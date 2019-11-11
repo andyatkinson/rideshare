@@ -1,0 +1,2 @@
+class Rider < User
+end
