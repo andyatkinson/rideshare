@@ -1,11 +1,4 @@
-# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
-
-one:
-  rider_id: 1
-  start_location_id: 1
-  end_location_id: 1
-
-two:
-  rider_id: 1
-  start_location_id: 1
-  end_location_id: 1
+big_trip:
+  rider: jane
+  start_location: nyc
+  end_location: bos

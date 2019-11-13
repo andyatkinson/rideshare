@@ -1,1 +1,11 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+nyc:
+  address: New York, NY
+  latitude: 40.7143528
+  longitude: -74.0059731
+
+bos:
+  address: Boston, MA
+  latitude: 42.361145,
+  longitude: -71.057083
