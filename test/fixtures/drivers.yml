@@ -1,9 +1,11 @@
 jack:
   first_name: Jack
   last_name: White
+  email: jack@email.com
   type: Driver
 
 meg:
   first_name: Meg
   last_name: White
+  email: meg@email.com
   type: Driver
