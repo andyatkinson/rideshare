@@ -1,24 +1,19 @@
-# README
+# Rideshare
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+An exemplary Rails 6.0 API app, in iterations
 
-Things you may want to cover:
+### Iteration 2
 
-* Ruby version
+* Location (Geo coordinates) and Trip Request models
+* API base controller
+* Trip Requests index and create API endpoints
 
-* System dependencies
 
-* Configuration
+### Iteration 1
 
-* Database creation
+* Design Document
+  * Writing out use cases
+  * Planning models, database tables, constraints, validations
+    * Using single-table inheritance for Driver and Rider instances in a Users table
 
-* Database initialization
 
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
