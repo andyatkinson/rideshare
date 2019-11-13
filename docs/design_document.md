@@ -1,3 +1,20 @@
+## 2019-11-12
+
+Trip model. Add rating. Ensure Trip is complete before it can be rated. Use a `completed_at` timestamp as the initial way to record the trip status, either complete or not. We may wish to add a state machine later, and states like `pending`->`in_progress`->`completed` etc.
+
+Idea: User communication (also becomes a uniqueness dimension): add email address?
+
+Indexing Dos and Dont's <https://www.itprotoday.com/sql-server/indexing-dos-and-don-ts>
+
+Use `db/schema.rb` and not `db/structure.sql`
+
+Trip has a `trip_request_id` FK, we could ensure it exists before create
+
+Since TripRequest already has a Rider, and Trip references TripRequest, we can use `delegate` to access the Rider for a Trip <https://stackoverflow.com/a/11457714/126688>
+
+Idea: DB check constraint on rating, `completed_at` IS NOT NULL, pros and cons <https://naildrivin5.com/blog/2015/11/15/rails-validations-vs-postgres-check-constraints.html>
+
+
 ## 2019-11-11
 
 Patterns: Introduce Geocoder gem. In order to automatically `geocode` on create, we can use the `after_validation` hook.
@@ -17,6 +34,8 @@ Best practice: render 201 when trip request was created, or unprocessable entity
 Best practice: use the geocoder initializer `rails generate geocoder:config`, and customize the testing behavior so lookups are not happening in test mode
 
 NOTE: uniqueness among trip request records. The same rider may travel the same trip, so we might want another dimension for uniqueness.
+
+NOTE: We could nest requests and ratings under trips, e.g. /api/trips, api/trips/requests, api/trips/ratings
 
 ## 2019-11-08
 
@@ -40,10 +59,10 @@ Some model ideas:
 
 Driver(name:string) (use STI?)
 Rider(name:string) (use STI?)
+Location(driver_id:integer,rider_id:integer,latitude:decimal,longitude:decimal)
 TripRequest(rider_id:integer,start:location_id,end:location_id)
 Trip(trip_request_id:integer,driver_id:integer,rider_id:integer,rating:integer)
-TripRating(trip_id:integer,rating:integer)
-Location(driver_id:integer,rider_id:integer,latitude:decimal,longitude:decimal)
+~TripRating(trip_id:integer,rating:integer)~
 
 Integer IDs (PK and FKs)
 
