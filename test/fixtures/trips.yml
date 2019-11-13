@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+incomplete_trip:
+  trip_request: big_trip
+  driver: jack
+  completed_at:
+  rating:
+
+completed_trip:
+  trip_request: big_trip
+  driver: meg
+  completed_at: <%= 1.day.ago.to_s(:db) %>
+  rating:
