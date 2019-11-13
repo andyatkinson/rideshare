@@ -1,0 +1,20 @@
+<h1>Dashboard</h1>
+
+<section>
+  <h2>Driver Ratings Performance</h2>
+  <ul>
+    <%- @stats.each do |row| %>
+      <dl>
+        <dt>Name</dt>
+        <dd><%= row['driver_name'] %></dd>
+
+        <dt># of Trips</dt>
+        <dd><%= row['trip_count'] %></dd>
+
+        <dt>Average Rating</dt>
+        <dd><%= row['avg_rating'] %></dd>
+      </dl>
+    <%- end %>
+  </ul>
+
+</section>

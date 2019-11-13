@@ -13,11 +13,12 @@ gem 'jbuilder', '~> 2.7'
 gem 'bootsnap', '>= 1.4.2', require: false
 
 gem 'geocoder'
-gem 'rails_best_practices'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
+  gem 'rails_best_practices'
+  gem 'faker', require: false
 end
 
 group :development do
