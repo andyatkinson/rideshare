@@ -14,6 +14,7 @@ Since TripRequest already has a Rider, and Trip references TripRequest, we can u
 
 Idea: DB check constraint on rating, `completed_at` IS NOT NULL, pros and cons <https://naildrivin5.com/blog/2015/11/15/rails-validations-vs-postgres-check-constraints.html>
 
+Idea: Consider using an ADR style for the Iterations log?
 
 ## 2019-11-11
 
