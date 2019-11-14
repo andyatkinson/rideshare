@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html class="uk-height-1-1 uk-notouch">
   <head>
     <title>Rideshare</title>
     <%= csrf_meta_tags %>
@@ -10,6 +10,8 @@
   </head>
 
   <body>
-    <%= yield %>
+    <div class="uk-container uk-container-center uk-margin-top uk-margin-large-bottom">
+      <%= yield %>
+    </div>
   </body>
 </html>

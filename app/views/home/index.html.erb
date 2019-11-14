@@ -1,20 +1,24 @@
-<h1>Dashboard</h1>
-
-<section>
-  <h2>Driver Ratings Performance</h2>
-  <ul>
-    <%- @stats.each do |row| %>
-      <dl>
-        <dt>Name</dt>
-        <dd><%= row['driver_name'] %></dd>
-
-        <dt># of Trips</dt>
-        <dd><%= row['trip_count'] %></dd>
-
-        <dt>Average Rating</dt>
-        <dd><%= row['avg_rating'] %></dd>
-      </dl>
-    <%- end %>
-  </ul>
-
-</section>
+<div class="uk-grid" data-uk-grid-margin>
+  <div class="uk-width-medium-1-3 uk-row-first">
+    <div class="uk-overflow-container">
+      <table class="uk-table uk-text-nowrap">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th># of Trips</th>
+            <th>Avg. Rating</th>
+          </tr>
+        </thead>
+        <tbody>
+        <%- @stats.each do |row| %>
+          <tr>
+            <td><%= row['driver_name'] %></td>
+            <td><%= row['trip_count'] %></td>
+            <td><%= number_with_precision(row['avg_rating'], precision: 2) %></td>
+          </tr>
+        <%- end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
