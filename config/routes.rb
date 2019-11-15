@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   root 'home#index'
 
   namespace :api do
-    resources :trip_requests, only: [:create, :index]
+    resources :trips, only: [:index]
+    resources :trip_requests, only: [:create]
   end
 end
