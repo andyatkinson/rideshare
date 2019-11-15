@@ -15,5 +15,9 @@ module Rideshare
     # Application configuration can go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded after loading
     # the framework and any gems in your application.
+
+
+    # https://blog.bigbinary.com/2016/08/29/rails-5-disables-autoloading-after-booting-the-app-in-production.html
+    config.eager_load_paths << Rails.root.join('app/services')
   end
 end
