@@ -1,11 +1,6 @@
 require 'test_helper'
 
 class Api::TripRequestsControllerTest < ActionDispatch::IntegrationTest
-  test "GET all trip requests" do
-    get api_trip_requests_url
-    assert_response 200
-  end
-
   test "CREATE a trip request works" do
     rider = riders(:jane)
     trip_request = {

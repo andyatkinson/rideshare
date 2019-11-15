@@ -1,8 +1,4 @@
 class Api::TripRequestsController < ApiController
-  def index
-    render json: []
-  end
-
   def create
     start_location = Location.create!(address: trip_request_params[:start_address])
     end_location = Location.create!(address: trip_request_params[:end_address])
