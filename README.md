@@ -49,7 +49,7 @@ Rider -> Trip : Rider Rates Trip
 
 ### Iteration 1
 
-* Design Document
+* Started with [Design Document](/docs/design_document.md)
   * Writing out use cases
   * Planning models, database tables, constraints, validations
     * Using single-table inheritance for Driver and Rider instances in a Users table
