@@ -21,6 +21,9 @@ ActiveRecord::Schema.define(version: 2019_11_12_165848) do
     t.decimal "longitude", precision: 15, scale: 10, null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["address"], name: "index_locations_on_address"
+    t.index ["latitude"], name: "index_locations_on_latitude"
+    t.index ["longitude"], name: "index_locations_on_longitude"
   end
 
   create_table "trip_requests", force: :cascade do |t|
