@@ -14,9 +14,25 @@ class Trip < ApplicationRecord
 
   validate :rating_requires_completed_trip
 
+  scope :with_start_location, -> (text) {
+    joins(trip_request: :start_location).
+    where('locations.address ILIKE ?', "%#{text}%")
+  }
+
+  scope :with_driver_name, -> (text) {
+    joins(:driver).
+    where('users.first_name ILIKE ?', "%#{text}%")
+  }
+
   def rating_requires_completed_trip
     if rating_changed? && completed_at.nil?
       errors.add(:rating, "must be completed before a rating can be added")
+    end
+  end
+
+  def self.apply_scopes(*filters)
+    filters.inject(all) do |scope_chain, filter|
+      scope_chain.merge(filter)
     end
   end
 end

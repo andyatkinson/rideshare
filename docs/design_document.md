@@ -1,3 +1,10 @@
+## 2019-11-15
+
+Adding Trip Search on at least 2 dimensions
+
+Uniqueness on Trip Requests, they should not have the same start and end location.
+
+
 ## 2019-11-12
 
 Trip model. Add rating. Ensure Trip is complete before it can be rated. Use a `completed_at` timestamp as the initial way to record the trip status, either complete or not. We may wish to add a state machine later, and states like `pending`->`in_progress`->`completed` etc.
