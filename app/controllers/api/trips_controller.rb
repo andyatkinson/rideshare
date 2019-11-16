@@ -5,7 +5,11 @@ class Api::TripsController < ApiController
   #
   def index
     search = TripSearch.new(search_params)
-    trips = Trip.apply_scopes(search.start_location, search.driver_name)
+    trips = Trip.apply_scopes(
+      search.start_location,
+      search.driver_name,
+      search.rider_name
+    )
 
     render json: trips
   end
@@ -15,7 +19,8 @@ class Api::TripsController < ApiController
   def search_params
     params.permit(
       :start_location,
-      :driver_name
+      :driver_name,
+      :rider_name
    )
   end
 end

@@ -7,5 +7,10 @@ nyc:
 
 bos:
   address: Boston, MA
-  latitude: 42.361145,
+  latitude: 42.361145
   longitude: -71.057083
+
+jfk:
+  address: JFK Airport
+  latitude: 40.6413111
+  longitude: -73.7781391

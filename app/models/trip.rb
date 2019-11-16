@@ -24,6 +24,11 @@ class Trip < ApplicationRecord
     where('users.first_name ILIKE ?', "%#{text}%")
   }
 
+  scope :with_rider_name, -> (text) {
+    joins(trip_request: :rider).
+    where('users.first_name ILIKE ?', "%#{text}%")
+  }
+
   def rating_requires_completed_trip
     if rating_changed? && completed_at.nil?
       errors.add(:rating, "must be completed before a rating can be added")

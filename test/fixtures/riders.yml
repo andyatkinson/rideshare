@@ -3,3 +3,10 @@ jane:
   last_name: Doe
   email: jane@email.com
   type: Rider
+
+jessica:
+  first_name: Jessica
+  last_name: Cruz
+  email: jessica@email.com
+  type: Rider
+

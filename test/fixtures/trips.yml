@@ -11,3 +11,9 @@ completed_trip:
   driver: meg
   completed_at: <%= 1.day.ago.to_s(:db) %>
   rating:
+
+rated_trip:
+  trip_request: airport_trip
+  driver: meg
+  completed_at: <%= 1.week.ago.to_s(:db) %>
+  rating: 5
