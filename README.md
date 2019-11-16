@@ -2,6 +2,10 @@
 
 An exemplary Rails 6.0 API app, in iterations
 
+### Iteration 6
+
+Add integration and model tests for trip search. Add trip search by multiple dimensions (Driver name, rider name, location).
+
 ### Iteration 5
 
 Generate sample Driver, Trip, Rider, and Rating data. Add basic Driver dashboard. Show driver stats.
