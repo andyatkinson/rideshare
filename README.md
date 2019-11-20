@@ -2,6 +2,35 @@
 
 An exemplary Rails 6.0 API app, in iterations
 
+### Iteration 8
+
+Improve test code coverage and maintain a `1:0.6` code to test ratio.
+
+`rake stats`
+
+```
+ Code LOC: 198     Test LOC: 115     Code to Test Ratio: 1:0.6
+```
+
+Put together a [Trip Search Sequence Diagram](https://www.planttext.com/).
+
+```
+@startuml
+
+title "Trip Search Sequence Diagram"
+
+actor User
+boundary "TripSearch"
+
+User -> TripSearch : Search by start location, driver name, rider name
+TripSearch -> User : Respond with matching Trips
+
+@enduml
+```
+
+<img src="https://www.plantuml.com/plantuml/img/JOyz3iCm24PtJe4ofnV8K6Ne2Vfp06AZ12csKqnQvVPrdLRj10BU-qIVZTJMC0EOsCpON5KMl32fcqgvhnmTuqbeL0eD03bBYhVC2aDQeoVTTcP7oiLxXuSZ_eROVON3XZKGv-J89CKMlSgZ0942jwZYFptyuKLMfHsUEIyfUdoAJHZ8t2Hnh4aPeEVeooSl" alt="Trip search" />
+
+
 ### Iteration 7
 
 Dockerize the application. <https://docs.docker.com/compose/rails/>
