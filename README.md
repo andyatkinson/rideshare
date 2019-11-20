@@ -2,6 +2,26 @@
 
 An exemplary Rails 6.0 API app, in iterations
 
+### Iteration 7
+
+Dockerize the application. <https://docs.docker.com/compose/rails/>
+
+* Change the `database.yml` and set the `host: db`
+* Install `yarn`
+
+#### Docker Commands
+
+* `docker-compose build`
+* `docker-compose up`
+* `docker-compose run web bundle exec rake db:create`
+* `docker-compose run web bundle exec rake db:migrate`
+* `docker-compose run web bundle exec rake data_generators:trips`
+
+Now query for some data:
+
+`curl http://localhost:3000/api/trips?start_location=New%20York&driver_name=Kasie`
+
+
 ### Iteration 6
 
 Add integration and model tests for trip search. Add trip search by multiple dimensions (Driver name, rider name, location).
