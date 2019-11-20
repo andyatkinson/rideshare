@@ -1,12 +1,12 @@
 default: &default
   adapter: postgresql
-  host: db
   username: postgres
   password:
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   timeout: 5000
 
 development:
+  host: db
   <<: *default
   database: rideshare_development
 
