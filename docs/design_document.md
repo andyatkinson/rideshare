@@ -1,6 +1,7 @@
 ## 2019-11-21
 
 Add `strong_migrations` gem, which helps prevent migrations that introduce downtime. I think this is a great project and wanted to rep it here.
+Add `blazer` gem for a demonstration of data reporting.
 
 
 ## 2019-11-15

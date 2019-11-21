@@ -2,6 +2,16 @@
 
 An exemplary Rails 6.0 API app, in iterations
 
+### Iteration 9
+
+Add two great tools, Strong Migrations and Blazer. Strong Migrations ensures that migrations will be safe to run in production, and avoid risky operations.
+
+Blazer is a simple platform for doing data analysis and data pulls. We used this extensively at a previous job and it let anyone with SQL knowledge learn about the data, serving their own reporting interests, and served as a repository of knowledge about common operations queries.
+
+I created a Driver and Rider dashboard here with some queries to look at Top rated drivers, and the most active Riders.
+
+<img src="https://imgur.com/JdEGWPr" alt="Driver and Rider Blazer dashboard" />
+
 ### Iteration 8
 
 Improve test code coverage and maintain a `1:0.6` code to test ratio.

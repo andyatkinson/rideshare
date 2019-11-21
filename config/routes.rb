@@ -6,4 +6,6 @@ Rails.application.routes.draw do
     resources :trips, only: [:index]
     resources :trip_requests, only: [:create]
   end
+
+  mount Blazer::Engine, at: 'blazer'
 end

@@ -6,7 +6,8 @@ default: &default
   timeout: 5000
 
 development:
-  host: db
+  #host: db # for Docker
+  host: localhost
   <<: *default
   database: rideshare_development
 
