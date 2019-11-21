@@ -10,7 +10,7 @@ Blazer is a simple platform for doing data analysis and data pulls. We used this
 
 I created a Driver and Rider dashboard here with some queries to look at Top rated drivers, and the most active Riders.
 
-<img src="https://imgur.com/JdEGWPr" alt="Driver and Rider Blazer dashboard" />
+<img src="https://i.imgur.com/JdEGWPr.png" alt="Driver and Rider Blazer dashboard" />
 
 ### Iteration 8
 
