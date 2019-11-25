@@ -6,8 +6,7 @@ default: &default
   timeout: 5000
 
 development:
-  #host: db # for Docker
-  host: localhost
+  host: db # localhost if not using docker
   <<: *default
   database: rideshare_development
 
@@ -15,6 +14,7 @@ development:
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
 test:
+  host: db
   <<: *default
   database: rideshare_test
 
