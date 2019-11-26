@@ -1,35 +1,54 @@
-FROM ruby:2.5
+FROM ruby:2.5-alpine
 
-# Add Yarn to the sources list
-RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
-  && echo 'deb http://dl.yarnpkg.com/debian/ stable main' > /etc/apt/sources.list.d/yarn.list
+ARG RUBY_ENV=development
+ARG NODE_ENV=development
+ARG BUILD_ENV=development
 
-RUN apt-get update -qq && apt-get install -y --no-install-recommends \
-  build-essential \
-  yarn \
-  nodejs \
-  postgresql-client
-RUN mkdir /myapp
-WORKDIR /myapp
-COPY Gemfile /myapp/Gemfile
-COPY Gemfile.lock /myapp/Gemfile.lock
+# Define all the envs here
+ENV RACK_ENV=$RUBY_ENV \
+    RAILS_ENV=$RUBY_ENV \
+    NODE_ENV=$NODE_ENV \
+    BUILD_ENV=$BUILD_ENV
 
-COPY package.json /usr/src/app/package.json
-COPY yarn.lock /usr/src/app/yarn.lock
-RUN yarn install --check-files
+RUN apk add --no-cache nodejs yarn build-base tzdata postgresql-dev
 
-RUN gem update --system
-RUN gem uninstall bundler
-RUN gem install bundler
-RUN bundler update --bundler
-RUN bundle install && yarn install --check-files
-COPY . /myapp
+WORKDIR /app
 
-# Add a script to be executed every time the constainer starts
-COPY entrypoint.sh /usr/bin/
-RUN chmod +x /usr/bin/entrypoint.sh
-ENTRYPOINT ["entrypoint.sh"]
-EXPOSE 3000
+ENV RAILS_ENV test
+ENV NODE_ENV test
 
-# Start the main process
-CMD ["rails", "server", "-b", "0.0.0.0"]
+ENV BUNDLE_GEMFILE=/app/Gemfile \
+    BUNDLE_JOBS=4 \
+    BUNDLE_PATH="/bundle"
+
+ENV NODE_VERSION="8"
+
+COPY Gemfile Gemfile.lock /app/
+
+# Skip installing gem documentation
+RUN mkdir -p /usr/local/etc \
+      && { \
+    echo '---'; \
+    echo ':update_sources: true'; \
+    echo ':benchmark: false'; \
+    echo ':backtrace: true'; \
+    echo ':verbose: true'; \
+    echo 'gem: --no-ri --no-rdoc'; \
+    echo 'install: --no-document'; \
+    echo 'update: --no-document'; \
+    } >> /usr/local/etc/gemrc
+
+# Install Ruby gems
+RUN gem install bundler && \
+bundle install --jobs $BUNDLE_JOBS \
+                   --path $BUNDLE_PATH \
+                   --without development ;
+
+# Install JS
+COPY package.json yarn.lock /app/
+RUN yarn install --network-timeout 100000
+
+# Copy app files
+COPY . /app/
+
+CMD entrypoint.sh

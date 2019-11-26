@@ -1,0 +1,36 @@
+version: '3.2'
+
+services:
+  db:
+    image: postgres
+    container_name: rideshare_db
+    environment:
+      - POSTGRES_DB=rideshare_development
+    ports:
+      - '5432'
+
+  web:
+    build:
+      context: .
+      cache_from:
+        - ${DOCKER_IMAGE}:${BRANCH_TAG}
+      args:
+        - RUBY_ENV=test
+        - NODE_ENV=test
+        - BUILD_ENV=test
+    image: ${DOCKER_IMAGE}:${BRANCH_TAG}
+    command: bundle exec rails s -p $PORT -b 0.0.0.0
+    stdin_open: true
+    tty: true
+    depends_on:
+      - db
+    volumes:
+      - "ruby-bundle:/bundle"
+    environment:
+      - RACK_ENV=test
+      - RAILS_ENV=test
+      - NODE_ENV=test
+      - DB_HOST=db
+
+volumes:
+  ruby-bundle:

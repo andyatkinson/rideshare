@@ -1,8 +1,18 @@
 #!/bin/bash
+
+# Exit on fail
 set -e
 
 # Remove a potentially pre-existing server.pid for Rails.
-rm -f /myapp/tmp/pids/server.pid
+if [ -f /app/tmp/pids/server.pid ]; then
+  rm -f /app/tmp/pids/server.pid
+fi
 
-# Then exec the container's main process (what's set as CMD in the Dockerfile).
-exec "$@"
+# Run pending migrations if any and start rails or run tests:
+
+bundle exec rails db:migrate
+
+# Examples:
+#
+# docker-compose -f docker-compose.dev.yml run web
+# docker-compose -f docker-compose.test.yml run test
