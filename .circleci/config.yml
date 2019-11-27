@@ -41,7 +41,9 @@ jobs:
 
       - run:
           name: install dependencies
-          command: bundle install --path=vendor/bundle || bundle install --path=vendor/bundle --jobs 4 --retry 3
+          command: |
+            gem update --system # for bundler 2 errors, upgrade rubygems
+            bundle install --path=vendor/bundle || bundle install --path=vendor/bundle --jobs 4 --retry 3
 
       - save_cache:
           key: v1-dependencies-{{ checksum "Gemfile.lock" }}
