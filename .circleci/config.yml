@@ -64,8 +64,6 @@ jobs:
           command: |
             bundle exec rake db:create db:schema:load --trace
             bundle exec rake db:migrate
-          environment:
-            DATABASE_URL: "postgres://root@localhost:5432/rideshare_test"
 
       # run tests!
       - run:
