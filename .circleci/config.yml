@@ -13,7 +13,7 @@ jobs:
   build:
     docker:
       # specify the version you desire here
-      - image: circleci/ruby:2.5.5
+      - image: circleci/ruby:2.6
         environment:
           RAILS_ENV: test
           PG_HOST: 127.0.0.1
@@ -39,11 +39,14 @@ jobs:
             # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
 
+      # Bundler version workaround:
+      # https://discuss.circleci.com/t/using-bundler-2-0-during-ci-fails/27411/2
       - run:
-          name: install dependencies
+          name: Configure Bundler
           command: |
-            sudo gem update --system # for bundler 2 errors, upgrade rubygems, "By default builds do not run as root, so you don’t have permissions to write to system directories."
-            bundle install --path=vendor/bundle || bundle install --path=vendor/bundle --jobs 4 --retry 3
+            echo 'export BUNDLER_VERSION=$(cat Gemfile.lock | tail -1 | tr -d " ")' >> $BASH_ENV
+            source $BASH_ENV
+            gem install bundler
 
       - save_cache:
           key: v1-dependencies-{{ checksum "Gemfile.lock" }}
