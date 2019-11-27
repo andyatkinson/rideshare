@@ -48,6 +48,11 @@ jobs:
             source $BASH_ENV
             gem install bundler
 
+      # Install dependencies
+      - run:
+          name: install dependencies
+          command: bundle install --path=vendor/bundle || bundle install --path=vendor/bundle --jobs 4 --retry 3
+
       - save_cache:
           key: v1-dependencies-{{ checksum "Gemfile.lock" }}
           paths:
