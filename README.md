@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/andyatkinson/rideshare.svg?style=svg)](https://circleci.com/gh/andyatkinson/rideshare)
+
 # Rideshare
 
 An exemplary Rails 6.0 API app, in iterations
