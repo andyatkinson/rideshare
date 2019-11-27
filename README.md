@@ -4,6 +4,10 @@
 
 An exemplary Rails 6.0 API app, in iterations
 
+### Iteration 10
+
+Use Circle CI as a CI system.
+
 ### Iteration 9
 
 Add two great tools, Strong Migrations and Blazer. Strong Migrations ensures that migrations will be safe to run in production, and avoid risky operations.
