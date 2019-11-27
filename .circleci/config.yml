@@ -34,21 +34,21 @@ jobs:
 
       # Download and cache dependencies
       - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "Gemfile.lock" }}
-            # fallback to using the latest cache if no exact match is found
-            - v1-dependencies-
+        keys:
+          - v1-dependencies-{{ checksum "Gemfile.lock" }}
+          # fallback to using the latest cache if no exact match is found
+          - v1-dependencies-
 
       - run:
-          name: install dependencies
-          command: |
-            sudo gem update --system # for bundler 2 errors, upgrade rubygems, "By default builds do not run as root, so you don’t have permissions to write to system directories."
-            bundle install --path=vendor/bundle || bundle install --path=vendor/bundle --jobs 4 --retry 3
+        name: install dependencies
+        command: |
+          sudo gem update --system # for bundler 2 errors, upgrade rubygems, "By default builds do not run as root, so you don’t have permissions to write to system directories."
+          bundle install --path=vendor/bundle || bundle install --path=vendor/bundle --jobs 4 --retry 3
 
       - save_cache:
-          key: v1-dependencies-{{ checksum "Gemfile.lock" }}
-          paths:
-            - vendor/bundle
+        key: v1-dependencies-{{ checksum "Gemfile.lock" }}
+        paths:
+          - vendor/bundle
 
       # Database setup
       - run:
@@ -61,8 +61,8 @@ jobs:
 
       # run tests!
       - run:
-          name: run tests
-          command: bin/rails test
+        name: run tests
+        command: bin/rails test
 
       # collect reports
       - store_test_results:
