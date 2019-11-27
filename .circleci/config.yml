@@ -42,7 +42,7 @@ jobs:
       - run:
           name: install dependencies
           command: |
-            gem update --system # for bundler 2 errors, upgrade rubygems
+            sudo gem update --system # for bundler 2 errors, upgrade rubygems, "By default builds do not run as root, so you don’t have permissions to write to system directories."
             bundle install --path=vendor/bundle || bundle install --path=vendor/bundle --jobs 4 --retry 3
 
       - save_cache:
