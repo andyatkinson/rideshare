@@ -65,6 +65,9 @@ jobs:
             bundle exec rake db:create db:schema:load --trace
             bundle exec rake db:migrate
 
+      # Precompile assets
+      - run: bundle exec rake assets:precompile
+
       # run tests!
       - run:
           name: run tests
