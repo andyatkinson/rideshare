@@ -4,6 +4,30 @@
 
 An exemplary Rails 6.0 API app, in iterations
 
+### Rails Best Practices and choices
+
+* Data Integrity (in the DB)
+  * Enforce Nullability
+  * Foreign key constraints for referential integrity
+  * Unique constraints
+* Code Quality
+  * Rails best practices
+  * Strong Migrations
+* Named Scopes
+* Search functionality
+* Automatic Geocoding
+  * Use callbacks
+  * Disable in test environment
+* Fixtures
+* Strong Params
+* API Application
+  * We only need an API, use `ActionController::API` for lighter weight API code
+  * Use `/api` namespace
+  * Status codes
+    * `201` on created
+    * `422` on error
+* Use [Single table inheritence](https://api.rubyonrails.org/v6.0.1/classes/ActiveRecord/Base.html#class-ActiveRecord::Base-label-Single+table+inheritance) [DB migration commit](https://github.com/andyatkinson/rideshare/commit/39232da339c2c04966e49e3e4ff03d88c2e66842#diff-7d736cc988a61ff29b4b9b2466b7a6ab)
+
 ### Iteration 10
 
 Use Circle CI as a CI system.
