@@ -28,6 +28,11 @@ An exemplary Rails 6.0 API app, in iterations
     * `422` on error
 * Use [Single table inheritence](https://api.rubyonrails.org/v6.0.1/classes/ActiveRecord/Base.html#class-ActiveRecord::Base-label-Single+table+inheritance) [DB migration commit](https://github.com/andyatkinson/rideshare/commit/39232da339c2c04966e49e3e4ff03d88c2e66842#diff-7d736cc988a61ff29b4b9b2466b7a6ab)
 
+### Maintenance
+
+* `bundle update [gemname]` to update a particular gem
+* `yarn upgrade` (may need to use `nvm use [version]` to switch to particular Node version)
+
 ### Iteration 10
 
 Use Circle CI as a CI system.
