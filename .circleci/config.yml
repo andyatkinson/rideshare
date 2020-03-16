@@ -24,7 +24,7 @@ jobs:
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
       # documented at https://circleci.com/docs/2.0/circleci-images/
-      - image: circleci/postgres:9.5
+      - image: circleci/ruby@sha256:4be65b406f7402b5c4fd5df7173d2fd7ea3fdaa74d9c43b6ebd896197a45c448
         environment:
           POSTGRES_USER: root
           POSTGRES_DB: rideshare_test
