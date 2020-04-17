@@ -2,7 +2,9 @@
 
 # Rideshare
 
-An exemplary Rails 6.0 API app, in iterations
+An example Rails 6.0 API app, in iterations.
+
+The purpose of this repo is to model a well-known domain, ride sharing, like Uber, and apply Rails concepts and best practices to it.
 
 ### Rails Best Practices and choices
 
