@@ -1,3 +1,10 @@
+## Welcome
+
+This document has entries that were chunks of work on this app. The entries are ordered reverse chronologically, so the first entry is on the bottom.
+
+Start from the bottom and work up to navigate the design decisions made along the way.
+
+
 ## 2019-11-21
 
 Add `strong_migrations` gem, which helps prevent migrations that introduce downtime. I think this is a great project and wanted to rep it here.
@@ -69,21 +76,26 @@ The same works when querying, by asking for a particular record, the type inform
 
 ## 2019-11-07 Initial thoughts
 
-Some model ideas:
+The purpose of this app is to model car-based ride sharing, like Uber or Lyft. This is my take on some objects and their interactions that model this domain. The main model is a Trip and then there are Drivers that provide the trip, and Riders that take the trip.
 
+
+Some Active Record model ideas and notes:
+
+```
 Driver(name:string) (use STI?)
 Rider(name:string) (use STI?)
 Location(driver_id:integer,rider_id:integer,latitude:decimal,longitude:decimal)
 TripRequest(rider_id:integer,start:location_id,end:location_id)
 Trip(trip_request_id:integer,driver_id:integer,rider_id:integer,rating:integer)
-~TripRating(trip_id:integer,rating:integer)~
+~~TripRating(trip_id:integer,rating:integer)~~
+```
 
-Integer IDs (PK and FKs)
+Integer IDs (PK and FKs). :bulb: Trade-off: integer primary keys can be exhausted at large scale, and auto increment IDs can be guessable which has security concerns. UUIDs or GUIDs are an alternative, but reduce usability.
 
 
 Use cases:
 
-* A rider makes a trip request, including start (geolocate current) and end locations (enter destination)
+* A rider makes a trip request, including a start location (geolocate current) and end location (enter destination)
 * A driver accepts the trip request
 * A trip involving a driver and rider begins, the location is tracked (includes driver and rider)
   * A trip involving a driver and rider completes (driver and rider)
