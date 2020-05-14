@@ -14,10 +14,19 @@ class Api::TripsController < ApiController
     render json: trips
   end
 
+  def show
+    @trip = Trip.find(params[:id])
+
+    if stale?(@trip)
+      render json: @trip
+    end
+  end
+
   private
 
   def search_params
     params.permit(
+      :id,
       :start_location,
       :driver_name,
       :rider_name
