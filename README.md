@@ -11,39 +11,59 @@ I made this app to demonstrate how I would model a well-known domain, ride shari
 Demonstrations of each of these items can be found in the app
 
 * Data Integrity (in the DB and application)
-	* Enforce Nullability
-  	* Foreign key constraints for referential integrity
-  	* Unique constraints
+  * Enforce Nullability
+    * Foreign key constraints for referential integrity
+    * Unique constraints
 * Code Quality
-  	* Rails best practices gem (`rails_best_practices .`)
-  	* Strong Migrations
-  	* Use `delegate` in models
-  	* Strong Params
+  * Rails best practices gem (`rails_best_practices .`)
+  * Strong Migrations
+  * Use `delegate` in models
+  * Strong Params
 * Performance
-	* DB indexes
-		* Primary, unique, foreign key columns
+  * DB indexes
+    * Primary, unique, foreign key columns
 * Named Scopes
 * Search functionality
 * Automatic Geocoding
-  	* Use callbacks
-  	* Disable geocoding in the test environment
+  * Use callbacks
+  * Disable geocoding in the test environment
 * Testing
-  	* Fixtures and factories
-  	* Test to code ratio of `0.6` (use `rake stats`)
-  	* Fake data generators for local development (`faker` gem, rake task)
+  * Fixtures and factories
+  * Test to code ratio of `0.6` (use `rake stats`)
+  * Fake data generators for local development (`faker` gem, rake task)
 * API Application
-  	* We only need an API, use `ActionController::API` for lighter weight API code
-  	* Use `/api` namespace
-  	* Status codes
-   	* `201` on created
-   * `422` on error
+  * We only need an API, use `ActionController::API` for lighter weight API code
+  * Use `/api` namespace
+  * Status codes
+  * `201` on created
+  * `422` on error
+  * HTTP Caching (ETag)
 * Use [Single table inheritence](https://api.rubyonrails.org/v6.0.1/classes/ActiveRecord/Base.html#class-ActiveRecord::Base-label-Single+table+inheritance) when appropriate
-	* Link: [DB migration commit](https://github.com/andyatkinson/rideshare/commit/39232da339c2c04966e49e3e4ff03d88c2e66842#diff-7d736cc988a61ff29b4b9b2466b7a6ab)
+  * Link: [DB migration commit](https://github.com/andyatkinson/rideshare/commit/39232da339c2c04966e49e3e4ff03d88c2e66842#diff-7d736cc988a61ff29b4b9b2466b7a6ab)
 
 ## Maintenance
 
 * `bundle update [gemname]` to update a particular gem
 * `yarn upgrade` (may need to use `nvm use [version]` to switch to particular Node version)
+
+## Iteration 11
+
+Introduce ETag HTTP caching to the trips API. `ETag` is content-based HTTP caching  built in to Rails. ETags can be strong or weak, weak ETags are used by default in Rails, and are identified with a `W/` on the front, e.g. `W/"02d4d6729566d6bb56f0aa9e644c8c93"`.
+
+Collections (an `ActiveRecord::Relation`) are supported, although they will be covered here in the future, for now this uses a `trips#show` API as a demonstration.
+
+Sending a curl request and asking for headers only, we can see an ETag as a response header, and a 200 status code.
+
+Using that ETag value as a request header, for example below, if the content for this trip has not changed, we'll see a `304 Not Modified` response.
+
+```
+curl -I --header 'If-None-Match: W/"02d4d6729566d6bb56f0aa9e644c8c93"' localhost:3000/api/trips/1
+```
+
+We can open a console and updated this trip, e.g. `Trip.find(1).touch`, and then sending the same ETag, we'll see the trip is rendered again, and we get a 200 response as expected, since the content of the trip has changed (the `updated_at` timestamp was updated).
+
+
+
 
 ## Iteration 10
 
