@@ -15,6 +15,8 @@ class Api::TripsController < ApiController
   end
 
   def show
+    expires_in 1.minute, public: true
+
     @trip = Trip.find(params[:id])
 
     if stale?(@trip)

@@ -37,7 +37,7 @@ Demonstrations of each of these items can be found in the app
   * Status codes
   * `201` on created
   * `422` on error
-  * HTTP Caching (ETag, Last Modified)
+  * HTTP Caching (ETag, Last Modified, static content)
 * Use [Single table inheritence](https://api.rubyonrails.org/v6.0.1/classes/ActiveRecord/Base.html#class-ActiveRecord::Base-label-Single+table+inheritance) when appropriate
   * Link: [DB migration commit](https://github.com/andyatkinson/rideshare/commit/39232da339c2c04966e49e3e4ff03d88c2e66842#diff-7d736cc988a61ff29b4b9b2466b7a6ab)
 
