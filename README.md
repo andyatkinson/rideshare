@@ -37,7 +37,7 @@ Demonstrations of each of these items can be found in the app
   * Status codes
   * `201` on created
   * `422` on error
-  * HTTP Caching (ETag)
+  * HTTP Caching (ETag, Last Modified)
 * Use [Single table inheritence](https://api.rubyonrails.org/v6.0.1/classes/ActiveRecord/Base.html#class-ActiveRecord::Base-label-Single+table+inheritance) when appropriate
   * Link: [DB migration commit](https://github.com/andyatkinson/rideshare/commit/39232da339c2c04966e49e3e4ff03d88c2e66842#diff-7d736cc988a61ff29b4b9b2466b7a6ab)
 
@@ -62,7 +62,15 @@ curl -I --header 'If-None-Match: W/"02d4d6729566d6bb56f0aa9e644c8c93"' localhost
 
 We can open a console and updated this trip, e.g. `Trip.find(1).touch`, and then sending the same ETag, we'll see the trip is rendered again, and we get a 200 response as expected, since the content of the trip has changed (the `updated_at` timestamp was updated).
 
+Another response header that `stale?` introduces (this header doesn't seem to appear with a regular `render`) is `Last-Modified`, e.g. as a header and value an example is `Last-Modified: Thu, 14 May 2020 01:42:08 GMT`.
 
+Now we can create a curl request with the request header `If-Modified-Since` and this timestamp, e.g.
+
+```
+curl -i --header 'If-Modified-Since: Thu, 14 May 2020 01:42:08 GMT' localhost:3000/api/trips/1
+```
+
+And confirm that we receive a `304 Not Modified`. Updating the trip and sending an equivalent request responds with a `200`, which makes sense since the trip has been updated. And similarly, if we replace the timestamp value with the new value from the `Last-Modified`, we are back to getting a `304 Not Modified` response.
 
 
 ## Iteration 10
