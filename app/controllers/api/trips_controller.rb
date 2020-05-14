@@ -24,11 +24,22 @@ class Api::TripsController < ApiController
     end
   end
 
+  # TODO authentication
+  def my
+    @trips = Trip.completed.joins(trip_request: :rider).
+      where('users.id = ?', params[:rider_id])
+
+    # params[:fields] may be passed from the client as an array of Strings
+    options = {}
+    options.merge!(fields: { trip: params[:fields] }) if params[:fields].present?
+
+    render json: TripSerializer.new(@trips, options).serializable_hash
+  end
+
   private
 
   def search_params
     params.permit(
-      :id,
       :start_location,
       :driver_name,
       :rider_name

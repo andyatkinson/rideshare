@@ -46,6 +46,11 @@ Demonstrations of each of these items can be found in the app
 * `bundle update [gemname]` to update a particular gem
 * `yarn upgrade` (may need to use `nvm use [version]` to switch to particular Node version)
 
+## Iteration 12
+
+Plan out a public API. A rider's "my trips" API. Includes driver details, maybe additional information like my rating, average rating. Includes start and end location.
+Use fast_jsonapi and some of the JSON API features, like sparse fieldsets and compound documents.
+
 ## Iteration 11
 
 Introduce ETag HTTP caching to the trips API. `ETag` is content-based HTTP caching  built in to Rails. ETags can be strong or weak, weak ETags are used by default in Rails, and are identified with a `W/` on the front, e.g. `W/"02d4d6729566d6bb56f0aa9e644c8c93"`.
