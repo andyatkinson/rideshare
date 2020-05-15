@@ -29,9 +29,16 @@ class Api::TripsController < ApiController
     @trips = Trip.completed.joins(trip_request: :rider).
       where('users.id = ?', params[:rider_id])
 
-    # params[:fields] may be passed from the client as an array of Strings
     options = {}
-    options.merge!(fields: { trip: params[:fields] }) if params[:fields].present?
+    # JSON API: https://jsonapi.org/format/#fetching-sparse-fieldsets
+    # fast_jsonapi: https://github.com/Netflix/fast_jsonapi#sparse-fieldsets
+    #
+    # convert input params to options arguments
+    if params[:fields]
+      trip_params = params[:fields].permit(:trips).to_h.
+        inject({}) { |h, (k,v)| h[k.singularize.to_sym] = v.split(",").map(&:to_sym); h }
+      options.merge!(fields: trip_params)
+    end
 
     render json: TripSerializer.new(@trips, options).serializable_hash
   end

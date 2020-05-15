@@ -42,13 +42,23 @@ class Api::TripsControllerTest < ActionDispatch::IntegrationTest
     assert_equal 'Meg W.', first_trip['attributes']['driver_name']
   end
 
-  test "get my trips sparse fieldset" do
-    get my_api_trips_url, params: { rider_id: trip.rider.id, fields: ['rider_name'] }
+  test "get my trips sparse fieldset all fields" do
+    get my_api_trips_url, params: { rider_id: trip.rider.id, "fields[trips]" => "rider_name,driver_name" }
     assert_response 200
     assert json = JSON.parse(response.body)
 
     assert first_trip = json['data'][0]
-    assert_equal 'Jane D.', first_trip['attributes']['rider_name']
+    assert_equal "Jane D.", first_trip['attributes']['rider_name']
+    assert_equal "Meg W.", first_trip['attributes']['driver_name']
+  end
+
+  test "get my trips sparse fieldset subset of fields" do
+    get my_api_trips_url, params: { rider_id: trip.rider.id, "fields[trips]" => "rider_name" }
+    assert_response 200
+    assert json = JSON.parse(response.body)
+
+    assert first_trip = json['data'][0]
+    assert_equal "Jane D.", first_trip['attributes']['rider_name']
     assert_nil first_trip['attributes']['driver_name']
   end
 
