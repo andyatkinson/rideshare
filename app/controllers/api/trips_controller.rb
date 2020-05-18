@@ -24,7 +24,30 @@ class Api::TripsController < ApiController
     end
   end
 
+  # Get more details about a single trip
+  # TODO add JSON API mime type
+  def details
+    options = {}
+    # include=driver
+    # fields[driver]=average_rating
+    if params[:fields]
+      driver_fields = params[:fields].permit(:driver).to_h.
+        inject({}) { |h, (k,v)| h[k.to_sym] = v.split(",").map(&:to_sym); h }
+      options.merge!(fields: driver_fields)
+    end
+
+    # multiple associated resources are comma-separated
+    if params[:include]
+      options[:include] = params[:include].split(",").map(&:to_sym)
+    end
+
+    @trip = Trip.includes(:driver).find_by(id: params[:id])
+
+    render json: TripSerializer.new(@trip, options).serializable_hash
+  end
+
   # TODO authentication
+  # TODO add JSON API mime type
   def my
     @trips = Trip.completed.
       includes(:driver, {trip_request: :rider}).

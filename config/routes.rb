@@ -7,6 +7,9 @@ Rails.application.routes.draw do
       collection do
         get :my
       end
+      member do
+        get :details
+      end
     end
     resources :trip_requests, only: [:create]
   end

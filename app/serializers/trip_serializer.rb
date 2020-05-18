@@ -8,4 +8,6 @@ class TripSerializer
   attribute :driver_name do |trip|
     trip.driver.display_name
   end
+
+  belongs_to :driver
 end

@@ -62,6 +62,46 @@ class Api::TripsControllerTest < ActionDispatch::IntegrationTest
     assert_nil first_trip['attributes']['driver_name']
   end
 
+  test "get trip details" do
+    get details_api_trip_url(id: trip.id)
+    assert_response 200
+    assert json = JSON.parse(response.body)
+    assert json.has_key?('data')
+    assert_equal 'trip', json['data']['type']
+  end
+
+  test "get trip details with driver fields as compound document" do
+    get details_api_trip_url(id: trip.id), params: {include: "driver"}
+    assert_response 200
+    assert json = JSON.parse(response.body)
+    assert json.has_key?('data')
+    assert_equal 'trip', json['data']['type']
+
+    assert json.has_key?('included')
+    assert driver_details = json['included'][0]['attributes']
+
+    assert driver_details.has_key?('display_name')
+    assert driver_details.has_key?('average_rating')
+  end
+
+  test "get trip details with driver fields as compound document with sparse fieldset on driver" do
+    get details_api_trip_url(id: trip.id),
+      params: { include: "driver", "fields[driver]" => "average_rating" }
+
+    assert_response 200
+    assert json = JSON.parse(response.body)
+    assert json.has_key?('data')
+    assert_equal 'trip', json['data']['type']
+
+    assert json.has_key?('included')
+    assert driver_details = json['included'][0]['attributes']
+
+    assert driver_details.has_key?('average_rating')
+
+    assert_not driver_details.has_key?('display_name'),
+      "did not expect display_name for driver to be included"
+  end
+
   private
 
   def trip
