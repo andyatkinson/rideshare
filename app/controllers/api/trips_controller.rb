@@ -26,7 +26,9 @@ class Api::TripsController < ApiController
 
   # TODO authentication
   def my
-    @trips = Trip.completed.joins(trip_request: :rider).
+    @trips = Trip.completed.
+      includes(:driver, {trip_request: :rider}).
+      joins(trip_request: :rider).
       where('users.id = ?', params[:rider_id])
 
     options = {}
