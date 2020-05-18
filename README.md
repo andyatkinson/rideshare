@@ -34,6 +34,9 @@ Demonstrations of each of these items can be found in the app
 * API Application
   * We only need an API, use `ActionController::API` for lighter weight API code
   * Use `/api` namespace
+  * JSON API for API standardization
+    * Sparse Fieldsets
+    * Compound Documents
   * Status codes
   * `201` on created
   * `422` on error
