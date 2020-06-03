@@ -33,7 +33,9 @@ class Api::TripsControllerTest < ActionDispatch::IntegrationTest
 
   ### API: /my ###
   test "get my trips" do
-    get my_api_trips_url, params: { rider_id: trip.rider.id }
+    get my_api_trips_url,
+      headers: { 'Authorization' => auth_token },
+      params: { rider_id: trip.rider.id }
     assert_response 200
     assert json = JSON.parse(response.body)
 
@@ -43,7 +45,9 @@ class Api::TripsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "get my trips sparse fieldset all fields" do
-    get my_api_trips_url, params: { rider_id: trip.rider.id, "fields[trips]" => "rider_name,driver_name" }
+    get my_api_trips_url,
+      headers: { 'Authorization' => auth_token },
+      params: { rider_id: trip.rider.id, "fields[trips]" => "rider_name,driver_name" }
     assert_response 200
     assert json = JSON.parse(response.body)
 
@@ -53,13 +57,21 @@ class Api::TripsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "get my trips sparse fieldset subset of fields" do
-    get my_api_trips_url, params: { rider_id: trip.rider.id, "fields[trips]" => "rider_name" }
+    get my_api_trips_url,
+      headers: { 'Authorization' => auth_token },
+      params: { rider_id: trip.rider.id, "fields[trips]" => "rider_name" }
     assert_response 200
     assert json = JSON.parse(response.body)
 
     assert first_trip = json['data'][0]
     assert_equal "Jane D.", first_trip['attributes']['rider_name']
     assert_nil first_trip['attributes']['driver_name']
+  end
+
+  test "get my trips no auth token" do
+    get my_api_trips_url,
+      params: { rider_id: trip.rider.id }
+    assert_response 401
   end
 
   test "get trip details" do
@@ -106,5 +118,9 @@ class Api::TripsControllerTest < ActionDispatch::IntegrationTest
 
   def trip
     @trip ||= trips(:completed_trip)
+  end
+
+  def auth_token
+    JsonWebToken.encode(user_id: trip.rider.id)
   end
 end

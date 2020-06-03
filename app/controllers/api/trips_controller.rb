@@ -1,4 +1,6 @@
 class Api::TripsController < ApiController
+  before_action :authorize_request, only: :my
+
   #
   # Search params: `start_location`
   #   => `New%20York%2C%20NY`
@@ -46,7 +48,6 @@ class Api::TripsController < ApiController
     render json: TripSerializer.new(@trip, options).serializable_hash
   end
 
-  # TODO authentication
   # TODO add JSON API mime type
   def my
     @trips = Trip.completed.
