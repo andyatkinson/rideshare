@@ -14,5 +14,7 @@ Rails.application.routes.draw do
     resources :trip_requests, only: [:create]
   end
 
+  post '/auth/login', to: 'authentication#login'
+
   mount Blazer::Engine, at: 'blazer'
 end
