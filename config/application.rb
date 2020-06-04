@@ -19,5 +19,6 @@ module Rideshare
 
     # https://blog.bigbinary.com/2016/08/29/rails-5-disables-autoloading-after-booting-the-app-in-production.html
     config.eager_load_paths << Rails.root.join('app/services')
+    config.eager_load_paths << Rails.root.join('lib')
   end
 end
