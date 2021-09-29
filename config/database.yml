@@ -24,3 +24,5 @@ test:
 production:
   <<: *default
   database: rideshare_production
+  variables:
+    statement_timeout: 4000
