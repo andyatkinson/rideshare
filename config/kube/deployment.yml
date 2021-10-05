@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kubernetes-rideshare-deployment
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: rideshare
+  template:
+    metadata:
+      labels:
+        app: rideshare
+    spec:
+      containers:
+      - name: rideshare
+        image: andyatkinson/rideshare:latest
+        ports:
+        - containerPort: 3000
