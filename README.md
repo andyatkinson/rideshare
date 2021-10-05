@@ -49,6 +49,13 @@ Demonstrations of each of these items can be found in the app
 * `bundle update [gemname]` to update a particular gem
 * `yarn upgrade` (may need to use `nvm use [version]` to switch to particular Node version)
 
+## Development Iterations
+
+### Kubernetes
+
+[Getting started with Amazon EKS](https://docs.aws.amazon.com/eks/latest/userguide/getting-started.html)
+
+
 ## Iteration 14
 
 Upgrade Rails 6.0->6.1

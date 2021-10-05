@@ -1,54 +1,19 @@
-FROM ruby:2.5-alpine
+FROM ruby:2.5
 
-ARG RUBY_ENV=development
-ARG NODE_ENV=development
-ARG BUILD_ENV=development
+RUN curl https://deb.nodesource.com/setup_12.x | bash
+RUN curl https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
+RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
 
-# Define all the envs here
-ENV RACK_ENV=$RUBY_ENV \
-    RAILS_ENV=$RUBY_ENV \
-    NODE_ENV=$NODE_ENV \
-    BUILD_ENV=$BUILD_ENV
+RUN apt-get update && apt-get install -y nodejs yarn postgresql-client
 
-RUN apk add --no-cache nodejs yarn build-base tzdata postgresql-dev
-
+RUN mkdir /app
 WORKDIR /app
+COPY Gemfile Gemfile.lock ./
+RUN gem install bundler
+RUN bundle install
+COPY . .
 
-ENV RAILS_ENV test
-ENV NODE_ENV test
+#RUN rake assets:precompile
 
-ENV BUNDLE_GEMFILE=/app/Gemfile \
-    BUNDLE_JOBS=4 \
-    BUNDLE_PATH="/bundle"
-
-ENV NODE_VERSION="8"
-
-COPY Gemfile Gemfile.lock /app/
-
-# Skip installing gem documentation
-RUN mkdir -p /usr/local/etc \
-      && { \
-    echo '---'; \
-    echo ':update_sources: true'; \
-    echo ':benchmark: false'; \
-    echo ':backtrace: true'; \
-    echo ':verbose: true'; \
-    echo 'gem: --no-ri --no-rdoc'; \
-    echo 'install: --no-document'; \
-    echo 'update: --no-document'; \
-    } >> /usr/local/etc/gemrc
-
-# Install Ruby gems
-RUN gem install bundler && \
-bundle install --jobs $BUNDLE_JOBS \
-                   --path $BUNDLE_PATH \
-                   --without development ;
-
-# Install JS
-COPY package.json yarn.lock /app/
-RUN yarn install --network-timeout 100000
-
-# Copy app files
-COPY . /app/
-
-CMD entrypoint.sh
+EXPOSE 3000
+CMD ["rails", "server", "-b", "0.0.0.0"]
