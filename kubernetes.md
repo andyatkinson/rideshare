@@ -1,5 +1,9 @@
 ## Kubernetes
 
+### Docker
+
+`docker build -t andyatkinson/rideshare:latest .`
+
 Docker private repository. Signed in to Docker desktop.
 
 `docker push andyatkinson/rideshare:latest`
