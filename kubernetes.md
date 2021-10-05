@@ -27,3 +27,7 @@ After creating the deployment and load balancer, apply the configuration.
 `kubectl apply -f config/kube`
 
 `kubectl rollout restart deployment.apps/kubernetes-rideshare-deployment`
+
+`kubectl get services`
+
+`kubectl describe service kubernetes-ridehsare-load-balancer`
