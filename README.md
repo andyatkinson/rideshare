@@ -6,6 +6,19 @@ An example Rails 6.0 API app, in iterations.
 
 I made this app to demonstrate how I would model a well-known domain, ride sharing like Uber or Lyft. Along the way, there are opportunities to call out Rails Best Practices, Patterns, and design trade-offs. There are also opportunities to demonstrate my personal style and recommendations.
 
+## Install
+
+```
+rbenv 2.6.8 # Check `.ruby-version`
+gem install bundler
+bundle install
+nvm install latest
+npm install
+rake db:create:all
+rake test
+```
+
+
 ## My Rails Best Practices and Patterns
 
 Demonstrations of each of these items can be found in the app

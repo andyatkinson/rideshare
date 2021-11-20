@@ -17,7 +17,7 @@ development:
 test:
   <<: *default
   #host: db # docker
-  username: root
+  username: postgres
   host: localhost
   database: rideshare_test
 

@@ -7,7 +7,8 @@
     "@rails/ujs": "^6.0.0-alpha",
     "@rails/webpacker": "^4.2.0",
     "turbolinks": "^5.2.0",
-    "uikit": "^3.2.3"
+    "uikit": "^3.2.3",
+    "yarn": "^1.22.17"
   },
   "version": "0.1.0",
   "devDependencies": {
