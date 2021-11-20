@@ -1,4 +1,4 @@
-FROM ruby:2.5-alpine
+FROM ruby:2.6.8-alpine
 
 ARG RUBY_ENV=development
 ARG NODE_ENV=development
