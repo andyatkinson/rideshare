@@ -10,7 +10,8 @@ namespace :data_generators do
       drivers << Driver.create!(
         first_name: fname,
         last_name: lname,
-        email: "#{fname}-#{lname}-#{i}@email.com"
+        email: "#{fname}-#{lname}-#{i}@email.com",
+        password: SecureRandom.hex
       )
     end
 
@@ -21,7 +22,8 @@ namespace :data_generators do
       riders << Rider.create!(
         first_name: fname,
         last_name: lname,
-        email: "#{fname}-#{lname}-#{i}@email.com"
+        email: "#{fname}-#{lname}-#{i}@email.com",
+        password: SecureRandom.hex
       )
     end
 
@@ -37,17 +39,21 @@ namespace :data_generators do
       longitude: -71.057083
     )
 
-    100.times do |i|
+    puts "creating trip requests and trips"
+    1000.times do |i|
       request = TripRequest.create!(
         rider: riders.sample,
         start_location: nyc,
         end_location: bos
       )
 
+      # for about 1/4 of the trips, give them a random rating
+      rating = (i % 4 == 0) ? 1 + rand(5) : nil
+
       request.create_trip!(
         driver: drivers.sample,
         completed_at: 1.minute.ago,
-        rating: 1 + rand(5)
+        rating: rating
       )
     end
   end
