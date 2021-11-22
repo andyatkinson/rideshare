@@ -2,6 +2,8 @@ Rails.application.routes.draw do
   get 'home/index'
   root 'home#index'
 
+  mount PgHero::Engine, at: "pghero"
+
   namespace :api do
     resources :trips, only: [:index, :show] do
       collection do

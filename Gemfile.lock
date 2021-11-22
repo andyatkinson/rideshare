@@ -124,6 +124,8 @@ GEM
       mini_portile2 (~> 2.6.1)
       racc (~> 1.4)
     pg (1.2.3)
+    pghero (2.8.1)
+      activerecord (>= 5)
     public_suffix (4.0.4)
     puma (3.12.6)
     racc (1.6.0)
@@ -248,6 +250,7 @@ DEPENDENCIES
   jwt
   listen (>= 3.0.5, < 3.2)
   pg
+  pghero
   puma (~> 3.12)
   rails (~> 6.1)
   rails_best_practices

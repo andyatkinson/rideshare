@@ -17,6 +17,7 @@ gem 'blazer'
 gem 'fast_jsonapi'
 gem 'jwt' # Json Web Token
 gem 'bcrypt' # Use ActiveModel has_secure_password
+gem 'pghero'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
