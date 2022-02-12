@@ -127,7 +127,8 @@ GEM
     pghero (2.8.1)
       activerecord (>= 5)
     public_suffix (4.0.4)
-    puma (3.12.6)
+    puma (4.3.11)
+      nio4r (~> 2.0)
     racc (1.6.0)
     rack (2.2.3)
     rack-proxy (0.6.5)
@@ -251,7 +252,7 @@ DEPENDENCIES
   listen (>= 3.0.5, < 3.2)
   pg
   pghero
-  puma (~> 3.12)
+  puma (~> 4.3)
   rails (~> 6.1)
   rails_best_practices
   sass-rails (~> 5)
