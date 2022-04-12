@@ -9,7 +9,7 @@ I made this app to demonstrate how I would model a well-known domain, ride shari
 ## Install
 
 ```
-rbenv 2.6.8 # Check `.ruby-version`
+rbenv 3.1.0 # Check `.ruby-version`
 gem install bundler
 bundle install
 nvm install latest
@@ -17,6 +17,14 @@ npm install
 rake db:create:all
 rake test
 ```
+
+## Ctags
+
+I use it, and running:
+
+`ctags -R --exclude=.git --exclude=node_modules --exclude=test --exclude=vendor`
+
+Excludes directories.
 
 
 ## My Rails Best Practices and Patterns
@@ -61,6 +69,10 @@ Demonstrations of each of these items can be found in the app
 
 * `bundle update [gemname]` to update a particular gem
 * `yarn upgrade` (may need to use `nvm use [version]` to switch to particular Node version)
+
+## Iteration 16 (2022)
+
+* Upgrade to Rails 7. Remove some gems.
 
 ## Iteration 15
 
