@@ -22,6 +22,7 @@ group :development, :test do
   gem 'rails_best_practices'
   gem 'faker', require: false
   gem 'listen'
+  gem 'pry'
 end
 
 group :test do

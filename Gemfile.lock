@@ -76,6 +76,7 @@ GEM
     chartkick (4.1.3)
     code_analyzer (0.5.5)
       sexp_processor
+    coderay (1.1.3)
     concurrent-ruby (1.1.10)
     crass (1.0.6)
     digest (3.1.0)
@@ -129,6 +130,9 @@ GEM
     pg (1.3.5)
     pghero (2.8.2)
       activerecord (>= 5)
+    pry (0.14.1)
+      coderay (~> 1.1)
+      method_source (~> 1.0)
     puma (5.6.4)
       nio4r (~> 2.0)
     racc (1.6.0)
@@ -221,6 +225,7 @@ GEM
 
 PLATFORMS
   x86_64-darwin-20
+  x86_64-darwin-21
 
 DEPENDENCIES
   bcrypt
@@ -233,6 +238,7 @@ DEPENDENCIES
   listen
   pg
   pghero
+  pry
   puma
   rails (~> 7)
   rails_best_practices

@@ -7,7 +7,7 @@ orbs:
 jobs:
   build:
     docker:
-      - image: cimg/ruby:2.7-node
+      - image: cimg/ruby:3.1-node
     steps:
       - checkout
       - ruby/install-deps
@@ -18,8 +18,8 @@ jobs:
   test:
     parallelism: 3
     docker:
-      - image: cimg/ruby:2.7-node
-      - image: circleci/postgres:9.5-alpine
+      - image: cimg/ruby:3.1-node
+      - image: circleci/cimg/postgres:13.6
         environment:
           POSTGRES_USER: root
           POSTGRES_DB: rideshare_test
