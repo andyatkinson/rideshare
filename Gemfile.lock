@@ -127,6 +127,8 @@ GEM
     nokogiri (1.13.4-x86_64-darwin)
       racc (~> 1.4)
     pg (1.3.5)
+    pghero (2.8.2)
+      activerecord (>= 5)
     puma (5.6.4)
       nio4r (~> 2.0)
     racc (1.6.0)
@@ -230,6 +232,7 @@ DEPENDENCIES
   jwt
   listen
   pg
+  pghero
   puma
   rails (~> 7)
   rails_best_practices
