@@ -19,7 +19,7 @@ jobs:
     parallelism: 3
     docker:
       - image: cimg/ruby:3.1-node
-      - image: circleci/cimg/postgres:13.6
+      - image: cimg/postgres:13.6
         environment:
           POSTGRES_USER: root
           POSTGRES_DB: rideshare_test
