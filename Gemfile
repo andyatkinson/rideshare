@@ -12,6 +12,7 @@ gem 'fast_jsonapi'
 gem 'jwt' # Json Web Token
 gem 'bcrypt' # Use ActiveModel has_secure_password
 gem 'pghero'
+gem 'fx' # manage DB functions
 
 gem 'webpacker'
 gem 'turbolinks'

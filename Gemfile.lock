@@ -88,6 +88,9 @@ GEM
     fast_jsonapi (1.5)
       activesupport (>= 4.2)
     ffi (1.15.5)
+    fx (0.7.0)
+      activerecord (>= 4.0.0)
+      railties (>= 4.0.0)
     geocoder (1.7.5)
     globalid (1.0.0)
       activesupport (>= 5.0)
@@ -232,6 +235,7 @@ DEPENDENCIES
   blazer
   faker
   fast_jsonapi
+  fx
   geocoder
   jbuilder
   jwt
