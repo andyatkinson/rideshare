@@ -13,7 +13,7 @@
 ActiveRecord::Schema[7.0].define(version: 2022_07_11_015524) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "intarray"
-  enable_extension "pg_cron"
+  #enable_extension "pg_cron"
   enable_extension "pg_stat_statements"
   enable_extension "plpgsql"
 
@@ -283,8 +283,4 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_11_015524) do
       $function$
   SQL
 
-
-  create_trigger :cron_job_cache_invalidate, sql_definition: <<-SQL
-      CREATE TRIGGER cron_job_cache_invalidate AFTER INSERT OR DELETE OR UPDATE OR TRUNCATE ON cron.job FOR EACH STATEMENT EXECUTE FUNCTION cron.job_cache_invalidate()
-  SQL
 end
