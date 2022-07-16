@@ -74,6 +74,8 @@ Demonstrations of each of these items can be found in the app
 
 Start a pgbench benchmark basics. Add fx gem to manage DB functions (pl/pgsql). Add data scrub functions.
 
+Add paranoia gem and create some deleted users for the purposes of different query types.
+
 
 ## Iteration 16 (2022)
 
