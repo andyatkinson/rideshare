@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_07_11_015524) do
+ActiveRecord::Schema[7.0].define(version: 2022_07_16_020213) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -112,6 +112,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_11_015524) do
     t.datetime "updated_at", null: false
     t.string "password_digest"
     t.index ["email"], name: "index_users_on_email"
+    t.index ["last_name"], name: "index_users_on_last_name"
   end
 
   add_foreign_key "trip_requests", "locations", column: "end_location_id"

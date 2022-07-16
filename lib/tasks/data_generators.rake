@@ -1,8 +1,22 @@
+require 'faker'
+
 namespace :data_generators do
   desc "Generator Trip data"
-  task trips: :environment do |t, args|
-    require 'faker'
+  task drivers: :environment do |t, args|
+    10.times do |i|
+      fname = Faker::Name.first_name
+      lname = Faker::Name.last_name
+      Driver.create!(
+        first_name: fname,
+        last_name: lname,
+        email: "#{fname}-#{lname}-#{i}@email.com",
+        password: SecureRandom.hex
+      )
+    end
 
+  end
+
+  task trips: :environment do |t, args|
     drivers = []
     10.times do |i|
       fname = Faker::Name.first_name
