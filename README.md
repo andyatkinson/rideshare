@@ -70,6 +70,11 @@ Demonstrations of each of these items can be found in the app
 * `bundle update [gemname]` to update a particular gem
 * `yarn upgrade` (may need to use `nvm use [version]` to switch to particular Node version)
 
+## Iteration 17
+
+Start a pgbench benchmark basics. Add fx gem to manage DB functions (pl/pgsql). Add data scrub functions.
+
+
 ## Iteration 16 (2022)
 
 * Upgrade to Rails 7. Remove some gems.
