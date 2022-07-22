@@ -9,11 +9,11 @@ incomplete_trip:
 completed_trip:
   trip_request: big_trip
   driver: meg
-  completed_at: <%= 1.day.ago.to_s(:db) %>
+  completed_at: <%= 1.day.ago.to_fs(:db) %>
   rating:
 
 rated_trip:
   trip_request: airport_trip
   driver: meg
-  completed_at: <%= 1.week.ago.to_s(:db) %>
+  completed_at: <%= 1.week.ago.to_fs(:db) %>
   rating: 5
