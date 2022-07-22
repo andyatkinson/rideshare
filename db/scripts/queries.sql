@@ -10,7 +10,9 @@
 -- by a semicolon
 -- https://access.crunchydata.com/documentation/postgresql11/11.5/pgbench.html
 
+-- Run the data loaders first
 
+-- perhaps need an expression index
 SELECT
 CONCAT(d.first_name, ' ', d.last_name) AS driver_name,
 AVG(t.rating) AS avg_rating,
@@ -20,6 +22,9 @@ JOIN users d ON t.driver_id = d.id
 GROUP BY t.driver_id, d.first_name, d.last_name
 ORDER BY COUNT(t.rating) DESC;
 
--- update query
+-- group the users, need an index on 'type'
+select count(*),type from users group by type;
 
--- delete query
+-- update some rows with diverse primary key IDs
+
+-- delete some rows with diverse ids
