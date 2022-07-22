@@ -2,9 +2,11 @@
 
 # Rideshare
 
-An example Rails 6.0 API app, in iterations.
+An example Rails 7.0 API app, in iterations.
 
 I made this app to demonstrate how I would model a well-known domain, ride sharing like Uber or Lyft. Along the way, there are opportunities to call out Rails Best Practices, Patterns, and design trade-offs. There are also opportunities to demonstrate my personal style and recommendations.
+
+
 
 ## Install
 
