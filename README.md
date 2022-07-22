@@ -70,6 +70,19 @@ Demonstrations of each of these items can be found in the app
 * `bundle update [gemname]` to update a particular gem
 * `yarn upgrade` (may need to use `nvm use [version]` to switch to particular Node version)
 
+## Iteration 18
+
+Rails Entity Relationship Diagram (ERD)
+
+[Customization](https://voormedia.github.io/rails-erd/customise.html)
+
+```
+bundle exec rake erd \
+  inheritance=true \
+  only="Driver,Rider,User,Location,TripRequest,Trip" \
+  attributes=foreign_keys,primary_keys
+```
+
 ## Iteration 17
 
 Start a pgbench benchmark basics. Add fx gem to manage DB functions (pl/pgsql). Add data scrub functions.

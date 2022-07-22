@@ -74,6 +74,7 @@ GEM
       safely_block (>= 0.1.1)
     builder (3.2.4)
     chartkick (4.1.3)
+    choice (0.2.0)
     code_analyzer (0.5.5)
       sexp_processor
     coderay (1.1.3)
@@ -161,6 +162,11 @@ GEM
     rails-dom-testing (2.0.3)
       activesupport (>= 4.2.0)
       nokogiri (>= 1.6)
+    rails-erd (1.7.1)
+      activerecord (>= 4.2)
+      activesupport (>= 4.2)
+      choice (~> 0.2.0)
+      ruby-graphviz (~> 1.2)
     rails-html-sanitizer (1.4.2)
       loofah (~> 2.3)
     rails_best_practices (1.23.1)
@@ -183,6 +189,9 @@ GEM
     rb-inotify (0.10.1)
       ffi (~> 1.0)
     require_all (3.0.0)
+    rexml (3.2.5)
+    ruby-graphviz (1.2.5)
+      rexml
     ruby-progressbar (1.11.0)
     safely_block (0.3.0)
       errbase (>= 0.1.1)
@@ -245,6 +254,7 @@ DEPENDENCIES
   pry
   puma
   rails (~> 7)
+  rails-erd
   rails_best_practices
   sass-rails
   strong_migrations

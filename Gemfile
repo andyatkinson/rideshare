@@ -23,6 +23,7 @@ group :development, :test do
   gem 'faker', require: false
   gem 'listen'
   gem 'pry'
+  gem 'rails-erd'
 end
 
 group :test do
