@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_07_16_024539) do
+ActiveRecord::Schema[7.0].define(version: 2022_07_29_020430) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -112,8 +112,23 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_16_024539) do
     t.datetime "updated_at", null: false
     t.string "password_digest"
     t.datetime "deleted_at"
-    t.index ["email"], name: "index_users_on_email"
-    t.index ["last_name"], name: "index_users_on_last_name"
+  end
+
+  create_table "vehicle_reservations", force: :cascade do |t|
+    t.integer "vehicle_id", null: false
+    t.integer "trip_request_id", null: false
+    t.datetime "starts_at", precision: nil, null: false
+    t.datetime "ends_at", precision: nil, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["vehicle_id"], name: "index_vehicle_reservations_on_vehicle_id"
+  end
+
+  create_table "vehicles", force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_vehicles_on_name", unique: true
   end
 
   add_foreign_key "trip_requests", "locations", column: "end_location_id"

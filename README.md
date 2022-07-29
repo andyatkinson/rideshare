@@ -34,9 +34,10 @@ Excludes directories.
 Demonstrations of each of these items can be found in the app
 
 * Data Integrity (in the DB and application)
-  * Enforce Nullability
+  * Enforce Null Constraints
     * Foreign key constraints for referential integrity
     * Unique constraints
+    * Exclusion
 * Code Quality
   * Rails best practices gem (`rails_best_practices .`)
   * Strong Migrations
@@ -44,7 +45,7 @@ Demonstrations of each of these items can be found in the app
   * Strong Params
 * Performance
   * DB indexes
-    * Primary, unique, foreign key columns
+    * Primary, uniqueness, indexed foreign key columns
 * Named Scopes
 * Search functionality
 * Automatic Geocoding
@@ -53,11 +54,11 @@ Demonstrations of each of these items can be found in the app
 * Testing
   * Fixtures and factories
   * Test to code ratio of `0.6` (use `rake stats`)
-  * Fake data generators for local development (`faker` gem, rake task)
+  * Fake data generators for local development (`faker` gem, rake task), SQL data loads
 * API Application
   * We only need an API, use `ActionController::API` for lighter weight API code
   * Use `/api` namespace
-  * JSON API for API standardization
+  * JSON:API for API standardization
     * Sparse Fieldsets
     * Compound Documents
   * Status codes
@@ -71,6 +72,17 @@ Demonstrations of each of these items can be found in the app
 
 * `bundle update [gemname]` to update a particular gem
 * `yarn upgrade` (may need to use `nvm use [version]` to switch to particular Node version)
+
+## Iteration 20
+
+Pagination for trips. Gem vs. custom paginatino solution. TBD.
+
+## Iteration 19
+
+Vehicle Reservation concept (e.g. special car, limo). Has a reservation duration.
+
+When vehicle is reserved, cannot be overlapping reservation.
+
 
 ## Iteration 18
 
