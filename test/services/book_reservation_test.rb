@@ -20,4 +20,26 @@ class BookReservationTest < ActiveSupport::TestCase
       reservation.reserve!
     end
   end
+
+  test "can NOT book overlapping reservation" do
+    existing_reservation = vehicle_reservations(:party_bus)
+
+    violation_msg = 'PG::ExclusionViolation: ERROR:  " +
+    "conflicting key value violates exclusion constraint "non_overlapping_vehicle_registration"'
+
+    assert_no_difference -> { ::VehicleReservation.count } do
+      assert_raises(ActiveRecord::StatementInvalid, violation_msg) do
+        new_reservation = BookReservation.new(
+          vehicle_id: existing_reservation.id,
+          rider_id: existing_reservation.trip_request.rider.id,
+          start_location_id: existing_reservation.trip_request.start_location.id,
+          end_location_id: existing_reservation.trip_request.end_location.id,
+          starts_at: (existing_reservation.starts_at + 1.hour).to_s,
+          ends_at: (existing_reservation.starts_at + 2.hours).to_s
+        )
+
+        new_reservation.reserve!
+      end
+    end
+  end
 end

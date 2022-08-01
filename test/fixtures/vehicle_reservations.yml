@@ -1,5 +1,5 @@
 party_bus:
   vehicle: party_bus
   trip_request: girls_night_out
-  starts_at: 2022-07-28 07:00:00
-  ends_at: 2022-07-28 07:30:00
+  starts_at: 2022-07-28 19:00:00
+  ends_at: 2022-07-28 23:00:00

@@ -75,7 +75,7 @@ Demonstrations of each of these items can be found in the app
 
 ## Iteration 20
 
-Pagination for trips. Gem vs. custom paginatino solution. TBD.
+Pagination for trips. Gem vs. custom pagination solution. TBD.
 
 ## Iteration 19
 
@@ -83,6 +83,9 @@ Vehicle Reservation concept (e.g. special car, limo). Has a reservation duration
 
 When vehicle is reserved, cannot be overlapping reservation.
 
+Create an exclusion constraint. Run a specific test like this:
+
+`rails test test/services/book_reservation_test.rb -n BookReservationTest#test_can_NOT_book_overlapping_reservation`
 
 ## Iteration 18
 

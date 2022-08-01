@@ -8,8 +8,8 @@ class BookReservation
     @rider = Rider.find(rider_id)
     @start_location = Location.find(start_location_id)
     @end_location = Location.find(end_location_id)
-    @starts_at = DateTime.parse(starts_at)
-    @ends_at = DateTime.parse(ends_at)
+    @starts_at = Time.parse(starts_at)
+    @ends_at = Time.parse(ends_at)
   end
 
   def reserve!
