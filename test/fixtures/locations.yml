@@ -1,9 +1,12 @@
-# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
-
 nyc:
   address: New York, NY
   latitude: 40.7143528
   longitude: -74.0059731
+
+comedy_cellar:
+  address: 117 MacDougal St, New York, NY 10012
+  latitude: 40.7303492
+  longitude: -74.0003215
 
 bos:
   address: Boston, MA

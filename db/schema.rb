@@ -10,13 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_07_16_024539) do
+ActiveRecord::Schema[7.0].define(version: 2022_08_01_140121) do
   # These are extensions that must be enabled in order to support this database
+  enable_extension "btree_gist"
   enable_extension "plpgsql"
 
   create_table "blazer_audits", force: :cascade do |t|
-    t.integer "user_id"
-    t.integer "query_id"
+    t.bigint "user_id"
+    t.bigint "query_id"
     t.text "statement"
     t.string "data_source"
     t.datetime "created_at", precision: nil
@@ -25,8 +26,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_16_024539) do
   end
 
   create_table "blazer_checks", force: :cascade do |t|
-    t.integer "creator_id"
-    t.integer "query_id"
+    t.bigint "creator_id"
+    t.bigint "query_id"
     t.string "state"
     t.string "schedule"
     t.text "emails"
@@ -41,8 +42,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_16_024539) do
   end
 
   create_table "blazer_dashboard_queries", force: :cascade do |t|
-    t.integer "dashboard_id"
-    t.integer "query_id"
+    t.bigint "dashboard_id"
+    t.bigint "query_id"
     t.integer "position"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -51,7 +52,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_16_024539) do
   end
 
   create_table "blazer_dashboards", force: :cascade do |t|
-    t.integer "creator_id"
+    t.bigint "creator_id"
     t.text "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -59,7 +60,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_16_024539) do
   end
 
   create_table "blazer_queries", force: :cascade do |t|
-    t.integer "creator_id"
+    t.bigint "creator_id"
     t.string "name"
     t.text "description"
     t.text "statement"
@@ -111,9 +112,27 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_16_024539) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "password_digest"
-    t.datetime "deleted_at"
     t.index ["email"], name: "index_users_on_email"
     t.index ["last_name"], name: "index_users_on_last_name"
+  end
+
+  create_table "vehicle_reservations", force: :cascade do |t|
+    t.integer "vehicle_id", null: false
+    t.integer "trip_request_id", null: false
+    t.boolean "canceled", default: false, null: false
+    t.datetime "starts_at", precision: nil, null: false
+    t.datetime "ends_at", precision: nil, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index "vehicle_id, tsrange(starts_at, ends_at)", name: "non_overlapping_vehicle_registration", where: "(NOT canceled)", using: :gist
+    t.index ["vehicle_id"], name: "index_vehicle_reservations_on_vehicle_id"
+  end
+
+  create_table "vehicles", force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_vehicles_on_name", unique: true
   end
 
   add_foreign_key "trip_requests", "locations", column: "end_location_id"
