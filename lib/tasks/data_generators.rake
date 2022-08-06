@@ -3,10 +3,9 @@ require 'faker'
 namespace :data_generators do
   desc "Generator Trip data"
   task drivers: :environment do |t, args|
-    Driver.delete_all
     results = Benchmark.measure do
-      Driver.insert_all(
-        10000.times.map do |i|
+      1_000_000.times.to_a.in_groups_of(10_000).each do |group|
+        batch = group.map do |i|
           fname = Faker::Name.first_name
           lname = Faker::Name.last_name
           Driver.new(
@@ -21,7 +20,10 @@ namespace :data_generators do
             :email, :password, :type
           )
         end
-      )
+
+        puts "bulk insert batch size: #{batch.size}"
+        Driver.insert_all(batch)
+      end
     end
     puts "created #{Driver.count} drivers."
     puts results
@@ -29,7 +31,7 @@ namespace :data_generators do
 
   task trips: :environment do |t, args|
     drivers = []
-    10.times do |i|
+    100.times do |i|
       fname = Faker::Name.first_name
       lname = Faker::Name.last_name
       drivers << Driver.create!(
@@ -41,7 +43,7 @@ namespace :data_generators do
     end
 
     riders = []
-    10.times do |i|
+    100.times do |i|
       fname = Faker::Name.first_name
       lname = Faker::Name.last_name
       riders << Rider.create!(
