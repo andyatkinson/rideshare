@@ -75,7 +75,7 @@ Demonstrations of each of these items can be found in the app
 
 ## Iteration 20
 
-Pagination for trips. Gem vs. custom pagination solution. TBD.
+Counter cache example for trips that belong to a driver.
 
 ## Iteration 19
 

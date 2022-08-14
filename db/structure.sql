@@ -377,15 +377,9 @@ CREATE TABLE public.users (
     type character varying NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
-    password_digest character varying
+    password_digest character varying,
+    trips_count integer
 );
-
-
---
--- Name: TABLE users; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON TABLE public.users IS 'sensitive_fields|first_name:scrub_text,last_name:scrub_text,email:scrub_email';
 
 
 --
@@ -639,11 +633,11 @@ ALTER TABLE ONLY public.trips
 
 
 --
--- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: users users_copy_pkey1; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.users
-    ADD CONSTRAINT users_pkey PRIMARY KEY (id);
+    ADD CONSTRAINT users_copy_pkey1 PRIMARY KEY (id);
 
 
 --
@@ -789,13 +783,6 @@ CREATE INDEX index_users_on_email ON public.users USING btree (email);
 
 
 --
--- Name: index_users_on_last_name; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_users_on_last_name ON public.users USING btree (last_name);
-
-
---
 -- Name: index_vehicle_reservations_on_vehicle_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -870,6 +857,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220716020213'),
 ('20220729014635'),
 ('20220729020430'),
-('20220801140121');
+('20220801140121'),
+('20220814175213');
 
 

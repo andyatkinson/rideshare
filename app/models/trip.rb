@@ -1,6 +1,6 @@
 class Trip < ApplicationRecord
   belongs_to :trip_request
-  belongs_to :driver
+  belongs_to :driver, counter_cache: true
 
   delegate :rider, to: :trip_request, allow_nil: false
 
