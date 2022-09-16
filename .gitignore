@@ -35,4 +35,3 @@ yarn-debug.log*
 .yarn-integrity
 
 .sql
-*.pdf

@@ -96,7 +96,7 @@ Rails Entity Relationship Diagram (ERD)
 ```
 bundle exec rake erd \
   inheritance=true \
-  only="Driver,Rider,User,Location,TripRequest,Trip" \
+  only="Driver,Rider,User,Location,TripRequest,Trip,Vehicle,VehicleReservation" \
   attributes=foreign_keys,primary_keys
 ```
 
