@@ -299,6 +299,52 @@ CREATE TABLE public.schema_migrations (
 
 
 --
+-- Name: trips; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.trips (
+    id bigint NOT NULL,
+    trip_request_id integer NOT NULL,
+    driver_id integer NOT NULL,
+    completed_at timestamp without time zone,
+    rating integer,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: users; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.users (
+    id bigint NOT NULL,
+    first_name character varying NOT NULL,
+    last_name character varying NOT NULL,
+    email character varying NOT NULL,
+    type character varying NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL,
+    password_digest character varying,
+    trips_count integer
+);
+
+
+--
+-- Name: search_results; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW public.search_results AS
+ SELECT concat(d.first_name, ' ', d.last_name) AS driver_name,
+    avg(t.rating) AS avg_rating,
+    count(t.rating) AS trip_count
+   FROM (public.trips t
+     JOIN public.users d ON ((t.driver_id = d.id)))
+  GROUP BY t.driver_id, d.first_name, d.last_name
+  ORDER BY (count(t.rating)) DESC;
+
+
+--
 -- Name: trip_requests; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -332,21 +378,6 @@ ALTER SEQUENCE public.trip_requests_id_seq OWNED BY public.trip_requests.id;
 
 
 --
--- Name: trips; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.trips (
-    id bigint NOT NULL,
-    trip_request_id integer NOT NULL,
-    driver_id integer NOT NULL,
-    completed_at timestamp without time zone,
-    rating integer,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
-);
-
-
---
 -- Name: trips_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -363,23 +394,6 @@ CREATE SEQUENCE public.trips_id_seq
 --
 
 ALTER SEQUENCE public.trips_id_seq OWNED BY public.trips.id;
-
-
---
--- Name: users; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.users (
-    id bigint NOT NULL,
-    first_name character varying NOT NULL,
-    last_name character varying NOT NULL,
-    email character varying NOT NULL,
-    type character varying NOT NULL,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL,
-    password_digest character varying,
-    trips_count integer
-);
 
 
 --
@@ -858,6 +872,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220729014635'),
 ('20220729020430'),
 ('20220801140121'),
-('20220814175213');
+('20220814175213'),
+('20220916171314');
 
 
