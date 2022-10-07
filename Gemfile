@@ -24,4 +24,6 @@ group :development, :test do
   gem 'listen'
   gem 'pry'
   gem 'rails-erd'
+  gem 'benchmark-ips'
+  gem 'benchmark-memory'
 end

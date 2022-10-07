@@ -24,18 +24,3 @@ FROM GENERATE_SERIES(1, 100000) seq;
 "
 
 psql --dbname rideshare_development -c "$query";
-
-
-# update query, could be a way to update
-# a large number of the rows to test the 
-# effects of bloat
-query = "
-UPDATE users
-SET first_name = 
-  CASE (seq % 2)
-    WHEN 0 THEN 'Bill'
-    ELSE 'Jane'
-  END
-FROM GENERATE_SERIES(1,10000) seq
-WHERE id = seq;
-"
