@@ -17,6 +17,7 @@ gem 'webpacker'
 gem 'turbolinks'
 gem 'jbuilder'
 gem 'scenic' # manage DB Views
+gem 'whenever', require: false # manage scheduled jobs
 
 group :development, :test do
   gem 'rails_best_practices'

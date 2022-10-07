@@ -257,6 +257,54 @@ ALTER SEQUENCE public.blazer_queries_id_seq OWNED BY public.blazer_queries.id;
 
 
 --
+-- Name: trips; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.trips (
+    id bigint NOT NULL,
+    trip_request_id integer NOT NULL,
+    driver_id integer NOT NULL,
+    completed_at timestamp without time zone,
+    rating integer,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: users; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.users (
+    id bigint NOT NULL,
+    first_name character varying NOT NULL,
+    last_name character varying NOT NULL,
+    email character varying NOT NULL,
+    type character varying NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL,
+    password_digest character varying,
+    trips_count integer
+)
+WITH (autovacuum_enabled='false');
+
+
+--
+-- Name: fast_search_results; Type: MATERIALIZED VIEW; Schema: public; Owner: -
+--
+
+CREATE MATERIALIZED VIEW public.fast_search_results AS
+ SELECT concat(d.first_name, ' ', d.last_name) AS driver_name,
+    avg(t.rating) AS avg_rating,
+    count(t.rating) AS trip_count
+   FROM (public.trips t
+     JOIN public.users d ON ((t.driver_id = d.id)))
+  GROUP BY t.driver_id, d.first_name, d.last_name
+  ORDER BY (count(t.rating)) DESC
+  WITH NO DATA;
+
+
+--
 -- Name: locations; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -295,38 +343,6 @@ ALTER SEQUENCE public.locations_id_seq OWNED BY public.locations.id;
 
 CREATE TABLE public.schema_migrations (
     version character varying NOT NULL
-);
-
-
---
--- Name: trips; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.trips (
-    id bigint NOT NULL,
-    trip_request_id integer NOT NULL,
-    driver_id integer NOT NULL,
-    completed_at timestamp without time zone,
-    rating integer,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
-);
-
-
---
--- Name: users; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.users (
-    id bigint NOT NULL,
-    first_name character varying NOT NULL,
-    last_name character varying NOT NULL,
-    email character varying NOT NULL,
-    type character varying NOT NULL,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL,
-    password_digest character varying,
-    trips_count integer
 );
 
 
@@ -873,6 +889,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220729020430'),
 ('20220801140121'),
 ('20220814175213'),
-('20220916171314');
+('20220916171314'),
+('20221007184855');
 
 
