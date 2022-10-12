@@ -1,4 +1,3 @@
-
 CREATE TABLE users_copy (LIKE users INCLUDING ALL);
 
 ALTER TABLE users_copy ADD PRIMARY KEY(id);

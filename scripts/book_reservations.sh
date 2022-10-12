@@ -1,7 +1,6 @@
 # Exclusion constraint SQL validation
 # Original credit: https://gist.githubusercontent.com/fphilipe/0a2a3d50a9f3834683bf/raw/0ab4470655b8248370bf070e15d3b32809cc70d1/exclude.sql
 
-
 # using a gist index for an exclusion constraint with the extension
 CREATE EXTENSION btree_gist;
 

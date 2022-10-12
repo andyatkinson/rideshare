@@ -1,4 +1,3 @@
-
 -- With new drivers
 WITH new_drivers AS (
     SELECT *

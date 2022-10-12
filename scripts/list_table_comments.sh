@@ -1,4 +1,3 @@
-
 # choose tables with a table level comment
 query="SELECT relname, obj_description(oid)
 FROM pg_class

@@ -1,4 +1,3 @@
-
 # inspiration: https://vnegrisolo.github.io/postgresql/generate-fake-data-using-sql
 
 # create large amounts of fake drivers and riders

@@ -1,4 +1,3 @@
-
 # Query trips for a rider
 #
 rider_id = 1
