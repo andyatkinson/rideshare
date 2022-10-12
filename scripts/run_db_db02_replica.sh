@@ -5,5 +5,5 @@ docker run \
   -e POSTGRES_USER=postgres \
   -e POSTGRES_PASSWORD=db02 \
   -e POSTGRES_DB=db02 \
-  --net=host \
+  --net=rideshare-net \
   -d postgres:14.5
