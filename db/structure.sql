@@ -24,6 +24,16 @@ COMMENT ON EXTENSION btree_gist IS 'support for indexing common datatypes in GiS
 
 
 --
+-- Name: vehicle_status; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.vehicle_status AS ENUM (
+    'draft',
+    'published'
+);
+
+
+--
 -- Name: scrub_email(character varying); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -516,7 +526,8 @@ CREATE TABLE public.vehicles (
     id bigint NOT NULL,
     name character varying NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    updated_at timestamp(6) without time zone NOT NULL,
+    status public.vehicle_status DEFAULT 'draft'::public.vehicle_status NOT NULL
 );
 
 
@@ -985,6 +996,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20221007184855'),
 ('20221108172238'),
 ('20221108172933'),
-('20221108175321');
+('20221108175321'),
+('20221108175619');
 
 

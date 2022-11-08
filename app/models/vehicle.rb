@@ -14,14 +14,11 @@ class Vehicle < ApplicationRecord
     ]
   end
 
+  enum status: {
+    draft: VehicleStatus::DRAFT,
+    published: VehicleStatus::PUBLISHED
+  }, _prefix: true
+
   validates :status, inclusion: { in: VehicleStatus::VALID_STATUSES }
 
-  before_validation :set_status
-  before_save :validate_status
-
-  private
-
-  def set_status
-    self.status = VehicleStatus::DRAFT
-  end
 end

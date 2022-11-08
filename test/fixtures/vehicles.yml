@@ -1,3 +1,2 @@
 party_bus:
   name: Party Bus
-  status: <%= Vehicle::VehicleStatus::DRAFT %>

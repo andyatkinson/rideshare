@@ -8,8 +8,7 @@ class VehicleTest < ActiveSupport::TestCase
   end
 
   test "a vehicle is in a draft state by default" do
-    party_bus = Vehicle.new(name: "draft vehicle")
-    assert party_bus.valid?
-    assert_equal Vehicle::VehicleStatus::DRAFT, party_bus.status
+    vehicle = vehicles(:party_bus)
+    assert vehicle.status_draft?
   end
 end
