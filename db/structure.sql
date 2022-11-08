@@ -516,8 +516,7 @@ CREATE TABLE public.vehicles (
     id bigint NOT NULL,
     name character varying NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL,
-    status character varying NOT NULL
+    updated_at timestamp(6) without time zone NOT NULL
 );
 
 
@@ -985,6 +984,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220916171314'),
 ('20221007184855'),
 ('20221108172238'),
-('20221108172933');
+('20221108172933'),
+('20221108175321');
 
 
