@@ -257,6 +257,18 @@ ALTER SEQUENCE public.blazer_queries_id_seq OWNED BY public.blazer_queries.id;
 
 
 --
+-- Name: deliveries; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.deliveries (
+    id bigint NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL,
+    trip_id bigint NOT NULL
+);
+
+
+--
 -- Name: trips; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -335,6 +347,36 @@ CREATE SEQUENCE public.locations_id_seq
 --
 
 ALTER SEQUENCE public.locations_id_seq OWNED BY public.locations.id;
+
+
+--
+-- Name: riders; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.riders (
+    id integer NOT NULL,
+    name character varying(255) NOT NULL
+);
+
+
+--
+-- Name: riders_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.riders_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: riders_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.riders_id_seq OWNED BY public.riders.id;
 
 
 --
@@ -474,7 +516,8 @@ CREATE TABLE public.vehicles (
     id bigint NOT NULL,
     name character varying NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    updated_at timestamp(6) without time zone NOT NULL,
+    status character varying NOT NULL
 );
 
 
@@ -537,6 +580,13 @@ ALTER TABLE ONLY public.blazer_queries ALTER COLUMN id SET DEFAULT nextval('publ
 --
 
 ALTER TABLE ONLY public.locations ALTER COLUMN id SET DEFAULT nextval('public.locations_id_seq'::regclass);
+
+
+--
+-- Name: riders id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.riders ALTER COLUMN id SET DEFAULT nextval('public.riders_id_seq'::regclass);
 
 
 --
@@ -636,6 +686,14 @@ ALTER TABLE ONLY public.locations
 
 ALTER TABLE ONLY public.vehicle_reservations
     ADD CONSTRAINT non_overlapping_vehicle_registration EXCLUDE USING gist (vehicle_id WITH =, tstzrange(starts_at, ends_at) WITH &&) WHERE ((NOT canceled));
+
+
+--
+-- Name: riders riders_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.riders
+    ADD CONSTRAINT riders_pkey PRIMARY KEY (id);
 
 
 --
@@ -764,6 +822,13 @@ CREATE INDEX index_locations_on_longitude ON public.locations USING btree (longi
 
 
 --
+-- Name: index_riders_on_name; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_riders_on_name ON public.riders USING btree (name);
+
+
+--
 -- Name: index_trip_requests_on_end_location_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -824,6 +889,34 @@ CREATE INDEX index_vehicle_reservations_on_vehicle_id ON public.vehicle_reservat
 --
 
 CREATE UNIQUE INDEX index_vehicles_on_name ON public.vehicles USING btree (name);
+
+
+--
+-- Name: index_vs_on_vehicle_id_partial; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_vs_on_vehicle_id_partial ON public.vehicle_reservations USING btree (vehicle_id) WHERE (canceled = true);
+
+
+--
+-- Name: trips_completed_at_index; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX trips_completed_at_index ON public.trips USING btree (completed_at DESC NULLS LAST);
+
+
+--
+-- Name: users_fname_lname_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX users_fname_lname_idx ON public.users USING btree (first_name) INCLUDE (last_name);
+
+
+--
+-- Name: users_type_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX users_type_idx ON public.users USING btree (type);
 
 
 --
@@ -890,6 +983,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220801140121'),
 ('20220814175213'),
 ('20220916171314'),
-('20221007184855');
+('20221007184855'),
+('20221108172238'),
+('20221108172933');
 
 
