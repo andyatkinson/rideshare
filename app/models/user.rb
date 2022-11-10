@@ -18,4 +18,5 @@ class User < ApplicationRecord
   def display_name
     "#{first_name.capitalize} #{last_name[0].capitalize}."
   end
+
 end

@@ -306,7 +306,8 @@ CREATE TABLE public.users (
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
     password_digest character varying,
-    trips_count integer
+    trips_count integer,
+    drivers_license_number character varying(100)
 )
 WITH (autovacuum_enabled='false');
 
@@ -997,6 +998,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20221108172238'),
 ('20221108172933'),
 ('20221108175321'),
-('20221108175619');
+('20221108175619'),
+('20221110020532');
 
 
