@@ -24,6 +24,20 @@ COMMENT ON EXTENSION btree_gist IS 'support for indexing common datatypes in GiS
 
 
 --
+-- Name: citext; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS citext WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION citext; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION citext IS 'data type for case-insensitive character strings';
+
+
+--
 -- Name: vehicle_status; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -289,7 +303,8 @@ CREATE TABLE public.trips (
     completed_at timestamp without time zone,
     rating integer,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    updated_at timestamp(6) without time zone NOT NULL,
+    CONSTRAINT rating_check CHECK (((rating IS NULL) OR ((rating >= 1) AND (rating <= 5))))
 );
 
 
@@ -999,6 +1014,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20221108172933'),
 ('20221108175321'),
 ('20221108175619'),
-('20221110020532');
+('20221110020532'),
+('20221111212740'),
+('20221111213918');
 
 

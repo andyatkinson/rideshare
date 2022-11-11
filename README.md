@@ -73,6 +73,10 @@ Demonstrations of each of these items can be found in the app
 * `bundle update [gemname]` to update a particular gem
 * `yarn upgrade` (may need to use `nvm use [version]` to switch to particular Node version)
 
+## Iteration 21
+
+Trip rating database CHECK constraint.
+
 ## Iteration 20
 
 Counter cache example for trips that belong to a driver.
