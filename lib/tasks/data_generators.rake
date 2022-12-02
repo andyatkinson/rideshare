@@ -29,6 +29,7 @@ namespace :data_generators do
     puts results
   end
 
+  desc "Generate trips"
   task trips: :environment do |t, args|
     drivers = []
     100.times do |i|
@@ -85,6 +86,7 @@ namespace :data_generators do
     end
   end
 
+  desc "Generate Vehicles and Reservations"
   task vehicle_reservations: :environment do |t, args|
     riders = []
     100.times do |i|
