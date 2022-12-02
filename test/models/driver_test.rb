@@ -16,7 +16,7 @@ class DriverTest < ActiveSupport::TestCase
 
   test "driver's license number format must pass validation" do
     assert driver = drivers(:meg)
-    driver.drivers_license_number = "P800000224322"
+    driver.drivers_license_number = "P800000224325"
     assert driver.valid?, driver.errors.full_messages
   end
 end
