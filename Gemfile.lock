@@ -99,6 +99,7 @@ GEM
     globalid (1.0.0)
       activesupport (>= 5.0)
     google-protobuf (3.21.10-x86_64-darwin)
+    google-protobuf (3.21.10-x86_64-linux)
     i18n (1.12.0)
       concurrent-ruby (~> 1.0)
     jbuilder (2.11.5)
@@ -128,7 +129,9 @@ GEM
     net-smtp (0.3.2)
       net-protocol
     nio4r (2.5.8)
-    nokogiri (1.13.8-x86_64-darwin)
+    nokogiri (1.13.9-x86_64-darwin)
+      racc (~> 1.4)
+    nokogiri (1.13.9-x86_64-linux)
       racc (~> 1.4)
     pg (1.4.4)
     pg_query (2.2.0)
@@ -244,6 +247,7 @@ GEM
 PLATFORMS
   x86_64-darwin-20
   x86_64-darwin-21
+  x86_64-linux
 
 DEPENDENCIES
   bcrypt
