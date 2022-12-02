@@ -35,11 +35,13 @@ namespace :data_generators do
     100.times do |i|
       fname = Faker::Name.first_name
       lname = Faker::Name.last_name
+      drivers_license_number = "#{fname.first.upcase}80000022432#{i}"
       drivers << Driver.create!(
         first_name: fname,
         last_name: lname,
         email: "#{fname}-#{lname}-#{i}@email.com",
-        password: SecureRandom.hex
+        password: SecureRandom.hex,
+        drivers_license_number: drivers_license_number
       )
     end
 

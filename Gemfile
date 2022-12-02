@@ -18,6 +18,8 @@ gem 'turbolinks'
 gem 'jbuilder'
 gem 'scenic' # manage DB Views
 gem 'whenever', require: false # manage scheduled jobs
+gem 'prosopite' # identify N+1 queries
+gem 'pg_query'
 
 group :development, :test do
   gem 'rails_best_practices'
