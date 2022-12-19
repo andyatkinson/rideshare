@@ -133,7 +133,7 @@ GEM
     jbuilder (2.11.5)
       actionview (>= 5.0.0)
       activesupport (>= 5.0.0)
-    json (2.6.2)
+    json (2.6.3)
     jwt (2.4.1)
     listen (3.7.1)
       rb-fsevent (~> 0.10, >= 0.10.3)
@@ -190,7 +190,7 @@ GEM
       ruby-graphviz (~> 1.2)
     rails-html-sanitizer (1.4.4)
       loofah (~> 2.19, >= 2.19.1)
-    rails_best_practices (1.23.1)
+    rails_best_practices (1.23.2)
       activesupport
       code_analyzer (~> 0.5.5)
       erubis

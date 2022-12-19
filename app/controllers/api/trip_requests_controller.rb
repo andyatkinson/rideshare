@@ -1,7 +1,7 @@
 class Api::TripRequestsController < ApiController
   def create
-    start_location = Location.create!(address: trip_request_params[:start_address])
-    end_location = Location.create!(address: trip_request_params[:end_address])
+    start_location = Location.find_or_create_by(address: trip_request_params[:start_address])
+    end_location = Location.find_or_create_by(address: trip_request_params[:end_address])
 
     if start_location && end_location && current_rider
 
