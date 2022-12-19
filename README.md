@@ -2,10 +2,16 @@
 
 # Rideshare
 
-An example Rails 7.0 API app, in iterations.
+An example Rails API app. Past iterations building it are documented, and recommendations are given.
 
-I made this app to demonstrate how I would model a well-known domain, ride sharing like Uber or Lyft. Along the way, there are opportunities to call out Rails Best Practices, Patterns, and design trade-offs. There are also opportunities to demonstrate my personal style and recommendations.
+I made this app to model the well-known "ride sharing" domain. Along the way, there are opportunities to call out Rails Best Practices, patterns, and trade-offs.
 
+There are also opportunities to demonstrate my personal style and recommendations.
+
+## Goals
+
+- Stay on `master`/`main` of Rails, and modern Ruby version
+- Use PostgreSQL
 
 
 ## Install
