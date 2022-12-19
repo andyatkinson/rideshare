@@ -16,12 +16,16 @@ require 'json'
 
 
 url = 'http://localhost:3000/api/trip_requests'
-request_data = {
-  rider_id: 1,
-  start_address: '',
-  end_address: ''
+request_body = {
+  trip_request: {
+    rider_id: 1,
+    start_address: 'Boston, MA',
+    end_address: 'New York, NY'
+  }
 }
-response = Faraday.post(url, {a: 1}, {'Accept' => 'application/json'})
+request_headers = {
+  'Accept' => 'application/json'
+}
+response = Faraday.post(url, request_body, request_headers)
 resp = JSON.parse(response.body, symbolize_names: true)
 puts resp
-
