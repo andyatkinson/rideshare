@@ -15,7 +15,8 @@ class Api::TripRequestsController < ApiController
   def show
     if current_trip_request
       render json: {
-        trip_request_id: current_trip_request.id
+        trip_request_id: current_trip_request.id,
+        trip_id: created_trip&.id
       }
     else
       render nothing: true,
@@ -33,6 +34,12 @@ class Api::TripRequestsController < ApiController
 
   def current_trip_request
     @trip_request ||= TripRequest.find(params[:id])
+  end
+
+  def created_trip
+    if Trip.exists?(trip_request_id: params[:id])
+      Trip.find_by(trip_request_id: params[:id])
+    end
   end
 
   def current_rider

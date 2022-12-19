@@ -18,5 +18,6 @@ class Api::TripRequestsControllerTest < ActionDispatch::IntegrationTest
     get api_trip_request_url(trip_request)
     assert_response 200
     assert response.parsed_body['trip_request_id'].present?
+    assert response.parsed_body['trip_id'].present?
   end
 end

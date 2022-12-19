@@ -9,7 +9,7 @@ class TripCreator
 
   def create_trip!
     trip = Trip.new(
-      trip_request: trip_request,
+      trip_request_id: trip_request.id,
       driver: best_available_driver
     )
     raise TripCreationFailure unless trip.valid?
