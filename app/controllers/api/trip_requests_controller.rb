@@ -5,18 +5,34 @@ class Api::TripRequestsController < ApiController
         start_location: start_location,
         end_location: end_location
       )
-      render json: {request_id: trip_request.id}, status: :created
+      render json: {trip_request_id: trip_request.id}, status: :created
     else
-      # trip request creation failed
-      render nothing: true, status: :unprocessable_entity
+      render nothing: true,
+        status: :unprocessable_entity
+    end
+  end
+
+  def show
+    if current_trip_request
+      render json: {
+        trip_request_id: current_trip_request.id
+      }
+    else
+      render nothing: true,
+        status: :unprocessable_entity
     end
   end
 
   private
 
   def trip_request_params
-    params.require(:trip_request).
+    params.
+      require(:trip_request).
       permit(:rider_id, :start_address, :end_address)
+  end
+
+  def current_trip_request
+    @trip_request ||= TripRequest.find(params[:id])
   end
 
   def current_rider

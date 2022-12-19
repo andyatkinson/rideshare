@@ -13,7 +13,7 @@ Rails.application.routes.draw do
         get :details
       end
     end
-    resources :trip_requests, only: [:create]
+    resources :trip_requests, only: [:create, :show]
   end
 
   post '/auth/login', to: 'authentication#login'
