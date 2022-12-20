@@ -12,18 +12,4 @@ class TripRequest < ApplicationRecord
 
   validates :rider, :start_location, :end_location, presence: true
 
-  # used for simulation
-  after_commit :create_trip, on: :create
-
-  private
-
-  def create_trip
-    # make this a config param
-    if Rails.env.development?
-      Rails.logger.info "^^^^^^^^ SIMULATE FANCY SELECTION PROCESS ^^^^^^^^"
-      sleep(10)
-      TripCreator.new(trip_request_id: id).create_trip!
-    end
-
-  end
 end

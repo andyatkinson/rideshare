@@ -5,7 +5,11 @@ class Api::TripRequestsController < ApiController
         start_location: start_location,
         end_location: end_location
       )
-      render json: {trip_request_id: trip_request.id}, status: :created
+      TripCreator.new(
+        trip_request_id: trip_request.id
+      ).create_trip!
+      render json: {trip_request_id: trip_request.id},
+        status: :created
     else
       render nothing: true,
         status: :unprocessable_entity

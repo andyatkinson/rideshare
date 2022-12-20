@@ -14,6 +14,7 @@ require 'json'
 # 1. (API) Rider polls for trip status
 # 1. Driver completes trip
 
+5.times do
 
 # 1. create trip request
 url = 'http://localhost:3000/api/trip_requests'
@@ -35,6 +36,8 @@ puts "[trip_request] got trip_request_id: #{trip_request_id}"
 
 if trip_request_id
   # 1. poll for trip request status, until trip exists
+  # Polling is not implemented, would need some async processing
+  # in the app like Sidekiq or another background processor
   begin
     puts "[trip_request] checking for trip_id..."
     attempts ||= 1
@@ -47,6 +50,7 @@ if trip_request_id
       puts "[trip] Got a trip_id: #{trip_id}"
     else
       puts "[trip] no trip_id..."
+      raise
     end
   rescue
     if (attempts += 1) < 5 # go back to begin block if condition ok
@@ -57,3 +61,5 @@ if trip_request_id
 end
 
 # 1. poll for trip status, until trip is completed
+#
+end
