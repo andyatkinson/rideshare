@@ -29,4 +29,5 @@ group :development, :test do
   gem 'rails-erd'
   gem 'benchmark-ips'
   gem 'benchmark-memory'
+  gem 'active_record_doctor'
 end

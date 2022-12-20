@@ -38,6 +38,20 @@ COMMENT ON EXTENSION citext IS 'data type for case-insensitive character strings
 
 
 --
+-- Name: pg_stat_statements; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS pg_stat_statements WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION pg_stat_statements; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION pg_stat_statements IS 'track planning and execution statistics of all SQL statements executed';
+
+
+--
 -- Name: vehicle_status; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -340,6 +354,16 @@ CREATE MATERIALIZED VIEW public.fast_search_results AS
   GROUP BY t.driver_id, d.first_name, d.last_name
   ORDER BY (count(t.rating)) DESC
   WITH NO DATA;
+
+
+--
+-- Name: items; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.items (
+    n integer,
+    s text
+);
 
 
 --
@@ -925,10 +949,24 @@ CREATE INDEX index_vs_on_vehicle_id_partial ON public.vehicle_reservations USING
 
 
 --
+-- Name: items_n_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX items_n_idx ON public.items USING btree (n);
+
+
+--
 -- Name: trips_completed_at_index; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX trips_completed_at_index ON public.trips USING btree (completed_at DESC NULLS LAST);
+
+
+--
+-- Name: users_first_name_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX users_first_name_idx ON public.users USING btree (first_name);
 
 
 --
@@ -992,6 +1030,7 @@ ALTER TABLE ONLY public.trip_requests
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20221220201836'),
 ('20221219164626'),
 ('20221111213918'),
 ('20221111212740'),
