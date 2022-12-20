@@ -1,7 +1,7 @@
 require 'faker'
 
 namespace :data_generators do
-  desc "Generator Trip data"
+  desc "Generator Drivers"
   task drivers: :environment do |t, args|
     results = Benchmark.measure do
       1_000_000.times.to_a.in_groups_of(10_000).each do |group|
@@ -29,7 +29,7 @@ namespace :data_generators do
     puts results
   end
 
-  desc "Generate trips"
+  desc "Generate Trips"
   task trips: :environment do |t, args|
     drivers = []
     100.times do |i|
@@ -69,7 +69,7 @@ namespace :data_generators do
       longitude: -71.057083
     )
 
-    puts "creating trip requests and trips"
+    puts "creating Trip Requests and Trips"
     1000.times do |i|
       request = TripRequest.create!(
         rider: riders.sample,
