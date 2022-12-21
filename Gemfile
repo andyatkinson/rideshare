@@ -22,6 +22,8 @@ gem 'prosopite' # identify N+1 queries
 gem 'pg_query'
 
 group :development, :test do
+  gem 'faraday'
+  gem 'json'
   gem 'rails_best_practices'
   gem 'faker', require: false
   gem 'listen'

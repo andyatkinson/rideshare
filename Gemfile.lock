@@ -120,6 +120,10 @@ GEM
     erubis (2.7.0)
     faker (2.21.0)
       i18n (>= 1.8.11, < 2)
+    faraday (2.7.2)
+      faraday-net_http (>= 2.0, < 3.1)
+      ruby2_keywords (>= 0.0.4)
+    faraday-net_http (3.0.2)
     fast_jsonapi (1.5)
       activesupport (>= 4.2)
     ffi (1.15.5)
@@ -209,6 +213,7 @@ GEM
     ruby-graphviz (1.2.5)
       rexml
     ruby-progressbar (1.11.0)
+    ruby2_keywords (0.0.5)
     safely_block (0.3.0)
       errbase (>= 0.1.1)
     sass-rails (6.0.0)
@@ -266,10 +271,12 @@ DEPENDENCIES
   benchmark-memory
   blazer
   faker
+  faraday
   fast_jsonapi
   fx
   geocoder
   jbuilder
+  json
   jwt
   listen
   pg

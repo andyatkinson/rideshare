@@ -5,15 +5,6 @@ class Vehicle < ApplicationRecord
 
   has_many :vehicle_reservations
 
-  class VehicleStatus
-    DRAFT = 'draft'.freeze
-    PUBLISHED = 'published'.freeze
-    VALID_STATUSES = [
-      DRAFT,
-      PUBLISHED
-    ]
-  end
-
   enum status: {
     draft: VehicleStatus::DRAFT,
     published: VehicleStatus::PUBLISHED
