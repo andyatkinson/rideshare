@@ -32,4 +32,5 @@ group :development, :test do
   gem 'benchmark-ips'
   gem 'benchmark-memory'
   gem 'active_record_doctor'
+  gem 'rails-pg-extras'
 end
