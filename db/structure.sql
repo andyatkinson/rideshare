@@ -312,7 +312,7 @@ CREATE TABLE public.deliveries (
 
 CREATE TABLE public.trips (
     id bigint NOT NULL,
-    trip_request_id integer NOT NULL,
+    trip_request_id bigint NOT NULL,
     driver_id integer NOT NULL,
     completed_at timestamp without time zone,
     rating integer,
@@ -1030,6 +1030,7 @@ ALTER TABLE ONLY public.trip_requests
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20221221052616'),
 ('20221220201836'),
 ('20221219164626'),
 ('20221111213918'),

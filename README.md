@@ -79,6 +79,12 @@ Demonstrations of each of these items can be found in the app
 * `bundle update [gemname]` to update a particular gem
 * `yarn upgrade` (may need to use `nvm use [version]` to switch to particular Node version)
 
+## Iteration 22
+
+- Maintain the data generators
+- Disable Prepared Statements for now
+- Start using Active Record Doctor gem: `bundle exec rake active_record_doctor` for more insights
+
 ## Iteration 21
 
 Trip rating database CHECK constraint.

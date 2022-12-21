@@ -12,6 +12,9 @@ class User < ApplicationRecord
     confirmation: true, # automatically added by has_secure_password, prob. redundant
     if: -> { new_record? || !password.nil? }
 
+  validates :type,
+    presence: true
+
   # NOTE on password confirmation:
   # Validation only called when password_confirmation attribute is present
 
