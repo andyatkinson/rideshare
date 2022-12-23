@@ -10,6 +10,8 @@ class Vehicle < ApplicationRecord
     published: VehicleStatus::PUBLISHED
   }, _prefix: true
 
-  validates :status, inclusion: { in: VehicleStatus::VALID_STATUSES }
+  validates :status,
+    inclusion: { in: VehicleStatus::VALID_STATUSES },
+    presence: true
 
 end
