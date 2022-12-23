@@ -22,3 +22,10 @@
 every 15.minutes do
   runner "FastSearchResult.refresh"
 end
+
+
+every 1.month do
+  command "pgslice add_partitions trip_positions
+  --future 6
+  --url postgres://localhost/rideshare_development"
+end
