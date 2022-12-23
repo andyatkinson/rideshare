@@ -38,6 +38,20 @@ COMMENT ON EXTENSION citext IS 'data type for case-insensitive character strings
 
 
 --
+-- Name: pg_buffercache; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS pg_buffercache WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION pg_buffercache; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION pg_buffercache IS 'examine the shared buffer cache';
+
+
+--
 -- Name: pg_stat_statements; Type: EXTENSION; Schema: -; Owner: -
 --
 
@@ -49,6 +63,20 @@ CREATE EXTENSION IF NOT EXISTS pg_stat_statements WITH SCHEMA public;
 --
 
 COMMENT ON EXTENSION pg_stat_statements IS 'track planning and execution statistics of all SQL statements executed';
+
+
+--
+-- Name: sslinfo; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS sslinfo WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION sslinfo; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION sslinfo IS 'information about SSL certificates';
 
 
 --
@@ -453,6 +481,38 @@ CREATE VIEW public.search_results AS
 
 
 --
+-- Name: trip_positions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.trip_positions (
+    id bigint NOT NULL,
+    "position" point,
+    trip_id bigint NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: trip_positions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.trip_positions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: trip_positions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.trip_positions_id_seq OWNED BY public.trip_positions.id;
+
+
+--
 -- Name: trip_requests; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -640,6 +700,13 @@ ALTER TABLE ONLY public.riders ALTER COLUMN id SET DEFAULT nextval('public.rider
 
 
 --
+-- Name: trip_positions id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.trip_positions ALTER COLUMN id SET DEFAULT nextval('public.trip_positions_id_seq'::regclass);
+
+
+--
 -- Name: trip_requests id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -752,6 +819,14 @@ ALTER TABLE ONLY public.riders
 
 ALTER TABLE ONLY public.schema_migrations
     ADD CONSTRAINT schema_migrations_pkey PRIMARY KEY (version);
+
+
+--
+-- Name: trip_positions trip_positions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.trip_positions
+    ADD CONSTRAINT trip_positions_pkey PRIMARY KEY (id);
 
 
 --
@@ -1030,6 +1105,7 @@ ALTER TABLE ONLY public.trip_requests
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20221223161403'),
 ('20221221052616'),
 ('20221220201836'),
 ('20221219164626'),

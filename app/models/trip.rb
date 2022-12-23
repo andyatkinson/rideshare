@@ -1,6 +1,7 @@
 class Trip < ApplicationRecord
   belongs_to :trip_request
   belongs_to :driver, counter_cache: true
+  has_many :trip_positions
 
   delegate :rider, to: :trip_request, allow_nil: false
 

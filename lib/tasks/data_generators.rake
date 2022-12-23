@@ -156,6 +156,59 @@ namespace :data_generators do
     )
   end
 
+  desc "Generate simulated historical trip positions data"
+  task generate_trip_positions: :environment do |t, args|
+
+    # Generate data from 1 year ago, 3 months ago, 2 months ago, 1 month ago
+    # and current month
+    # 1 year ago
+    5.times do |i|
+      @trip = Trip.all.sample
+      TripPosition.create!(
+        position: "(651096.993815166,667028.1146045981)",
+        trip: @trip,
+        created_at: 1.year.ago
+      )
+    end
+    # 3 months ago
+    5.times do |i|
+      @trip = Trip.all.sample
+      TripPosition.create!(
+        position: "(651096.993815166,667028.1146045981)",
+        trip: @trip,
+        created_at: 3.months.ago
+      )
+    end
+    # 2 months ago
+    5.times do |i|
+      @trip = Trip.all.sample
+      TripPosition.create!(
+        position: "(651096.993815166,667028.1146045981)",
+        trip: @trip,
+        created_at: 2.months.ago
+      )
+    end
+    # 1 month ago
+    5.times do |i|
+      @trip = Trip.all.sample
+      TripPosition.create!(
+        position: "(651096.993815166,667028.1146045981)",
+        trip: @trip,
+        created_at: 1.month.ago
+      )
+    end
+    # This month
+    5.times do |i|
+      @trip = Trip.all.sample
+      TripPosition.create!(
+        position: "(651096.993815166,667028.1146045981)",
+        trip: @trip
+      )
+    end
+
+
+  end
+
   desc "Generate All Data"
   task generate_all: :environment do |t, args|
     Rake::Task["data_generators:drivers_and_riders"].invoke
