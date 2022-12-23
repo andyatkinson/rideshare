@@ -462,7 +462,15 @@ CREATE TABLE public.trip_positions (
     trip_id bigint NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
-);
+)
+PARTITION BY RANGE (created_at);
+
+
+--
+-- Name: TABLE trip_positions; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON TABLE public.trip_positions IS 'column:created_at,period:month,cast:date,version:3';
 
 
 --
@@ -482,6 +490,110 @@ CREATE SEQUENCE public.trip_positions_id_seq
 --
 
 ALTER SEQUENCE public.trip_positions_id_seq OWNED BY public.trip_positions.id;
+
+
+--
+-- Name: trip_positions_202209; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.trip_positions_202209 (
+    id bigint DEFAULT nextval('public.trip_positions_id_seq'::regclass) NOT NULL,
+    "position" point,
+    trip_id bigint NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: trip_positions_202210; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.trip_positions_202210 (
+    id bigint DEFAULT nextval('public.trip_positions_id_seq'::regclass) NOT NULL,
+    "position" point,
+    trip_id bigint NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: trip_positions_202211; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.trip_positions_202211 (
+    id bigint DEFAULT nextval('public.trip_positions_id_seq'::regclass) NOT NULL,
+    "position" point,
+    trip_id bigint NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: trip_positions_202212; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.trip_positions_202212 (
+    id bigint DEFAULT nextval('public.trip_positions_id_seq'::regclass) NOT NULL,
+    "position" point,
+    trip_id bigint NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: trip_positions_202301; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.trip_positions_202301 (
+    id bigint DEFAULT nextval('public.trip_positions_id_seq'::regclass) NOT NULL,
+    "position" point,
+    trip_id bigint NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: trip_positions_202302; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.trip_positions_202302 (
+    id bigint DEFAULT nextval('public.trip_positions_id_seq'::regclass) NOT NULL,
+    "position" point,
+    trip_id bigint NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: trip_positions_202303; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.trip_positions_202303 (
+    id bigint DEFAULT nextval('public.trip_positions_id_seq'::regclass) NOT NULL,
+    "position" point,
+    trip_id bigint NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: trip_positions_retired; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.trip_positions_retired (
+    id bigint DEFAULT nextval('public.trip_positions_id_seq'::regclass) NOT NULL,
+    "position" point,
+    trip_id bigint NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
 
 
 --
@@ -620,6 +732,55 @@ CREATE SEQUENCE public.vehicles_id_seq
 --
 
 ALTER SEQUENCE public.vehicles_id_seq OWNED BY public.vehicles.id;
+
+
+--
+-- Name: trip_positions_202209; Type: TABLE ATTACH; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.trip_positions ATTACH PARTITION public.trip_positions_202209 FOR VALUES FROM ('2022-09-01 00:00:00') TO ('2022-10-01 00:00:00');
+
+
+--
+-- Name: trip_positions_202210; Type: TABLE ATTACH; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.trip_positions ATTACH PARTITION public.trip_positions_202210 FOR VALUES FROM ('2022-10-01 00:00:00') TO ('2022-11-01 00:00:00');
+
+
+--
+-- Name: trip_positions_202211; Type: TABLE ATTACH; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.trip_positions ATTACH PARTITION public.trip_positions_202211 FOR VALUES FROM ('2022-11-01 00:00:00') TO ('2022-12-01 00:00:00');
+
+
+--
+-- Name: trip_positions_202212; Type: TABLE ATTACH; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.trip_positions ATTACH PARTITION public.trip_positions_202212 FOR VALUES FROM ('2022-12-01 00:00:00') TO ('2023-01-01 00:00:00');
+
+
+--
+-- Name: trip_positions_202301; Type: TABLE ATTACH; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.trip_positions ATTACH PARTITION public.trip_positions_202301 FOR VALUES FROM ('2023-01-01 00:00:00') TO ('2023-02-01 00:00:00');
+
+
+--
+-- Name: trip_positions_202302; Type: TABLE ATTACH; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.trip_positions ATTACH PARTITION public.trip_positions_202302 FOR VALUES FROM ('2023-02-01 00:00:00') TO ('2023-03-01 00:00:00');
+
+
+--
+-- Name: trip_positions_202303; Type: TABLE ATTACH; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.trip_positions ATTACH PARTITION public.trip_positions_202303 FOR VALUES FROM ('2023-03-01 00:00:00') TO ('2023-04-01 00:00:00');
 
 
 --
@@ -794,10 +955,66 @@ ALTER TABLE ONLY public.schema_migrations
 
 
 --
--- Name: trip_positions trip_positions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: trip_positions_202209 trip_positions_202209_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.trip_positions
+ALTER TABLE ONLY public.trip_positions_202209
+    ADD CONSTRAINT trip_positions_202209_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: trip_positions_202210 trip_positions_202210_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.trip_positions_202210
+    ADD CONSTRAINT trip_positions_202210_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: trip_positions_202211 trip_positions_202211_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.trip_positions_202211
+    ADD CONSTRAINT trip_positions_202211_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: trip_positions_202212 trip_positions_202212_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.trip_positions_202212
+    ADD CONSTRAINT trip_positions_202212_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: trip_positions_202301 trip_positions_202301_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.trip_positions_202301
+    ADD CONSTRAINT trip_positions_202301_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: trip_positions_202302 trip_positions_202302_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.trip_positions_202302
+    ADD CONSTRAINT trip_positions_202302_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: trip_positions_202303 trip_positions_202303_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.trip_positions_202303
+    ADD CONSTRAINT trip_positions_202303_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: trip_positions_retired trip_positions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.trip_positions_retired
     ADD CONSTRAINT trip_positions_pkey PRIMARY KEY (id);
 
 

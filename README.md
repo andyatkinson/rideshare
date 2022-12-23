@@ -83,6 +83,7 @@ Demonstrations of each of these items can be found in the app
 
 - Add Trip Position model, and populate it with sample rows
 - Remove some experimental PG extensions from the application DB
+- Perform a conversion from unpartitioned to partitioned trip_positions table using pgslice
 
 `drop extension sslinfo`, `drop extension pg_buffercache` for now, these
 may return later. This cleans up the `db/structure.sql` so that it reflects
