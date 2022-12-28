@@ -11,7 +11,7 @@ gem 'blazer'
 gem 'fast_jsonapi'
 gem 'jwt' # Json Web Token
 gem 'bcrypt' # Use ActiveModel has_secure_password
-gem 'pghero'
+gem 'pghero' #, path: "~/Projects/pghero"
 gem 'fx' # manage DB Functions
 gem 'webpacker'
 gem 'turbolinks'

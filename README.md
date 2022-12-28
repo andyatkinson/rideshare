@@ -13,6 +13,10 @@ There are also opportunities to demonstrate my personal style and recommendation
 - Stay on `master`/`main` of Rails, and modern Ruby version
 - Use PostgreSQL
 
+## PostgreSQL Dependencies
+
+- `pg_cron` (3rd party) extension <https://github.com/citusdata/pg_cron>. This will need to be compiled from source on Mac OS.
+
 
 ## Install
 
@@ -78,6 +82,10 @@ Demonstrations of each of these items can be found in the app
 
 * `bundle update [gemname]` to update a particular gem
 * `yarn upgrade` (may need to use `nvm use [version]` to switch to particular Node version)
+
+## Iteration 25
+
+- Add `pg_cron` as a dependency
 
 ## Iteration 24
 
