@@ -501,7 +501,8 @@ CREATE TABLE public.trip_positions_202209 (
     "position" point,
     trip_id bigint NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    updated_at timestamp(6) without time zone NOT NULL,
+    CONSTRAINT trip_positions_202209_created_at_check CHECK (((created_at IS NOT NULL) AND (created_at >= '2022-09-01 00:00:00'::timestamp(6) without time zone) AND (created_at < '2022-10-01 00:00:00'::timestamp(6) without time zone)))
 );
 
 
@@ -575,6 +576,45 @@ CREATE TABLE public.trip_positions_202302 (
 --
 
 CREATE TABLE public.trip_positions_202303 (
+    id bigint DEFAULT nextval('public.trip_positions_id_seq'::regclass) NOT NULL,
+    "position" point,
+    trip_id bigint NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: trip_positions_202304; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.trip_positions_202304 (
+    id bigint DEFAULT nextval('public.trip_positions_id_seq'::regclass) NOT NULL,
+    "position" point,
+    trip_id bigint NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: trip_positions_202305; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.trip_positions_202305 (
+    id bigint DEFAULT nextval('public.trip_positions_id_seq'::regclass) NOT NULL,
+    "position" point,
+    trip_id bigint NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: trip_positions_202306; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.trip_positions_202306 (
     id bigint DEFAULT nextval('public.trip_positions_id_seq'::regclass) NOT NULL,
     "position" point,
     trip_id bigint NOT NULL,
@@ -675,7 +715,7 @@ CREATE TABLE public.vehicle_reservations (
     id bigint NOT NULL,
     vehicle_id integer NOT NULL,
     trip_request_id integer NOT NULL,
-    canceled boolean DEFAULT false NOT NULL,
+    canceled boolean DEFAULT true NOT NULL,
     starts_at timestamp with time zone NOT NULL,
     ends_at timestamp with time zone NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
@@ -735,13 +775,6 @@ ALTER SEQUENCE public.vehicles_id_seq OWNED BY public.vehicles.id;
 
 
 --
--- Name: trip_positions_202209; Type: TABLE ATTACH; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.trip_positions ATTACH PARTITION public.trip_positions_202209 FOR VALUES FROM ('2022-09-01 00:00:00') TO ('2022-10-01 00:00:00');
-
-
---
 -- Name: trip_positions_202210; Type: TABLE ATTACH; Schema: public; Owner: -
 --
 
@@ -781,6 +814,27 @@ ALTER TABLE ONLY public.trip_positions ATTACH PARTITION public.trip_positions_20
 --
 
 ALTER TABLE ONLY public.trip_positions ATTACH PARTITION public.trip_positions_202303 FOR VALUES FROM ('2023-03-01 00:00:00') TO ('2023-04-01 00:00:00');
+
+
+--
+-- Name: trip_positions_202304; Type: TABLE ATTACH; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.trip_positions ATTACH PARTITION public.trip_positions_202304 FOR VALUES FROM ('2023-04-01 00:00:00') TO ('2023-05-01 00:00:00');
+
+
+--
+-- Name: trip_positions_202305; Type: TABLE ATTACH; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.trip_positions ATTACH PARTITION public.trip_positions_202305 FOR VALUES FROM ('2023-05-01 00:00:00') TO ('2023-06-01 00:00:00');
+
+
+--
+-- Name: trip_positions_202306; Type: TABLE ATTACH; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.trip_positions ATTACH PARTITION public.trip_positions_202306 FOR VALUES FROM ('2023-06-01 00:00:00') TO ('2023-07-01 00:00:00');
 
 
 --
@@ -1011,6 +1065,30 @@ ALTER TABLE ONLY public.trip_positions_202303
 
 
 --
+-- Name: trip_positions_202304 trip_positions_202304_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.trip_positions_202304
+    ADD CONSTRAINT trip_positions_202304_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: trip_positions_202305 trip_positions_202305_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.trip_positions_202305
+    ADD CONSTRAINT trip_positions_202305_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: trip_positions_202306 trip_positions_202306_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.trip_positions_202306
+    ADD CONSTRAINT trip_positions_202306_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: trip_positions_retired trip_positions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1227,6 +1305,13 @@ CREATE INDEX trips_completed_at_index ON public.trips USING btree (completed_at 
 
 
 --
+-- Name: users_first_name_email_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX users_first_name_email_idx ON public.users USING btree (first_name, email);
+
+
+--
 -- Name: users_first_name_idx; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1294,6 +1379,8 @@ ALTER TABLE ONLY public.trip_requests
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20221228194245'),
+('20221227153221'),
 ('20221223161403'),
 ('20221221052616'),
 ('20221220201836'),
