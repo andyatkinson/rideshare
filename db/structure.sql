@@ -1266,7 +1266,7 @@ CREATE INDEX index_trips_on_trip_request_id ON public.trips USING btree (trip_re
 -- Name: index_users_on_email; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_users_on_email ON public.users USING btree (email);
+CREATE UNIQUE INDEX index_users_on_email ON public.users USING btree (email);
 
 
 --
@@ -1379,6 +1379,7 @@ ALTER TABLE ONLY public.trip_requests
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20221230200725'),
 ('20221228194245'),
 ('20221227153221'),
 ('20221223161403'),
