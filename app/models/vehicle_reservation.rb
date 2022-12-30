@@ -5,5 +5,4 @@ class VehicleReservation < ApplicationRecord
   validates :vehicle_id, :starts_at, :ends_at,
     presence: true
 
-  validates :canceled, presence: true
 end

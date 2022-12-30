@@ -715,7 +715,7 @@ CREATE TABLE public.vehicle_reservations (
     id bigint NOT NULL,
     vehicle_id integer NOT NULL,
     trip_request_id integer NOT NULL,
-    canceled boolean DEFAULT true NOT NULL,
+    canceled boolean DEFAULT false NOT NULL,
     starts_at timestamp with time zone NOT NULL,
     ends_at timestamp with time zone NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
@@ -1379,6 +1379,7 @@ ALTER TABLE ONLY public.trip_requests
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20221230203627'),
 ('20221230200725'),
 ('20221228194245'),
 ('20221227153221'),

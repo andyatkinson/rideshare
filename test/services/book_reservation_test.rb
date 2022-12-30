@@ -12,8 +12,8 @@ class BookReservationTest < ActiveSupport::TestCase
       rider_id: jane.id,
       start_location_id: nyc.id,
       end_location_id: comedy_cellar.id,
-      starts_at: '2022-07-29 20:00:00',
-      ends_at: '2022-07-29 23:00:00'
+      starts_at: Time.zone.local(2022, 07, 29, 20, 00, 00),
+      ends_at: Time.zone.local(2022, 07, 29, 23, 00, 00)
     )
 
     assert_difference -> { ::VehicleReservation.count }, +1 do
@@ -30,7 +30,7 @@ class BookReservationTest < ActiveSupport::TestCase
     assert_no_difference -> { ::VehicleReservation.count } do
       assert_raises(ActiveRecord::StatementInvalid, violation_msg) do
         new_reservation = BookReservation.new(
-          vehicle_id: existing_reservation.id,
+          vehicle_id: existing_reservation.vehicle_id,
           rider_id: existing_reservation.trip_request.rider.id,
           start_location_id: existing_reservation.trip_request.start_location.id,
           end_location_id: existing_reservation.trip_request.end_location.id,
