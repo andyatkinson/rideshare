@@ -133,9 +133,10 @@ GEM
       activerecord (>= 4.0.0)
       railties (>= 4.0.0)
     geocoder (1.8.0)
-    globalid (1.0.0)
+    globalid (1.0.1)
       activesupport (>= 5.0)
     google-protobuf (3.21.10-x86_64-darwin)
+    google-protobuf (3.21.10-x86_64-linux)
     i18n (1.12.0)
       concurrent-ruby (~> 1.0)
     jbuilder (2.11.5)
@@ -158,7 +159,7 @@ GEM
     memory_profiler (1.0.0)
     method_source (1.0.0)
     mini_mime (1.1.2)
-    minitest (5.16.3)
+    minitest (5.17.0)
     net-imap (0.3.2)
       date
       net-protocol
@@ -170,6 +171,8 @@ GEM
       net-protocol
     nio4r (2.5.8)
     nokogiri (1.13.10-x86_64-darwin)
+      racc (~> 1.4)
+    nokogiri (1.13.10-x86_64-linux)
       racc (~> 1.4)
     pg (1.4.4)
     pg_query (2.2.0)
@@ -274,6 +277,7 @@ GEM
 PLATFORMS
   x86_64-darwin-20
   x86_64-darwin-21
+  x86_64-linux
 
 DEPENDENCIES
   active_record_doctor
