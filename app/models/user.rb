@@ -2,6 +2,15 @@ class User < ApplicationRecord
   has_secure_password
   validates :first_name, :last_name, presence: true
 
+  include PgSearch::Model
+  pg_search_scope :search_by_full_name,
+    against: {
+      first_name: 'A', # highest rank
+      last_name: 'B'
+    },
+    using: { tsearch: { dictionary: 'english' } }
+  # using: [:tsearch, :trigram, :dmetaphone]
+
   validates :email,
     presence: true,
     uniqueness: true,

@@ -10,6 +10,20 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
+-- Name: public; Type: SCHEMA; Schema: -; Owner: -
+--
+
+-- *not* creating schema, since initdb creates it
+
+
+--
+-- Name: english_ci; Type: COLLATION; Schema: public; Owner: -
+--
+
+CREATE COLLATION public.english_ci (provider = icu, deterministic = false, locale = 'en-US-u-ks-level2');
+
+
+--
 -- Name: btree_gist; Type: EXTENSION; Schema: -; Owner: -
 --
 
@@ -38,6 +52,34 @@ COMMENT ON EXTENSION citext IS 'data type for case-insensitive character strings
 
 
 --
+-- Name: file_fdw; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS file_fdw WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION file_fdw; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION file_fdw IS 'foreign-data wrapper for flat file access';
+
+
+--
+-- Name: fuzzystrmatch; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS fuzzystrmatch WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION fuzzystrmatch; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION fuzzystrmatch IS 'determine similarities and distance between strings';
+
+
+--
 -- Name: pg_stat_statements; Type: EXTENSION; Schema: -; Owner: -
 --
 
@@ -49,6 +91,34 @@ CREATE EXTENSION IF NOT EXISTS pg_stat_statements WITH SCHEMA public;
 --
 
 COMMENT ON EXTENSION pg_stat_statements IS 'track planning and execution statistics of all SQL statements executed';
+
+
+--
+-- Name: pg_trgm; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS pg_trgm WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION pg_trgm; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION pg_trgm IS 'text similarity measurement and index searching based on trigrams';
+
+
+--
+-- Name: unaccent; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS unaccent WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION unaccent; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION unaccent IS 'text search dictionary that removes accents';
 
 
 --
@@ -104,6 +174,27 @@ RETURN
   );
 END;
 $$;
+
+
+--
+-- Name: file_server; Type: SERVER; Schema: -; Owner: -
+--
+
+CREATE SERVER file_server FOREIGN DATA WRAPPER file_fdw;
+
+
+--
+-- Name: file_server2; Type: SERVER; Schema: -; Owner: -
+--
+
+CREATE SERVER file_server2 FOREIGN DATA WRAPPER file_fdw;
+
+
+--
+-- Name: pglog; Type: SERVER; Schema: -; Owner: -
+--
+
+CREATE SERVER pglog FOREIGN DATA WRAPPER file_fdw;
 
 
 SET default_tablespace = '';
@@ -164,7 +255,9 @@ CREATE TABLE public.users (
     updated_at timestamp(6) without time zone NOT NULL,
     password_digest character varying,
     trips_count integer,
-    drivers_license_number character varying(100)
+    drivers_license_number character varying(100),
+    searchable_full_name tsvector GENERATED ALWAYS AS ((setweight(to_tsvector('english'::regconfig, (COALESCE(first_name, ''::character varying))::text), 'A'::"char") || setweight(to_tsvector('english'::regconfig, (COALESCE(last_name, ''::character varying))::text), 'B'::"char"))) STORED,
+    col text COLLATE public.english_ci
 )
 WITH (autovacuum_enabled='false');
 
@@ -225,6 +318,45 @@ CREATE SEQUENCE public.locations_id_seq
 --
 
 ALTER SEQUENCE public.locations_id_seq OWNED BY public.locations.id;
+
+
+--
+-- Name: pglog; Type: FOREIGN TABLE; Schema: public; Owner: -
+--
+
+CREATE FOREIGN TABLE public.pglog (
+    log_time timestamp(3) with time zone,
+    user_name text,
+    database_name text,
+    process_id integer,
+    connection_from text,
+    session_id text,
+    session_line_num bigint,
+    command_tag text,
+    session_start_time timestamp with time zone,
+    virtual_transaction_id text,
+    transaction_id bigint,
+    error_severity text,
+    sql_state_code text,
+    message text,
+    detail text,
+    hint text,
+    internal_query text,
+    internal_query_pos integer,
+    context text,
+    query text,
+    query_pos integer,
+    location text,
+    application_name text,
+    backend_type text,
+    leader_pid integer,
+    query_id bigint
+)
+SERVER pglog
+OPTIONS (
+    filename 'log/postgresql-2023-01-05_191254.csv',
+    format 'csv'
+);
 
 
 --
@@ -345,7 +477,6 @@ CREATE TABLE public.trip_positions_202210 (
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );
-ALTER TABLE ONLY public.trip_positions ATTACH PARTITION public.trip_positions_202210 FOR VALUES FROM ('2022-10-01 00:00:00') TO ('2022-11-01 00:00:00');
 
 
 --
@@ -359,7 +490,6 @@ CREATE TABLE public.trip_positions_202211 (
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );
-ALTER TABLE ONLY public.trip_positions ATTACH PARTITION public.trip_positions_202211 FOR VALUES FROM ('2022-11-01 00:00:00') TO ('2022-12-01 00:00:00');
 
 
 --
@@ -373,7 +503,6 @@ CREATE TABLE public.trip_positions_202212 (
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );
-ALTER TABLE ONLY public.trip_positions ATTACH PARTITION public.trip_positions_202212 FOR VALUES FROM ('2022-12-01 00:00:00') TO ('2023-01-01 00:00:00');
 
 
 --
@@ -387,7 +516,6 @@ CREATE TABLE public.trip_positions_202301 (
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );
-ALTER TABLE ONLY public.trip_positions ATTACH PARTITION public.trip_positions_202301 FOR VALUES FROM ('2023-01-01 00:00:00') TO ('2023-02-01 00:00:00');
 
 
 --
@@ -401,7 +529,6 @@ CREATE TABLE public.trip_positions_202302 (
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );
-ALTER TABLE ONLY public.trip_positions ATTACH PARTITION public.trip_positions_202302 FOR VALUES FROM ('2023-02-01 00:00:00') TO ('2023-03-01 00:00:00');
 
 
 --
@@ -415,7 +542,6 @@ CREATE TABLE public.trip_positions_202303 (
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );
-ALTER TABLE ONLY public.trip_positions ATTACH PARTITION public.trip_positions_202303 FOR VALUES FROM ('2023-03-01 00:00:00') TO ('2023-04-01 00:00:00');
 
 
 --
@@ -429,7 +555,6 @@ CREATE TABLE public.trip_positions_202304 (
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );
-ALTER TABLE ONLY public.trip_positions ATTACH PARTITION public.trip_positions_202304 FOR VALUES FROM ('2023-04-01 00:00:00') TO ('2023-05-01 00:00:00');
 
 
 --
@@ -443,7 +568,6 @@ CREATE TABLE public.trip_positions_202305 (
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );
-ALTER TABLE ONLY public.trip_positions ATTACH PARTITION public.trip_positions_202305 FOR VALUES FROM ('2023-05-01 00:00:00') TO ('2023-06-01 00:00:00');
 
 
 --
@@ -457,7 +581,6 @@ CREATE TABLE public.trip_positions_202306 (
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );
-ALTER TABLE ONLY public.trip_positions ATTACH PARTITION public.trip_positions_202306 FOR VALUES FROM ('2023-06-01 00:00:00') TO ('2023-07-01 00:00:00');
 
 
 --
@@ -523,6 +646,21 @@ CREATE SEQUENCE public.trips_id_seq
 --
 
 ALTER SEQUENCE public.trips_id_seq OWNED BY public.trips.id;
+
+
+--
+-- Name: users_ft; Type: FOREIGN TABLE; Schema: public; Owner: -
+--
+
+CREATE FOREIGN TABLE public.users_ft (
+    id bigint,
+    first_name text
+)
+SERVER file_server
+OPTIONS (
+    filename '/Users/andy/users_sample.csv',
+    format 'csv'
+);
 
 
 --
@@ -609,6 +747,69 @@ CREATE SEQUENCE public.vehicles_id_seq
 --
 
 ALTER SEQUENCE public.vehicles_id_seq OWNED BY public.vehicles.id;
+
+
+--
+-- Name: trip_positions_202210; Type: TABLE ATTACH; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.trip_positions ATTACH PARTITION public.trip_positions_202210 FOR VALUES FROM ('2022-10-01 00:00:00') TO ('2022-11-01 00:00:00');
+
+
+--
+-- Name: trip_positions_202211; Type: TABLE ATTACH; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.trip_positions ATTACH PARTITION public.trip_positions_202211 FOR VALUES FROM ('2022-11-01 00:00:00') TO ('2022-12-01 00:00:00');
+
+
+--
+-- Name: trip_positions_202212; Type: TABLE ATTACH; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.trip_positions ATTACH PARTITION public.trip_positions_202212 FOR VALUES FROM ('2022-12-01 00:00:00') TO ('2023-01-01 00:00:00');
+
+
+--
+-- Name: trip_positions_202301; Type: TABLE ATTACH; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.trip_positions ATTACH PARTITION public.trip_positions_202301 FOR VALUES FROM ('2023-01-01 00:00:00') TO ('2023-02-01 00:00:00');
+
+
+--
+-- Name: trip_positions_202302; Type: TABLE ATTACH; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.trip_positions ATTACH PARTITION public.trip_positions_202302 FOR VALUES FROM ('2023-02-01 00:00:00') TO ('2023-03-01 00:00:00');
+
+
+--
+-- Name: trip_positions_202303; Type: TABLE ATTACH; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.trip_positions ATTACH PARTITION public.trip_positions_202303 FOR VALUES FROM ('2023-03-01 00:00:00') TO ('2023-04-01 00:00:00');
+
+
+--
+-- Name: trip_positions_202304; Type: TABLE ATTACH; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.trip_positions ATTACH PARTITION public.trip_positions_202304 FOR VALUES FROM ('2023-04-01 00:00:00') TO ('2023-05-01 00:00:00');
+
+
+--
+-- Name: trip_positions_202305; Type: TABLE ATTACH; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.trip_positions ATTACH PARTITION public.trip_positions_202305 FOR VALUES FROM ('2023-05-01 00:00:00') TO ('2023-06-01 00:00:00');
+
+
+--
+-- Name: trip_positions_202306; Type: TABLE ATTACH; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.trip_positions ATTACH PARTITION public.trip_positions_202306 FOR VALUES FROM ('2023-06-01 00:00:00') TO ('2023-07-01 00:00:00');
 
 
 --
@@ -836,6 +1037,13 @@ ALTER TABLE ONLY public.vehicles
 
 
 --
+-- Name: idx_users_first_name_soundex; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_users_first_name_soundex ON public.users USING btree (public.soundex((first_name)::text));
+
+
+--
 -- Name: index_locations_on_address; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -913,6 +1121,13 @@ CREATE UNIQUE INDEX index_users_on_email ON public.users USING btree (email);
 
 
 --
+-- Name: index_users_on_searchable_full_name; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_users_on_searchable_full_name ON public.users USING gin (searchable_full_name);
+
+
+--
 -- Name: index_vehicle_reservations_on_vehicle_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -952,13 +1167,6 @@ CREATE INDEX trips_completed_at_index ON public.trips USING btree (completed_at 
 --
 
 CREATE INDEX users_first_name_email_idx ON public.users USING btree (first_name, email);
-
-
---
--- Name: users_first_name_idx; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX users_first_name_idx ON public.users USING btree (first_name);
 
 
 --
@@ -1023,6 +1231,8 @@ SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
 ('20230126025656'),
+('20230125003946'),
+('20230125003531'),
 ('20221230203627'),
 ('20221230200725'),
 ('20221228194245'),
