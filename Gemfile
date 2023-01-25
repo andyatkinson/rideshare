@@ -20,7 +20,6 @@ gem 'scenic' # manage DB Views
 gem 'whenever', require: false # manage scheduled jobs
 gem 'prosopite' # identify N+1 queries
 gem 'pg_query'
-gem 'rails-pg-extras'
 
 group :development, :test do
   gem 'faraday'
