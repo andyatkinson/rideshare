@@ -163,6 +163,8 @@ GEM
     nio4r (2.5.8)
     nokogiri (1.14.0-x86_64-darwin)
       racc (~> 1.4)
+    nokogiri (1.14.0-x86_64-linux)
+      racc (~> 1.4)
     pg (1.4.5)
     pg_query (2.2.1)
       google-protobuf (>= 3.19.2)
@@ -262,6 +264,7 @@ GEM
 PLATFORMS
   x86_64-darwin-20
   x86_64-darwin-21
+  x86_64-linux
 
 DEPENDENCIES
   active_record_doctor
