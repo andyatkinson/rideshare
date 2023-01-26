@@ -86,6 +86,11 @@ Demonstrations of each of these items can be found in the app
 * `bundle update [gemname]` to update a particular gem
 * `yarn upgrade` (may need to use `nvm use [version]` to switch to particular Node version)
 
+## Iteration 25 (2023)
+
+- Remove webpacker, and most front-end JS (this is an API app)
+- Retire Blazer. It's a great tool, but no longer part of the goal of this app.
+
 ## Iteration 24
 
 Add slow query logging using Active Support Instrumentation without 3rd party gems or PostgreSQL extensions

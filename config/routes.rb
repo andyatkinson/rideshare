@@ -17,6 +17,4 @@ Rails.application.routes.draw do
   end
 
   post '/auth/login', to: 'authentication#login'
-
-  mount Blazer::Engine, at: 'blazer'
 end

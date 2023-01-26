@@ -99,13 +99,7 @@ GEM
     benchmark-ips (2.10.0)
     benchmark-memory (0.2.0)
       memory_profiler (~> 1)
-    blazer (2.6.4)
-      activerecord (>= 5)
-      chartkick (>= 3.2)
-      railties (>= 5)
-      safely_block (>= 0.1.1)
     builder (3.2.4)
-    chartkick (4.2.0)
     choice (0.2.0)
     chronic (0.10.2)
     code_analyzer (0.5.5)
@@ -117,7 +111,6 @@ GEM
     database_consistency (1.7.1)
       activerecord (>= 3.2)
     date (3.3.3)
-    errbase (0.2.2)
     erubi (1.11.0)
     erubis (2.7.0)
     faker (2.21.0)
@@ -138,9 +131,6 @@ GEM
     google-protobuf (3.21.10-x86_64-darwin)
     i18n (1.12.0)
       concurrent-ruby (~> 1.0)
-    jbuilder (2.11.5)
-      actionview (>= 5.0.0)
-      activesupport (>= 5.0.0)
     json (2.6.3)
     jwt (2.4.1)
     listen (3.7.1)
@@ -220,8 +210,6 @@ GEM
       terminal-table
     ruby-progressbar (1.11.0)
     ruby2_keywords (0.0.5)
-    safely_block (0.3.0)
-      errbase (>= 0.1.1)
     sass-rails (6.0.0)
       sassc-rails (~> 2.1, >= 2.1.1)
     sassc (2.4.0)
@@ -250,9 +238,6 @@ GEM
     thor (1.2.1)
     tilt (2.0.10)
     timeout (0.3.1)
-    turbolinks (5.2.1)
-      turbolinks-source (~> 5.2)
-    turbolinks-source (5.2.0)
     tzinfo (2.0.5)
       concurrent-ruby (~> 1.0)
     unicode-display_width (2.3.0)
@@ -272,14 +257,12 @@ DEPENDENCIES
   bcrypt
   benchmark-ips
   benchmark-memory
-  blazer
   database_consistency
   faker
   faraday
   fast_jsonapi
   fx
   geocoder
-  jbuilder
   json
   jwt
   listen
@@ -296,7 +279,6 @@ DEPENDENCIES
   sass-rails
   scenic
   strong_migrations
-  turbolinks
   whenever
 
 BUNDLED WITH
