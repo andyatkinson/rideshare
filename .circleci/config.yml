@@ -1,24 +1,20 @@
 version: 2.1
 
 orbs:
-  ruby: circleci/ruby@1.1.0
-  node: circleci/node@2
+  ruby: circleci/ruby@2.0.0
 
 jobs:
   build:
     docker:
-      - image: cimg/ruby:3.1-node
+      - image: cimg/ruby:3.2.0
     steps:
       - checkout
       - ruby/install-deps
-      # Store bundle cache
-      - node/install-packages:
-          pkg-manager: yarn
-          cache-key: "yarn.lock"
+
   test:
     parallelism: 3
     docker:
-      - image: cimg/ruby:3.1-node
+      - image: cimg/ruby:3.2.0
       - image: cimg/postgres:13.6
         environment:
           POSTGRES_USER: root
@@ -34,9 +30,6 @@ jobs:
     steps:
       - checkout
       - ruby/install-deps
-      - node/install-packages:
-          pkg-manager: yarn
-          cache-key: "yarn.lock"
       - run:
           name: Wait for DB
           command: dockerize -wait tcp://localhost:5432 -timeout 1m
