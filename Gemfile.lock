@@ -184,8 +184,6 @@ GEM
       nio4r (~> 2.0)
     racc (1.6.1)
     rack (2.2.4)
-    rack-proxy (0.7.2)
-      rack
     rack-test (2.0.2)
       rack (>= 1.3)
     rails-dom-testing (2.0.3)
@@ -237,7 +235,6 @@ GEM
     scenic (1.6.0)
       activerecord (>= 4.0.0)
       railties (>= 4.0.0)
-    semantic_range (3.0.0)
     sexp_processor (4.16.1)
     sprockets (4.0.3)
       concurrent-ruby (~> 1.0)
@@ -259,11 +256,6 @@ GEM
     tzinfo (2.0.5)
       concurrent-ruby (~> 1.0)
     unicode-display_width (2.3.0)
-    webpacker (5.4.3)
-      activesupport (>= 5.2)
-      rack-proxy (>= 0.6.1)
-      railties (>= 5.2)
-      semantic_range (>= 2.3.0)
     websocket-driver (0.7.5)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
@@ -305,7 +297,6 @@ DEPENDENCIES
   scenic
   strong_migrations
   turbolinks
-  webpacker
   whenever
 
 BUNDLED WITH

@@ -10,8 +10,15 @@ There are also opportunities to demonstrate my personal style and recommendation
 
 ## Goals
 
-- Stay on `master`/`main` of Rails, and modern Ruby version
+- Stay on `master`/`main` of Rails, modern Ruby versions
 - Use PostgreSQL
+- Run on Mac OS, use Homebrew
+
+
+## Prerequisites
+
+* To generate a DB image, [Install graphiz](https://voormedia.github.io/rails-erd/install.html)
+* `brew install graphviz`
 
 
 ## Install

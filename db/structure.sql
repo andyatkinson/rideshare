@@ -517,6 +517,7 @@ CREATE TABLE public.trip_positions_202210 (
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );
+ALTER TABLE ONLY public.trip_positions ATTACH PARTITION public.trip_positions_202210 FOR VALUES FROM ('2022-10-01 00:00:00') TO ('2022-11-01 00:00:00');
 
 
 --
@@ -530,6 +531,7 @@ CREATE TABLE public.trip_positions_202211 (
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );
+ALTER TABLE ONLY public.trip_positions ATTACH PARTITION public.trip_positions_202211 FOR VALUES FROM ('2022-11-01 00:00:00') TO ('2022-12-01 00:00:00');
 
 
 --
@@ -543,6 +545,7 @@ CREATE TABLE public.trip_positions_202212 (
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );
+ALTER TABLE ONLY public.trip_positions ATTACH PARTITION public.trip_positions_202212 FOR VALUES FROM ('2022-12-01 00:00:00') TO ('2023-01-01 00:00:00');
 
 
 --
@@ -556,6 +559,7 @@ CREATE TABLE public.trip_positions_202301 (
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );
+ALTER TABLE ONLY public.trip_positions ATTACH PARTITION public.trip_positions_202301 FOR VALUES FROM ('2023-01-01 00:00:00') TO ('2023-02-01 00:00:00');
 
 
 --
@@ -569,6 +573,7 @@ CREATE TABLE public.trip_positions_202302 (
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );
+ALTER TABLE ONLY public.trip_positions ATTACH PARTITION public.trip_positions_202302 FOR VALUES FROM ('2023-02-01 00:00:00') TO ('2023-03-01 00:00:00');
 
 
 --
@@ -582,6 +587,7 @@ CREATE TABLE public.trip_positions_202303 (
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );
+ALTER TABLE ONLY public.trip_positions ATTACH PARTITION public.trip_positions_202303 FOR VALUES FROM ('2023-03-01 00:00:00') TO ('2023-04-01 00:00:00');
 
 
 --
@@ -595,6 +601,7 @@ CREATE TABLE public.trip_positions_202304 (
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );
+ALTER TABLE ONLY public.trip_positions ATTACH PARTITION public.trip_positions_202304 FOR VALUES FROM ('2023-04-01 00:00:00') TO ('2023-05-01 00:00:00');
 
 
 --
@@ -608,6 +615,7 @@ CREATE TABLE public.trip_positions_202305 (
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );
+ALTER TABLE ONLY public.trip_positions ATTACH PARTITION public.trip_positions_202305 FOR VALUES FROM ('2023-05-01 00:00:00') TO ('2023-06-01 00:00:00');
 
 
 --
@@ -621,6 +629,7 @@ CREATE TABLE public.trip_positions_202306 (
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );
+ALTER TABLE ONLY public.trip_positions ATTACH PARTITION public.trip_positions_202306 FOR VALUES FROM ('2023-06-01 00:00:00') TO ('2023-07-01 00:00:00');
 
 
 --
@@ -772,69 +781,6 @@ CREATE SEQUENCE public.vehicles_id_seq
 --
 
 ALTER SEQUENCE public.vehicles_id_seq OWNED BY public.vehicles.id;
-
-
---
--- Name: trip_positions_202210; Type: TABLE ATTACH; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.trip_positions ATTACH PARTITION public.trip_positions_202210 FOR VALUES FROM ('2022-10-01 00:00:00') TO ('2022-11-01 00:00:00');
-
-
---
--- Name: trip_positions_202211; Type: TABLE ATTACH; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.trip_positions ATTACH PARTITION public.trip_positions_202211 FOR VALUES FROM ('2022-11-01 00:00:00') TO ('2022-12-01 00:00:00');
-
-
---
--- Name: trip_positions_202212; Type: TABLE ATTACH; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.trip_positions ATTACH PARTITION public.trip_positions_202212 FOR VALUES FROM ('2022-12-01 00:00:00') TO ('2023-01-01 00:00:00');
-
-
---
--- Name: trip_positions_202301; Type: TABLE ATTACH; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.trip_positions ATTACH PARTITION public.trip_positions_202301 FOR VALUES FROM ('2023-01-01 00:00:00') TO ('2023-02-01 00:00:00');
-
-
---
--- Name: trip_positions_202302; Type: TABLE ATTACH; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.trip_positions ATTACH PARTITION public.trip_positions_202302 FOR VALUES FROM ('2023-02-01 00:00:00') TO ('2023-03-01 00:00:00');
-
-
---
--- Name: trip_positions_202303; Type: TABLE ATTACH; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.trip_positions ATTACH PARTITION public.trip_positions_202303 FOR VALUES FROM ('2023-03-01 00:00:00') TO ('2023-04-01 00:00:00');
-
-
---
--- Name: trip_positions_202304; Type: TABLE ATTACH; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.trip_positions ATTACH PARTITION public.trip_positions_202304 FOR VALUES FROM ('2023-04-01 00:00:00') TO ('2023-05-01 00:00:00');
-
-
---
--- Name: trip_positions_202305; Type: TABLE ATTACH; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.trip_positions ATTACH PARTITION public.trip_positions_202305 FOR VALUES FROM ('2023-05-01 00:00:00') TO ('2023-06-01 00:00:00');
-
-
---
--- Name: trip_positions_202306; Type: TABLE ATTACH; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.trip_positions ATTACH PARTITION public.trip_positions_202306 FOR VALUES FROM ('2023-06-01 00:00:00') TO ('2023-07-01 00:00:00');
 
 
 --
