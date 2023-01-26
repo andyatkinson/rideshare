@@ -4,7 +4,7 @@
 
 An example Rails API app. Past iterations building it are documented, and recommendations are given.
 
-I made this app to model the well-known "ride sharing" domain. Along the way, there are opportunities to call out Rails Best Practices, patterns, and trade-offs.
+I made this app to model the well-known *Ride Sharing* domain. Along the way, there are opportunities to call out Rails Best Practices, patterns, and trade-offs.
 
 There are also opportunities to demonstrate my personal style and recommendations.
 
@@ -24,7 +24,7 @@ There are also opportunities to demonstrate my personal style and recommendation
 ## Install
 
 ```
-rbenv 3.1.0 # Check `.ruby-version`
+rbenv 3.2 # Check `.ruby-version`
 gem install bundler
 bundle install
 nvm install latest
@@ -90,6 +90,16 @@ Demonstrations of each of these items can be found in the app
 
 - Remove webpacker, and most front-end JS (this is an API app)
 - Retire Blazer. It's a great tool, but no longer part of the goal of this app.
+
+```sh
+gem update --system
+brew upgrade ruby-build
+rbenv install 3.2.0
+gem install bundler
+bundle install
+bundle update
+bin/rails test
+```
 
 ## Iteration 25
 
