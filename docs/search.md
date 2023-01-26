@@ -7,3 +7,5 @@
 - Rank fields using `ts_rank()`
 - Store tsvectors using a Generated column
 - Index tsvectors using a GIN index
+- Add `users.searchable_full_name` `GENERATED ALWAYS`
+- For unaccent, consider an expression based index

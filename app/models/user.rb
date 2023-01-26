@@ -8,8 +8,16 @@ class User < ApplicationRecord
       first_name: 'A', # highest rank
       last_name: 'B'
     },
-    using: { tsearch: { dictionary: 'english' } }
-  # using: [:tsearch, :trigram, :dmetaphone]
+    using: {
+      tsearch: { 
+        dictionary: 'english',
+        tsvector_column: 'searchable_full_name'
+      }
+    }
+
+  pg_search_scope :unaccent_search,
+    against: [:first_name, :last_name],
+    ignoring: :accents
 
   validates :email,
     presence: true,

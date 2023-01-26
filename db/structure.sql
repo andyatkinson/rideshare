@@ -17,13 +17,6 @@ SET row_security = off;
 
 
 --
--- Name: english_ci; Type: COLLATION; Schema: public; Owner: -
---
-
-CREATE COLLATION public.english_ci (provider = icu, deterministic = false, locale = 'en-US-u-ks-level2');
-
-
---
 -- Name: btree_gist; Type: EXTENSION; Schema: -; Owner: -
 --
 
@@ -66,20 +59,6 @@ COMMENT ON EXTENSION file_fdw IS 'foreign-data wrapper for flat file access';
 
 
 --
--- Name: fuzzystrmatch; Type: EXTENSION; Schema: -; Owner: -
---
-
-CREATE EXTENSION IF NOT EXISTS fuzzystrmatch WITH SCHEMA public;
-
-
---
--- Name: EXTENSION fuzzystrmatch; Type: COMMENT; Schema: -; Owner: -
---
-
-COMMENT ON EXTENSION fuzzystrmatch IS 'determine similarities and distance between strings';
-
-
---
 -- Name: pg_stat_statements; Type: EXTENSION; Schema: -; Owner: -
 --
 
@@ -91,34 +70,6 @@ CREATE EXTENSION IF NOT EXISTS pg_stat_statements WITH SCHEMA public;
 --
 
 COMMENT ON EXTENSION pg_stat_statements IS 'track planning and execution statistics of all SQL statements executed';
-
-
---
--- Name: pg_trgm; Type: EXTENSION; Schema: -; Owner: -
---
-
-CREATE EXTENSION IF NOT EXISTS pg_trgm WITH SCHEMA public;
-
-
---
--- Name: EXTENSION pg_trgm; Type: COMMENT; Schema: -; Owner: -
---
-
-COMMENT ON EXTENSION pg_trgm IS 'text similarity measurement and index searching based on trigrams';
-
-
---
--- Name: unaccent; Type: EXTENSION; Schema: -; Owner: -
---
-
-CREATE EXTENSION IF NOT EXISTS unaccent WITH SCHEMA public;
-
-
---
--- Name: EXTENSION unaccent; Type: COMMENT; Schema: -; Owner: -
---
-
-COMMENT ON EXTENSION unaccent IS 'text search dictionary that removes accents';
 
 
 --
@@ -214,6 +165,178 @@ CREATE TABLE public.ar_internal_metadata (
 
 
 --
+-- Name: blazer_audits; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.blazer_audits (
+    id bigint NOT NULL,
+    user_id bigint,
+    query_id bigint,
+    statement text,
+    data_source character varying,
+    created_at timestamp without time zone
+);
+
+
+--
+-- Name: blazer_audits_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.blazer_audits_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: blazer_audits_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.blazer_audits_id_seq OWNED BY public.blazer_audits.id;
+
+
+--
+-- Name: blazer_checks; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.blazer_checks (
+    id bigint NOT NULL,
+    creator_id bigint,
+    query_id bigint,
+    state character varying,
+    schedule character varying,
+    emails text,
+    slack_channels text,
+    check_type character varying,
+    message text,
+    last_run_at timestamp without time zone,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: blazer_checks_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.blazer_checks_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: blazer_checks_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.blazer_checks_id_seq OWNED BY public.blazer_checks.id;
+
+
+--
+-- Name: blazer_dashboard_queries; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.blazer_dashboard_queries (
+    id bigint NOT NULL,
+    dashboard_id bigint,
+    query_id bigint,
+    "position" integer,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: blazer_dashboard_queries_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.blazer_dashboard_queries_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: blazer_dashboard_queries_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.blazer_dashboard_queries_id_seq OWNED BY public.blazer_dashboard_queries.id;
+
+
+--
+-- Name: blazer_dashboards; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.blazer_dashboards (
+    id bigint NOT NULL,
+    creator_id bigint,
+    name text,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: blazer_dashboards_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.blazer_dashboards_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: blazer_dashboards_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.blazer_dashboards_id_seq OWNED BY public.blazer_dashboards.id;
+
+
+--
+-- Name: blazer_queries; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.blazer_queries (
+    id bigint NOT NULL,
+    creator_id bigint,
+    name character varying,
+    description text,
+    statement text,
+    data_source character varying,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: blazer_queries_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.blazer_queries_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: blazer_queries_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.blazer_queries_id_seq OWNED BY public.blazer_queries.id;
+
+
+--
 -- Name: deliveries; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -256,8 +379,7 @@ CREATE TABLE public.users (
     password_digest character varying,
     trips_count integer,
     drivers_license_number character varying(100),
-    searchable_full_name tsvector GENERATED ALWAYS AS ((setweight(to_tsvector('english'::regconfig, (COALESCE(first_name, ''::character varying))::text), 'A'::"char") || setweight(to_tsvector('english'::regconfig, (COALESCE(last_name, ''::character varying))::text), 'B'::"char"))) STORED,
-    col text COLLATE public.english_ci
+    searchable_full_name tsvector GENERATED ALWAYS AS ((setweight(to_tsvector('english'::regconfig, (COALESCE(first_name, ''::character varying))::text), 'A'::"char") || setweight(to_tsvector('english'::regconfig, (COALESCE(last_name, ''::character varying))::text), 'B'::"char"))) STORED
 )
 WITH (autovacuum_enabled='false');
 
@@ -813,6 +935,41 @@ ALTER TABLE ONLY public.trip_positions ATTACH PARTITION public.trip_positions_20
 
 
 --
+-- Name: blazer_audits id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.blazer_audits ALTER COLUMN id SET DEFAULT nextval('public.blazer_audits_id_seq'::regclass);
+
+
+--
+-- Name: blazer_checks id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.blazer_checks ALTER COLUMN id SET DEFAULT nextval('public.blazer_checks_id_seq'::regclass);
+
+
+--
+-- Name: blazer_dashboard_queries id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.blazer_dashboard_queries ALTER COLUMN id SET DEFAULT nextval('public.blazer_dashboard_queries_id_seq'::regclass);
+
+
+--
+-- Name: blazer_dashboards id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.blazer_dashboards ALTER COLUMN id SET DEFAULT nextval('public.blazer_dashboards_id_seq'::regclass);
+
+
+--
+-- Name: blazer_queries id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.blazer_queries ALTER COLUMN id SET DEFAULT nextval('public.blazer_queries_id_seq'::regclass);
+
+
+--
 -- Name: locations id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -874,6 +1031,46 @@ ALTER TABLE ONLY public.vehicles ALTER COLUMN id SET DEFAULT nextval('public.veh
 
 ALTER TABLE ONLY public.ar_internal_metadata
     ADD CONSTRAINT ar_internal_metadata_pkey PRIMARY KEY (key);
+
+
+--
+-- Name: blazer_audits blazer_audits_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.blazer_audits
+    ADD CONSTRAINT blazer_audits_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: blazer_checks blazer_checks_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.blazer_checks
+    ADD CONSTRAINT blazer_checks_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: blazer_dashboard_queries blazer_dashboard_queries_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.blazer_dashboard_queries
+    ADD CONSTRAINT blazer_dashboard_queries_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: blazer_dashboards blazer_dashboards_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.blazer_dashboards
+    ADD CONSTRAINT blazer_dashboards_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: blazer_queries blazer_queries_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.blazer_queries
+    ADD CONSTRAINT blazer_queries_pkey PRIMARY KEY (id);
 
 
 --
@@ -1037,10 +1234,59 @@ ALTER TABLE ONLY public.vehicles
 
 
 --
--- Name: idx_users_first_name_soundex; Type: INDEX; Schema: public; Owner: -
+-- Name: index_blazer_audits_on_query_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_users_first_name_soundex ON public.users USING btree (public.soundex((first_name)::text));
+CREATE INDEX index_blazer_audits_on_query_id ON public.blazer_audits USING btree (query_id);
+
+
+--
+-- Name: index_blazer_audits_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_blazer_audits_on_user_id ON public.blazer_audits USING btree (user_id);
+
+
+--
+-- Name: index_blazer_checks_on_creator_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_blazer_checks_on_creator_id ON public.blazer_checks USING btree (creator_id);
+
+
+--
+-- Name: index_blazer_checks_on_query_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_blazer_checks_on_query_id ON public.blazer_checks USING btree (query_id);
+
+
+--
+-- Name: index_blazer_dashboard_queries_on_dashboard_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_blazer_dashboard_queries_on_dashboard_id ON public.blazer_dashboard_queries USING btree (dashboard_id);
+
+
+--
+-- Name: index_blazer_dashboard_queries_on_query_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_blazer_dashboard_queries_on_query_id ON public.blazer_dashboard_queries USING btree (query_id);
+
+
+--
+-- Name: index_blazer_dashboards_on_creator_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_blazer_dashboards_on_creator_id ON public.blazer_dashboards USING btree (creator_id);
+
+
+--
+-- Name: index_blazer_queries_on_creator_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_blazer_queries_on_creator_id ON public.blazer_queries USING btree (creator_id);
 
 
 --
@@ -1170,6 +1416,13 @@ CREATE INDEX users_first_name_email_idx ON public.users USING btree (first_name,
 
 
 --
+-- Name: users_first_name_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX users_first_name_idx ON public.users USING btree (first_name);
+
+
+--
 -- Name: users_fname_lname_idx; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1230,7 +1483,6 @@ ALTER TABLE ONLY public.trip_requests
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
-('20230126025656'),
 ('20230125003946'),
 ('20230125003531'),
 ('20221230203627'),
