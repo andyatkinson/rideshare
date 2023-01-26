@@ -66,7 +66,7 @@ Demonstrations of each of these items can be found in the app
   * Disable geocoding in the test environment
 * Testing
   * Fixtures and factories
-  * Test to code ratio of `0.6` (use `rake stats`)
+  * Minimum Code to Test Ratio: 1:0.6 (use `bin/rails stats`)
   * Fake data generators for local development (`faker` gem, rake task), SQL data loads
 * API Application
   * We only need an API, use `ActionController::API` for lighter weight API code
