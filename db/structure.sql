@@ -17,13 +17,6 @@ SET row_security = off;
 
 
 --
--- Name: english_ci; Type: COLLATION; Schema: public; Owner: -
---
-
-CREATE COLLATION public.english_ci (provider = icu, deterministic = false, locale = 'en-US-u-ks-level2');
-
-
---
 -- Name: btree_gist; Type: EXTENSION; Schema: -; Owner: -
 --
 
@@ -38,48 +31,6 @@ COMMENT ON EXTENSION btree_gist IS 'support for indexing common datatypes in GiS
 
 
 --
--- Name: citext; Type: EXTENSION; Schema: -; Owner: -
---
-
-CREATE EXTENSION IF NOT EXISTS citext WITH SCHEMA public;
-
-
---
--- Name: EXTENSION citext; Type: COMMENT; Schema: -; Owner: -
---
-
-COMMENT ON EXTENSION citext IS 'data type for case-insensitive character strings';
-
-
---
--- Name: file_fdw; Type: EXTENSION; Schema: -; Owner: -
---
-
-CREATE EXTENSION IF NOT EXISTS file_fdw WITH SCHEMA public;
-
-
---
--- Name: EXTENSION file_fdw; Type: COMMENT; Schema: -; Owner: -
---
-
-COMMENT ON EXTENSION file_fdw IS 'foreign-data wrapper for flat file access';
-
-
---
--- Name: fuzzystrmatch; Type: EXTENSION; Schema: -; Owner: -
---
-
-CREATE EXTENSION IF NOT EXISTS fuzzystrmatch WITH SCHEMA public;
-
-
---
--- Name: EXTENSION fuzzystrmatch; Type: COMMENT; Schema: -; Owner: -
---
-
-COMMENT ON EXTENSION fuzzystrmatch IS 'determine similarities and distance between strings';
-
-
---
 -- Name: pg_stat_statements; Type: EXTENSION; Schema: -; Owner: -
 --
 
@@ -91,34 +42,6 @@ CREATE EXTENSION IF NOT EXISTS pg_stat_statements WITH SCHEMA public;
 --
 
 COMMENT ON EXTENSION pg_stat_statements IS 'track planning and execution statistics of all SQL statements executed';
-
-
---
--- Name: pg_trgm; Type: EXTENSION; Schema: -; Owner: -
---
-
-CREATE EXTENSION IF NOT EXISTS pg_trgm WITH SCHEMA public;
-
-
---
--- Name: EXTENSION pg_trgm; Type: COMMENT; Schema: -; Owner: -
---
-
-COMMENT ON EXTENSION pg_trgm IS 'text similarity measurement and index searching based on trigrams';
-
-
---
--- Name: unaccent; Type: EXTENSION; Schema: -; Owner: -
---
-
-CREATE EXTENSION IF NOT EXISTS unaccent WITH SCHEMA public;
-
-
---
--- Name: EXTENSION unaccent; Type: COMMENT; Schema: -; Owner: -
---
-
-COMMENT ON EXTENSION unaccent IS 'text search dictionary that removes accents';
 
 
 --
@@ -176,27 +99,6 @@ END;
 $$;
 
 
---
--- Name: file_server; Type: SERVER; Schema: -; Owner: -
---
-
-CREATE SERVER file_server FOREIGN DATA WRAPPER file_fdw;
-
-
---
--- Name: file_server2; Type: SERVER; Schema: -; Owner: -
---
-
-CREATE SERVER file_server2 FOREIGN DATA WRAPPER file_fdw;
-
-
---
--- Name: pglog; Type: SERVER; Schema: -; Owner: -
---
-
-CREATE SERVER pglog FOREIGN DATA WRAPPER file_fdw;
-
-
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
@@ -210,18 +112,6 @@ CREATE TABLE public.ar_internal_metadata (
     value character varying,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
-);
-
-
---
--- Name: deliveries; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.deliveries (
-    id bigint NOT NULL,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL,
-    trip_id bigint NOT NULL
 );
 
 
@@ -256,10 +146,15 @@ CREATE TABLE public.users (
     password_digest character varying,
     trips_count integer,
     drivers_license_number character varying(100),
-    searchable_full_name tsvector GENERATED ALWAYS AS ((setweight(to_tsvector('english'::regconfig, (COALESCE(first_name, ''::character varying))::text), 'A'::"char") || setweight(to_tsvector('english'::regconfig, (COALESCE(last_name, ''::character varying))::text), 'B'::"char"))) STORED,
-    col text COLLATE public.english_ci
-)
-WITH (autovacuum_enabled='false');
+    searchable_full_name tsvector GENERATED ALWAYS AS ((setweight(to_tsvector('english'::regconfig, (COALESCE(first_name, ''::character varying))::text), 'A'::"char") || setweight(to_tsvector('english'::regconfig, (COALESCE(last_name, ''::character varying))::text), 'B'::"char"))) STORED
+);
+
+
+--
+-- Name: TABLE users; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON TABLE public.users IS 'sensitive_fields|first_name:scrub_text,last_name:scrub_text,email:scrub_email';
 
 
 --
@@ -275,16 +170,6 @@ CREATE MATERIALIZED VIEW public.fast_search_results AS
   GROUP BY t.driver_id, d.first_name, d.last_name
   ORDER BY (count(t.rating)) DESC
   WITH NO DATA;
-
-
---
--- Name: items; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.items (
-    n integer,
-    s text
-);
 
 
 --
@@ -321,75 +206,6 @@ ALTER SEQUENCE public.locations_id_seq OWNED BY public.locations.id;
 
 
 --
--- Name: pglog; Type: FOREIGN TABLE; Schema: public; Owner: -
---
-
-CREATE FOREIGN TABLE public.pglog (
-    log_time timestamp(3) with time zone,
-    user_name text,
-    database_name text,
-    process_id integer,
-    connection_from text,
-    session_id text,
-    session_line_num bigint,
-    command_tag text,
-    session_start_time timestamp with time zone,
-    virtual_transaction_id text,
-    transaction_id bigint,
-    error_severity text,
-    sql_state_code text,
-    message text,
-    detail text,
-    hint text,
-    internal_query text,
-    internal_query_pos integer,
-    context text,
-    query text,
-    query_pos integer,
-    location text,
-    application_name text,
-    backend_type text,
-    leader_pid integer,
-    query_id bigint
-)
-SERVER pglog
-OPTIONS (
-    filename 'log/postgresql-2023-01-05_191254.csv',
-    format 'csv'
-);
-
-
---
--- Name: riders; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.riders (
-    id integer NOT NULL,
-    name character varying(255) NOT NULL
-);
-
-
---
--- Name: riders_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.riders_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: riders_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.riders_id_seq OWNED BY public.riders.id;
-
-
---
 -- Name: schema_migrations; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -422,15 +238,7 @@ CREATE TABLE public.trip_positions (
     trip_id bigint NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
-)
-PARTITION BY RANGE (created_at);
-
-
---
--- Name: TABLE trip_positions; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON TABLE public.trip_positions IS 'column:created_at,period:month,cast:date,version:3';
+);
 
 
 --
@@ -450,150 +258,6 @@ CREATE SEQUENCE public.trip_positions_id_seq
 --
 
 ALTER SEQUENCE public.trip_positions_id_seq OWNED BY public.trip_positions.id;
-
-
---
--- Name: trip_positions_202209; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.trip_positions_202209 (
-    id bigint DEFAULT nextval('public.trip_positions_id_seq'::regclass) NOT NULL,
-    "position" point,
-    trip_id bigint NOT NULL,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL,
-    CONSTRAINT trip_positions_202209_created_at_check CHECK (((created_at IS NOT NULL) AND (created_at >= '2022-09-01 00:00:00'::timestamp(6) without time zone) AND (created_at < '2022-10-01 00:00:00'::timestamp(6) without time zone)))
-);
-
-
---
--- Name: trip_positions_202210; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.trip_positions_202210 (
-    id bigint DEFAULT nextval('public.trip_positions_id_seq'::regclass) NOT NULL,
-    "position" point,
-    trip_id bigint NOT NULL,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
-);
-
-
---
--- Name: trip_positions_202211; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.trip_positions_202211 (
-    id bigint DEFAULT nextval('public.trip_positions_id_seq'::regclass) NOT NULL,
-    "position" point,
-    trip_id bigint NOT NULL,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
-);
-
-
---
--- Name: trip_positions_202212; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.trip_positions_202212 (
-    id bigint DEFAULT nextval('public.trip_positions_id_seq'::regclass) NOT NULL,
-    "position" point,
-    trip_id bigint NOT NULL,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
-);
-
-
---
--- Name: trip_positions_202301; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.trip_positions_202301 (
-    id bigint DEFAULT nextval('public.trip_positions_id_seq'::regclass) NOT NULL,
-    "position" point,
-    trip_id bigint NOT NULL,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
-);
-
-
---
--- Name: trip_positions_202302; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.trip_positions_202302 (
-    id bigint DEFAULT nextval('public.trip_positions_id_seq'::regclass) NOT NULL,
-    "position" point,
-    trip_id bigint NOT NULL,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
-);
-
-
---
--- Name: trip_positions_202303; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.trip_positions_202303 (
-    id bigint DEFAULT nextval('public.trip_positions_id_seq'::regclass) NOT NULL,
-    "position" point,
-    trip_id bigint NOT NULL,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
-);
-
-
---
--- Name: trip_positions_202304; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.trip_positions_202304 (
-    id bigint DEFAULT nextval('public.trip_positions_id_seq'::regclass) NOT NULL,
-    "position" point,
-    trip_id bigint NOT NULL,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
-);
-
-
---
--- Name: trip_positions_202305; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.trip_positions_202305 (
-    id bigint DEFAULT nextval('public.trip_positions_id_seq'::regclass) NOT NULL,
-    "position" point,
-    trip_id bigint NOT NULL,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
-);
-
-
---
--- Name: trip_positions_202306; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.trip_positions_202306 (
-    id bigint DEFAULT nextval('public.trip_positions_id_seq'::regclass) NOT NULL,
-    "position" point,
-    trip_id bigint NOT NULL,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
-);
-
-
---
--- Name: trip_positions_retired; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.trip_positions_retired (
-    id bigint DEFAULT nextval('public.trip_positions_id_seq'::regclass) NOT NULL,
-    "position" point,
-    trip_id bigint NOT NULL,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
-);
 
 
 --
@@ -646,21 +310,6 @@ CREATE SEQUENCE public.trips_id_seq
 --
 
 ALTER SEQUENCE public.trips_id_seq OWNED BY public.trips.id;
-
-
---
--- Name: users_ft; Type: FOREIGN TABLE; Schema: public; Owner: -
---
-
-CREATE FOREIGN TABLE public.users_ft (
-    id bigint,
-    first_name text
-)
-SERVER file_server
-OPTIONS (
-    filename '/Users/andy/users_sample.csv',
-    format 'csv'
-);
 
 
 --
@@ -750,80 +399,10 @@ ALTER SEQUENCE public.vehicles_id_seq OWNED BY public.vehicles.id;
 
 
 --
--- Name: trip_positions_202210; Type: TABLE ATTACH; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.trip_positions ATTACH PARTITION public.trip_positions_202210 FOR VALUES FROM ('2022-10-01 00:00:00') TO ('2022-11-01 00:00:00');
-
-
---
--- Name: trip_positions_202211; Type: TABLE ATTACH; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.trip_positions ATTACH PARTITION public.trip_positions_202211 FOR VALUES FROM ('2022-11-01 00:00:00') TO ('2022-12-01 00:00:00');
-
-
---
--- Name: trip_positions_202212; Type: TABLE ATTACH; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.trip_positions ATTACH PARTITION public.trip_positions_202212 FOR VALUES FROM ('2022-12-01 00:00:00') TO ('2023-01-01 00:00:00');
-
-
---
--- Name: trip_positions_202301; Type: TABLE ATTACH; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.trip_positions ATTACH PARTITION public.trip_positions_202301 FOR VALUES FROM ('2023-01-01 00:00:00') TO ('2023-02-01 00:00:00');
-
-
---
--- Name: trip_positions_202302; Type: TABLE ATTACH; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.trip_positions ATTACH PARTITION public.trip_positions_202302 FOR VALUES FROM ('2023-02-01 00:00:00') TO ('2023-03-01 00:00:00');
-
-
---
--- Name: trip_positions_202303; Type: TABLE ATTACH; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.trip_positions ATTACH PARTITION public.trip_positions_202303 FOR VALUES FROM ('2023-03-01 00:00:00') TO ('2023-04-01 00:00:00');
-
-
---
--- Name: trip_positions_202304; Type: TABLE ATTACH; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.trip_positions ATTACH PARTITION public.trip_positions_202304 FOR VALUES FROM ('2023-04-01 00:00:00') TO ('2023-05-01 00:00:00');
-
-
---
--- Name: trip_positions_202305; Type: TABLE ATTACH; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.trip_positions ATTACH PARTITION public.trip_positions_202305 FOR VALUES FROM ('2023-05-01 00:00:00') TO ('2023-06-01 00:00:00');
-
-
---
--- Name: trip_positions_202306; Type: TABLE ATTACH; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.trip_positions ATTACH PARTITION public.trip_positions_202306 FOR VALUES FROM ('2023-06-01 00:00:00') TO ('2023-07-01 00:00:00');
-
-
---
 -- Name: locations id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.locations ALTER COLUMN id SET DEFAULT nextval('public.locations_id_seq'::regclass);
-
-
---
--- Name: riders id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.riders ALTER COLUMN id SET DEFAULT nextval('public.riders_id_seq'::regclass);
 
 
 --
@@ -893,14 +472,6 @@ ALTER TABLE ONLY public.vehicle_reservations
 
 
 --
--- Name: riders riders_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.riders
-    ADD CONSTRAINT riders_pkey PRIMARY KEY (id);
-
-
---
 -- Name: schema_migrations schema_migrations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -909,90 +480,10 @@ ALTER TABLE ONLY public.schema_migrations
 
 
 --
--- Name: trip_positions_202209 trip_positions_202209_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: trip_positions trip_positions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.trip_positions_202209
-    ADD CONSTRAINT trip_positions_202209_pkey PRIMARY KEY (id);
-
-
---
--- Name: trip_positions_202210 trip_positions_202210_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.trip_positions_202210
-    ADD CONSTRAINT trip_positions_202210_pkey PRIMARY KEY (id);
-
-
---
--- Name: trip_positions_202211 trip_positions_202211_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.trip_positions_202211
-    ADD CONSTRAINT trip_positions_202211_pkey PRIMARY KEY (id);
-
-
---
--- Name: trip_positions_202212 trip_positions_202212_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.trip_positions_202212
-    ADD CONSTRAINT trip_positions_202212_pkey PRIMARY KEY (id);
-
-
---
--- Name: trip_positions_202301 trip_positions_202301_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.trip_positions_202301
-    ADD CONSTRAINT trip_positions_202301_pkey PRIMARY KEY (id);
-
-
---
--- Name: trip_positions_202302 trip_positions_202302_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.trip_positions_202302
-    ADD CONSTRAINT trip_positions_202302_pkey PRIMARY KEY (id);
-
-
---
--- Name: trip_positions_202303 trip_positions_202303_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.trip_positions_202303
-    ADD CONSTRAINT trip_positions_202303_pkey PRIMARY KEY (id);
-
-
---
--- Name: trip_positions_202304 trip_positions_202304_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.trip_positions_202304
-    ADD CONSTRAINT trip_positions_202304_pkey PRIMARY KEY (id);
-
-
---
--- Name: trip_positions_202305 trip_positions_202305_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.trip_positions_202305
-    ADD CONSTRAINT trip_positions_202305_pkey PRIMARY KEY (id);
-
-
---
--- Name: trip_positions_202306 trip_positions_202306_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.trip_positions_202306
-    ADD CONSTRAINT trip_positions_202306_pkey PRIMARY KEY (id);
-
-
---
--- Name: trip_positions_retired trip_positions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.trip_positions_retired
+ALTER TABLE ONLY public.trip_positions
     ADD CONSTRAINT trip_positions_pkey PRIMARY KEY (id);
 
 
@@ -1013,11 +504,11 @@ ALTER TABLE ONLY public.trips
 
 
 --
--- Name: users users_copy_pkey1; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.users
-    ADD CONSTRAINT users_copy_pkey1 PRIMARY KEY (id);
+    ADD CONSTRAINT users_pkey PRIMARY KEY (id);
 
 
 --
@@ -1034,13 +525,6 @@ ALTER TABLE ONLY public.vehicle_reservations
 
 ALTER TABLE ONLY public.vehicles
     ADD CONSTRAINT vehicles_pkey PRIMARY KEY (id);
-
-
---
--- Name: idx_users_first_name_soundex; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX idx_users_first_name_soundex ON public.users USING btree (public.soundex((first_name)::text));
 
 
 --
@@ -1062,13 +546,6 @@ CREATE INDEX index_locations_on_latitude ON public.locations USING btree (latitu
 --
 
 CREATE INDEX index_locations_on_longitude ON public.locations USING btree (longitude);
-
-
---
--- Name: index_riders_on_name; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_riders_on_name ON public.riders USING btree (name);
 
 
 --
@@ -1121,6 +598,13 @@ CREATE UNIQUE INDEX index_users_on_email ON public.users USING btree (email);
 
 
 --
+-- Name: index_users_on_last_name; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_users_on_last_name ON public.users USING btree (last_name);
+
+
+--
 -- Name: index_users_on_searchable_full_name; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1139,48 +623,6 @@ CREATE INDEX index_vehicle_reservations_on_vehicle_id ON public.vehicle_reservat
 --
 
 CREATE UNIQUE INDEX index_vehicles_on_name ON public.vehicles USING btree (name);
-
-
---
--- Name: index_vs_on_vehicle_id_partial; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_vs_on_vehicle_id_partial ON public.vehicle_reservations USING btree (vehicle_id) WHERE (canceled = true);
-
-
---
--- Name: items_n_idx; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX items_n_idx ON public.items USING btree (n);
-
-
---
--- Name: trips_completed_at_index; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX trips_completed_at_index ON public.trips USING btree (completed_at DESC NULLS LAST);
-
-
---
--- Name: users_first_name_email_idx; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX users_first_name_email_idx ON public.users USING btree (first_name, email);
-
-
---
--- Name: users_fname_lname_idx; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX users_fname_lname_idx ON public.users USING btree (first_name) INCLUDE (last_name);
-
-
---
--- Name: users_type_idx; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX users_type_idx ON public.users USING btree (type);
 
 
 --
@@ -1235,8 +677,6 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230125003531'),
 ('20221230203627'),
 ('20221230200725'),
-('20221228194245'),
-('20221227153221'),
 ('20221223161403'),
 ('20221221052616'),
 ('20221220201836'),
@@ -1247,7 +687,6 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20221108175619'),
 ('20221108175321'),
 ('20221108172933'),
-('20221108172238'),
 ('20221007184855'),
 ('20220916171314'),
 ('20220814175213'),
