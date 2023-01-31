@@ -1,6 +1,6 @@
 GIT
   remote: git@github.com:rails/rails.git
-  revision: cd2ed0186bd8bc0eca743b7f1cbc149ab1dc27fd
+  revision: c8190750f9d28b831f9b38b4ded8a3ee5b41fd9d
   specs:
     actioncable (7.1.0.alpha)
       actionpack (= 7.1.0.alpha)
@@ -31,6 +31,7 @@ GIT
     actionpack (7.1.0.alpha)
       actionview (= 7.1.0.alpha)
       activesupport (= 7.1.0.alpha)
+      nokogiri (>= 1.8.5)
       rack (>= 2.2.4)
       rack-session (>= 1.0.1)
       rack-test (>= 0.6.3)
@@ -161,9 +162,9 @@ GEM
     net-smtp (0.3.3)
       net-protocol
     nio4r (2.5.8)
-    nokogiri (1.14.0-x86_64-darwin)
+    nokogiri (1.14.1-x86_64-darwin)
       racc (~> 1.4)
-    nokogiri (1.14.0-x86_64-linux)
+    nokogiri (1.14.1-x86_64-linux)
       racc (~> 1.4)
     pg (1.4.5)
     pg_query (2.2.1)
@@ -185,9 +186,9 @@ GEM
       rack (>= 3.0.0)
     rack-test (2.0.2)
       rack (>= 1.3)
-    rackup (2.0.0)
+    rackup (2.1.0)
       rack (>= 3)
-      webrick
+      webrick (~> 1.8)
     rails-dom-testing (2.0.3)
       activesupport (>= 4.2.0)
       nokogiri (>= 1.6)
@@ -243,17 +244,17 @@ GEM
       actionpack (>= 5.2)
       activesupport (>= 5.2)
       sprockets (>= 3.0.0)
-    strong_migrations (1.4.1)
+    strong_migrations (1.4.2)
       activerecord (>= 5.2)
     terminal-table (3.0.2)
       unicode-display_width (>= 1.1.1, < 3)
     thor (1.2.1)
     tilt (2.0.11)
     timeout (0.3.1)
-    tzinfo (2.0.5)
+    tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     unicode-display_width (2.4.2)
-    webrick (1.7.0)
+    webrick (1.8.1)
     websocket-driver (0.7.5)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
