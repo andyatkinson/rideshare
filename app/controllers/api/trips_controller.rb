@@ -1,10 +1,8 @@
 class Api::TripsController < ApiController
   before_action :authorize_request, only: :my
 
-  #
   # Search params: `start_location`
   #   => `New%20York%2C%20NY`
-  #
   def index
     search = TripSearch.new(search_params)
     trips = Trip.apply_scopes(
@@ -18,7 +16,6 @@ class Api::TripsController < ApiController
 
   def show
     expires_in 1.minute, public: true
-
     @trip = Trip.find(params[:id])
 
     if stale?(@trip)
@@ -53,7 +50,7 @@ class Api::TripsController < ApiController
     @trips = Trip.completed.
       includes(:driver, {trip_request: :rider}).
       joins(trip_request: :rider).
-      where('users.id = ?', params[:rider_id])
+      where(users: {id: params[:rider_id]})
 
     options = {}
     # JSON API: https://jsonapi.org/format/#fetching-sparse-fieldsets

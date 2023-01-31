@@ -32,6 +32,6 @@ class TripSearch
   private
 
   def sanitize(text)
-    URI.unescape(text.to_s)
+    CGI.unescape(text.to_s)
   end
 end

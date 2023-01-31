@@ -2,18 +2,55 @@
 
 # Rideshare
 
-An example Rails 6.0 API app, in iterations.
+An example Rails API app. Past iterations building it are documented, and recommendations are given.
 
-I made this app to demonstrate how I would model a well-known domain, ride sharing like Uber or Lyft. Along the way, there are opportunities to call out Rails Best Practices, Patterns, and design trade-offs. There are also opportunities to demonstrate my personal style and recommendations.
+I made this app to model the well-known *Ride Sharing* domain. Along the way, there are opportunities to call out Rails Best Practices, patterns, and trade-offs.
+
+There are also opportunities to demonstrate my personal style and recommendations.
+
+## Goals
+
+- Stay on `master`/`main` of Rails, modern Ruby versions
+- Use PostgreSQL
+- Run on Mac OS, use Homebrew
+
+
+## Prerequisites
+
+* To generate a DB image, [Install graphiz](https://voormedia.github.io/rails-erd/install.html)
+* `brew install graphviz`
+
+
+## Install
+
+```
+rbenv 3.2 # Check `.ruby-version`
+gem install bundler
+bundle install
+nvm install latest
+npm install
+rake db:create:all
+rake test
+```
+
+## Ctags
+
+I use it, and running:
+
+`ctags -R --exclude=.git --exclude=node_modules --exclude=test --exclude=vendor`
+
+Excludes directories.
+
 
 ## My Rails Best Practices and Patterns
 
 Demonstrations of each of these items can be found in the app
 
 * Data Integrity (in the DB and application)
-  * Enforce Nullability
+  * Enforce Null Constraints
     * Foreign key constraints for referential integrity
     * Unique constraints
+    * Exclusion
 * Code Quality
   * Rails best practices gem (`rails_best_practices .`)
   * Strong Migrations
@@ -21,7 +58,7 @@ Demonstrations of each of these items can be found in the app
   * Strong Params
 * Performance
   * DB indexes
-    * Primary, unique, foreign key columns
+    * Primary, uniqueness, indexed foreign key columns
 * Named Scopes
 * Search functionality
 * Automatic Geocoding
@@ -29,12 +66,12 @@ Demonstrations of each of these items can be found in the app
   * Disable geocoding in the test environment
 * Testing
   * Fixtures and factories
-  * Test to code ratio of `0.6` (use `rake stats`)
-  * Fake data generators for local development (`faker` gem, rake task)
+  * Minimum Code to Test Ratio: 1:0.6 (use `bin/rails stats`)
+  * Fake data generators for local development (`faker` gem, rake task), SQL data loads
 * API Application
   * We only need an API, use `ActionController::API` for lighter weight API code
   * Use `/api` namespace
-  * JSON API for API standardization
+  * JSON:API for API standardization
     * Sparse Fieldsets
     * Compound Documents
   * Status codes
@@ -44,10 +81,102 @@ Demonstrations of each of these items can be found in the app
 * Use [Single table inheritence](https://api.rubyonrails.org/v6.0.1/classes/ActiveRecord/Base.html#class-ActiveRecord::Base-label-Single+table+inheritance) when appropriate
   * Link: [DB migration commit](https://github.com/andyatkinson/rideshare/commit/39232da339c2c04966e49e3e4ff03d88c2e66842#diff-7d736cc988a61ff29b4b9b2466b7a6ab)
 
-## Maintenance
 
-* `bundle update [gemname]` to update a particular gem
-* `yarn upgrade` (may need to use `nvm use [version]` to switch to particular Node version)
+## Iteration 26 (2023)
+
+- Remove webpacker, and most front-end JS (this is an API app)
+- Retire Blazer. It's a great tool, but no longer part of the goal of this app.
+
+```sh
+gem update --system
+brew upgrade ruby-build
+rbenv install 3.2.0
+gem install bundler
+bundle install
+bundle update
+bin/rails test
+```
+
+## Iteration 25
+
+Add Full Text Search (FTS). Add `pg_search` to evaluate the features.
+
+- tsearch - Full text search, which is built-in to PostgreSQL
+- trigram - Trigram search, which requires the trigram extension
+- dmetaphone - Double Metaphone search, which requires the fuzzystrmatch extension
+
+## Iteration 24
+
+Add slow query logging using Active Support Instrumentation without 3rd party gems or PostgreSQL extensions
+
+When configured to log at >= 1 second duration, test it with:
+
+```rb
+ActiveRecord::Base.connection.execute("select pg_sleep(1)")
+```
+
+## Iteration 23
+
+- Add Trip Position model, and populate it with sample rows
+- Remove some experimental PG extensions from the application DB
+- Perform a conversion from unpartitioned to partitioned trip_positions table using pgslice
+
+`drop extension sslinfo`, `drop extension pg_buffercache` for now, these
+may return later. This cleans up the `db/structure.sql` so that it reflects
+the extensions in use by the application.
+
+## Iteration 22
+
+- Maintain the data generators
+- Disable Prepared Statements for now
+- Start using Active Record Doctor gem: `bundle exec rake active_record_doctor` for more insights
+
+## Iteration 21
+
+Trip rating database CHECK constraint.
+
+## Iteration 20
+
+Counter cache example for trips that belong to a driver.
+
+## Iteration 19
+
+Vehicle Reservation concept (e.g. special car, limo). Has a reservation duration.
+
+When vehicle is reserved, cannot be overlapping reservation.
+
+Create an exclusion constraint. Run a specific test like this:
+
+`rails test test/services/book_reservation_test.rb -n BookReservationTest#test_can_NOT_book_overlapping_reservation`
+
+## Iteration 18
+
+Rails Entity Relationship Diagram (ERD)
+
+[Customization](https://voormedia.github.io/rails-erd/customise.html)
+
+```
+bundle exec rake erd \
+  inheritance=true \
+  only="Driver,Rider,User,Location,TripRequest,Trip,Vehicle,VehicleReservation" \
+  attributes=foreign_keys,primary_keys
+```
+
+## Iteration 17
+
+Start a pgbench benchmark basics. Add fx gem to manage DB functions (pl/pgsql). Add data scrub functions.
+
+Add paranoia gem and create some deleted users for the purposes of different query types.
+
+
+## Iteration 16 (2022)
+
+* Upgrade to Rails 7. Remove some gems.
+
+## Iteration 15
+
+* Add [PgHero](https://github.com/ankane/pghero)
+* Use new CircleCI docker configuration
 
 ## Development Iterations
 

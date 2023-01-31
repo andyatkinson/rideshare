@@ -4,9 +4,9 @@ default: &default
   password:
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   timeout: 5000
+  prepared_statements: false
 
 development:
-  #host: db # docker
   host: localhost
   <<: *default
   database: rideshare_development
@@ -16,7 +16,6 @@ development:
 # Do not set this db to the same as development or production.
 test:
   <<: *default
-  #host: db # docker
   username: root
   host: localhost
   database: rideshare_test

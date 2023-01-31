@@ -1,81 +1,50 @@
-# Ruby CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-ruby/ for more details
-#
-# TODO: Yarn optimizations https://circleci.com/docs/2.0/yarn/
-#
-version: 2
-general:
-  branches:
-    only:
-     - master # list of branches to build
-     - /feature-.*/ # or regexes
+version: 2.1
+
+orbs:
+  ruby: circleci/ruby@2.0.0
 
 jobs:
   build:
     docker:
-      # specify the version you desire here
-      - image: circleci/ruby:2.6-node
-        environment:
-          RAILS_ENV: test
-          PG_HOST: 127.0.0.1
-          PG_USER: root
+      - image: cimg/ruby:3.2.0
+    steps:
+      - checkout
+      - ruby/install-deps
 
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      - image: circleci/postgres:9.5
+  test:
+    parallelism: 3
+    docker:
+      - image: cimg/ruby:3.2.0
+      - image: cimg/postgres:13.6
         environment:
           POSTGRES_USER: root
           POSTGRES_DB: rideshare_test
-          POSTGRES_HOST_AUTH_METHOD: trust
-
-    working_directory: ~/repo
-
+          POSTGRES_PASSWORD: ""
+    environment:
+      BUNDLE_JOBS: "3"
+      BUNDLE_RETRY: "3"
+      PGHOST: 127.0.0.1
+      PGUSER: root
+      PGPASSWORD: ""
+      RAILS_ENV: test
     steps:
       - checkout
-
-      # Download and cache dependencies
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "Gemfile.lock" }}
-            # fallback to using the latest cache if no exact match is found
-            - v1-dependencies-
-
-      # Bundler version workaround:
-      # https://discuss.circleci.com/t/using-bundler-2-0-during-ci-fails/27411/2
+      - ruby/install-deps
       - run:
-          name: Configure Bundler
-          command: |
-            echo 'export BUNDLER_VERSION=$(cat Gemfile.lock | tail -1 | tr -d " ")' >> $BASH_ENV
-            source $BASH_ENV
-            gem install bundler
-
-      # Install dependencies
+          name: Wait for DB
+          command: dockerize -wait tcp://localhost:5432 -timeout 1m
       - run:
-          name: install dependencies
-          command: bundle install --path=vendor/bundle || bundle install --path=vendor/bundle --jobs 4 --retry 3
-
-      - save_cache:
-          key: v1-dependencies-{{ checksum "Gemfile.lock" }}
-          paths:
-            - vendor/bundle
-
-      # Database setup
-      - run:
-          name: Set up DB
-          command: |
-            bundle exec rake db:create db:schema:load --trace
-            bundle exec rake db:migrate
-
-      # Precompile assets
-      - run: bundle exec rake assets:precompile
-
-      # run tests!
+          name: Database setup
+          command: bundle exec rails db:schema:load --trace
       - run:
           name: run tests
           command: bin/rails test
 
-      # collect reports
-      - store_test_results:
-          path: /tmp/test-results
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build
+      - test:
+          requires:
+            - build

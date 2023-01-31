@@ -1,0 +1,8 @@
+party_bus:
+  vehicle: party_bus
+  trip_request: girls_night_out
+  starts_at: <%= Time.zone.local(2022, 07, 28, 19, 00, 00) %>
+  ends_at: <%= Time.zone.local(2022, 07, 28, 23, 00, 00) %>
+  canceled: false # should be supplied by database as DEFAULT
+
+

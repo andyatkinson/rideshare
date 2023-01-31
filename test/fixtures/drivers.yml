@@ -3,9 +3,13 @@ jack:
   last_name: White
   email: jack@email.com
   type: Driver
+  password_digest: $3a$12$D0/yLVQ67zujhbLZUBkd3eD2w4oNaTg1MK2o2w3f4IOXiZ6az/X0O
+  drivers_license_number: P800000224322
 
 meg:
   first_name: Meg
   last_name: White
   email: meg@email.com
   type: Driver
+  password_digest: $4a$12$D0/yLVQ67zujhbLZUBkd3eD2w4oNaTg1MK2o2w3f4IOXiZ6az/X0O
+  drivers_license_number: P800000224323

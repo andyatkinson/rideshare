@@ -1,5 +1,10 @@
 class Location < ApplicationRecord
-  validates :address, presence: true
+  validates :address,
+    presence: true,
+    uniqueness: true # simple approach, assumes fully address, all parts
+
+  validates :latitude, :longitude,
+    presence: true
 
   geocoded_by :address
 

@@ -1,6 +1,5 @@
 Rails.application.routes.draw do
-  get 'home/index'
-  root 'home#index'
+  mount PgHero::Engine, at: "pghero"
 
   namespace :api do
     resources :trips, only: [:index, :show] do
@@ -11,10 +10,8 @@ Rails.application.routes.draw do
         get :details
       end
     end
-    resources :trip_requests, only: [:create]
+    resources :trip_requests, only: [:create, :show]
   end
 
   post '/auth/login', to: 'authentication#login'
-
-  mount Blazer::Engine, at: 'blazer'
 end
