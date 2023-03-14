@@ -16,6 +16,7 @@ gem 'whenever', require: false # manage scheduled jobs
 gem 'prosopite' # identify N+1 queries
 gem 'pg_query'
 gem 'pg_search'
+gem 'pgslice', git: 'git@github.com:andyatkinson/pgslice.git'
 
 group :development, :test do
   gem 'faraday'

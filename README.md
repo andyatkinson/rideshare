@@ -82,6 +82,19 @@ Demonstrations of each of these items can be found in the app
   * Link: [DB migration commit](https://github.com/andyatkinson/rideshare/commit/39232da339c2c04966e49e3e4ff03d88c2e66842#diff-7d736cc988a61ff29b4b9b2466b7a6ab)
 
 
+## Iteration 27
+
+Partition the `trip_positions` table using `pgslice`.
+
+* Add `pgslice` to Gemfile and install the binstub
+
+```sh
+# add 'pgslice` to Gemfile
+bundle install
+bundle binstubs pgslice
+```
+Invoke it with `rails runner`, e.g. `bin/rails runner "PgsliceHelper.new.add_partitions"`
+
 ## Iteration 26 (2023)
 
 - Remove webpacker, and most front-end JS (this is an API app)
