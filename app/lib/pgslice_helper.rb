@@ -5,6 +5,11 @@
 # - prep: pgslice prep
 # - bin/rails runner "PgsliceHelper.new.add_partitions(table_name: 'trip_positions', past: 0, future: 3)"
 #
+#
+# To test app compatibility:
+# - Make sure latest changes from dev DB are applied: `bin/rails db:test:prepare`
+# - change PGSLICE_URL in .env, specify test DB
+# - run `bin/rails test`
 class PgsliceHelper
   def add_partitions(table_name:, intermediate: true, past:, future:, dry_run: true)
     cmd = %(./bin/pgslice add_partitions #{table_name} \
