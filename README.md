@@ -95,6 +95,10 @@ bundle binstubs pgslice
 ```
 Invoke it with `rails runner`, e.g. `bin/rails runner "PgsliceHelper.new.add_partitions"`
 
+TODO, but deferred
+
+* `insert_all` compatibility
+
 ## Iteration 26 (2023)
 
 - Remove webpacker, and most front-end JS (this is an API app)

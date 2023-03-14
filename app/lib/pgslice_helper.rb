@@ -6,9 +6,6 @@
 # - bin/rails runner "PgsliceHelper.new.add_partitions(table_name: 'trip_positions', past: 0, future: 3)"
 #
 class PgsliceHelper
-  def initialize
-  end
-
   def add_partitions(table_name:, intermediate: true, past:, future:, dry_run: true)
     cmd = %(./bin/pgslice add_partitions #{table_name} \
     #{"--intermediate " if intermediate} \
