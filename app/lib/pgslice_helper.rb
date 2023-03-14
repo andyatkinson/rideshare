@@ -1,13 +1,11 @@
 #
-# Steps:
-# - export PGSLICE_URL
-# - prep: ./bin/pgslice prep trip_positions created_at month
-# - prep: pgslice prep
-# - bin/rails runner "PgsliceHelper.new.add_partitions(table_name: 'trip_positions', past: 0, future: 3)"
-#
 # Prep:
-# Retire default
+# export PGSLICE_URL
+# - Retire default
 # - bin/rails runner "PgsliceHelper.new.retire_default_partition(table_name: 'trip_positions')"
+# - bin/rails runner "PgsliceHelper.new.add_partitions(table_name: 'trip_positions', past: 0, future: 3, dry_run: false)"
+# - bin/rails runner "PgsliceHelper.new.fill(table_name: 'trip_positions', from_date: '2021-01-01')"
+# - bin/rails runner "PgsliceHelper.new.analyze(table_name: 'trip_positions')"
 #
 # To test app compatibility:
 # - Make sure latest changes from dev DB are applied: `bin/rails db:test:prepare`
@@ -25,16 +23,31 @@ class PgsliceHelper
     system(cmd)
   end
 
-  def fill
+  def fill(table_name:, partition_column: 'created_at', swapped: false, from_date:)
+    cmd = %(./bin/pgslice fill #{table_name}
+    #{"--where \"date(#{partition_column}) >= date('#{from_date}')\"" if from_date}
+    #{"--swapped" if swapped}
+    ).squish
+    log("fill cmd: #{cmd}")
+    system(cmd)
   end
 
-  def analyze
+  def analyze(table_name:)
+    cmd = %(./bin/pgslice analyze #{table_name}).squish
+    log("cmd: #{cmd}")
+    system(cmd)
   end
 
-  def swap
+  def swap(table_name:)
+    cmd = %(./bin/pgslice swap #{table_name}).squish
+    log("cmd: #{cmd}")
+    system(cmd)
   end
 
-  def unswap
+  def unswap(table_name:)
+    cmd = %(./bin/pgslice unswap #{table_name}).squish
+    log("cmd: #{cmd}")
+    system(cmd)
   end
 
   # default partitions cannot be detached concurrently

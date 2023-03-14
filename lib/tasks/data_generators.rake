@@ -156,12 +156,12 @@ namespace :data_generators do
     )
   end
 
+  # bin/rails data_generators:generate_trip_positions
   desc "Generate simulated historical trip positions data"
   task generate_trip_positions: :environment do |t, args|
-
     # Generate data from 1 year ago, 3 months ago, 2 months ago, 1 month ago
     # and current month
-    # 1 year ago
+    puts "From 1 year ago"
     5.times do |i|
       @trip = Trip.all.sample
       TripPosition.create!(
@@ -170,7 +170,7 @@ namespace :data_generators do
         created_at: 1.year.ago
       )
     end
-    # 3 months ago
+    puts "From 3 months ago"
     5.times do |i|
       @trip = Trip.all.sample
       TripPosition.create!(
@@ -179,7 +179,7 @@ namespace :data_generators do
         created_at: 3.months.ago
       )
     end
-    # 2 months ago
+    puts "From 2 months ago"
     5.times do |i|
       @trip = Trip.all.sample
       TripPosition.create!(
@@ -188,7 +188,7 @@ namespace :data_generators do
         created_at: 2.months.ago
       )
     end
-    # 1 month ago
+    puts "From 1 month ago"
     5.times do |i|
       @trip = Trip.all.sample
       TripPosition.create!(
@@ -197,7 +197,7 @@ namespace :data_generators do
         created_at: 1.month.ago
       )
     end
-    # This month
+    puts "This month"
     5.times do |i|
       @trip = Trip.all.sample
       TripPosition.create!(
@@ -205,8 +205,7 @@ namespace :data_generators do
         trip: @trip
       )
     end
-
-
+    puts "Created #{TripPosition.count} records."
   end
 
   desc "Generate All Data"
@@ -214,9 +213,9 @@ namespace :data_generators do
     Rake::Task["data_generators:drivers_and_riders"].invoke
     Rake::Task["data_generators:trips_and_requests"].invoke
     Rake::Task["data_generators:vehicles_and_reservations"].invoke
+    Rake::Task["data_generators:generate_trip_positions"].invoke
   end
 end
-
 
 def random_mn_drivers_license_number(fname, rand_1, rand_2, rand_3, rand_4, rand_5, i)
   [
