@@ -1,4 +1,4 @@
-#
+# Safe by default, add dry_run=false when ready
 # Prep:
 # export PGSLICE_URL
 # - Retire default
@@ -6,6 +6,10 @@
 # - bin/rails runner "PgsliceHelper.new.add_partitions(table_name: 'trip_positions', past: 0, future: 3, dry_run: false)"
 # - bin/rails runner "PgsliceHelper.new.fill(table_name: 'trip_positions', from_date: '2021-01-01')"
 # - bin/rails runner "PgsliceHelper.new.analyze(table_name: 'trip_positions')"
+#
+# Data export (Safe by default, add dry_run=false when ready)
+# - bin/rails runner "PgsliceHelper.new.dump_retired_table(table_name: 'trip_positions')"
+# - bin/rails runner "PgsliceHelper.new.drop_retired_table(table_name: 'trip_positions')"
 #
 # To test app compatibility:
 # - Make sure latest changes from dev DB are applied: `bin/rails db:test:prepare`
@@ -52,7 +56,7 @@ class PgsliceHelper
 
   # default partitions cannot be detached concurrently
   # "ERROR:  cannot detach partitions concurrently when a default partition exists"
-  def retire_default_partition(table_name:, dry_run: false)
+  def retire_default_partition(table_name:, dry_run: true)
     tbl_name = "#{table_name}_intermediate" # assumes intermediate table
     partition_name = "#{tbl_name}_default"
     retired_name = "#{partition_name}_retired"
@@ -95,6 +99,21 @@ class PgsliceHelper
     cmd = %(psql $PGSLICE_URL -c '#{sql}')
     log("unretiring and attaching. dry_run=#{dry_run}")
     log("cmd=#{cmd}")
+    system(cmd) unless dry_run
+  end
+
+  def dump_retired_table(table_name:, dry_run: true)
+    retired_name = "#{table_name}_retired"
+    dump_name = "#{retired_name}.dump"
+    cmd = %(pg_dump -c -Fc -t #{retired_name} $PGSLICE_URL > #{dump_name})
+    log("cmd=#{cmd}")
+    system(cmd) unless dry_run
+  end
+
+  def drop_retired_table(table_name:, dry_run: true)
+    retired_name = "#{table_name}_retired"
+    cmd = %(psql -c 'DROP TABLE #{retired_name}' $PGSLICE_URL)
+    log("cmd: #{cmd}")
     system(cmd) unless dry_run
   end
 
