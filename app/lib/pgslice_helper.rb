@@ -40,18 +40,20 @@ class PgsliceHelper
   # default partitions cannot be detached concurrently
   # "ERROR:  cannot detach partitions concurrently when a default partition exists"
   def retire_default_partition(table_name:, dry_run: false)
-    table_name = "#{table_name}_intermediate" # assumes intermediate table
-    partition_name = "#{table_name}_default"
+    tbl_name = "#{table_name}_intermediate" # assumes intermediate table
+    partition_name = "#{tbl_name}_default"
     retired_name = "#{partition_name}_retired"
 
     sql = %(
       BEGIN;
 
-      ALTER TABLE #{table_name} \
+      ALTER TABLE #{tbl_name} \
       DETACH PARTITION #{partition_name};
 
       ALTER TABLE #{partition_name}
-      RENAME TO #{retired_name}
+      RENAME TO #{retired_name};
+
+      COMMIT;
     ).squish
 
     cmd = %(psql $PGSLICE_URL -c '#{sql}')
