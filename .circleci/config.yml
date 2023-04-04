@@ -27,6 +27,7 @@ jobs:
       PGUSER: root
       PGPASSWORD: ""
       RAILS_ENV: test
+      PGSLICE_URL: "postgres://root@localhost:5432/rideshare_test"
     steps:
       - checkout
       - ruby/install-deps
@@ -36,6 +37,9 @@ jobs:
       - run:
           name: Database setup
           command: bundle exec rails db:schema:load --trace
+      - run:
+          name: Partition conversion
+          command: sh bin/partition_conversion.sh
       - run:
           name: run tests
           command: bin/rails test

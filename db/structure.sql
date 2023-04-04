@@ -261,6 +261,40 @@ ALTER SEQUENCE public.trip_positions_id_seq OWNED BY public.trip_positions.id;
 
 
 --
+-- Name: trip_positions_intermediate; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.trip_positions_intermediate (
+    id bigint DEFAULT nextval('public.trip_positions_id_seq'::regclass) NOT NULL,
+    "position" point,
+    trip_id bigint NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+)
+PARTITION BY RANGE (created_at);
+
+
+--
+-- Name: TABLE trip_positions_intermediate; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON TABLE public.trip_positions_intermediate IS 'column:created_at,period:month,cast:date,version:3';
+
+
+--
+-- Name: trip_positions_intermediate_default; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.trip_positions_intermediate_default (
+    id bigint DEFAULT nextval('public.trip_positions_id_seq'::regclass) NOT NULL,
+    "position" point,
+    trip_id bigint NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
 -- Name: trip_requests; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -399,6 +433,13 @@ ALTER SEQUENCE public.vehicles_id_seq OWNED BY public.vehicles.id;
 
 
 --
+-- Name: trip_positions_intermediate_default; Type: TABLE ATTACH; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.trip_positions_intermediate ATTACH PARTITION public.trip_positions_intermediate_default DEFAULT;
+
+
+--
 -- Name: locations id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -477,6 +518,14 @@ ALTER TABLE ONLY public.vehicle_reservations
 
 ALTER TABLE ONLY public.schema_migrations
     ADD CONSTRAINT schema_migrations_pkey PRIMARY KEY (version);
+
+
+--
+-- Name: trip_positions_intermediate_default trip_positions_intermediate_default_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.trip_positions_intermediate_default
+    ADD CONSTRAINT trip_positions_intermediate_default_pkey PRIMARY KEY (id);
 
 
 --
@@ -672,6 +721,8 @@ ALTER TABLE ONLY public.trip_requests
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20230314210022'),
+('20230314204931'),
 ('20230126025656'),
 ('20230125003946'),
 ('20230125003531'),

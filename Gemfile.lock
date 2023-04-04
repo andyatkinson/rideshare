@@ -1,4 +1,12 @@
 GIT
+  remote: git@github.com:andyatkinson/pgslice.git
+  revision: 1e8b5828b6927b908bb3deb8af2a6ff1c33d84cf
+  specs:
+    pgslice (0.5.0)
+      pg (>= 0.18.2)
+      thor
+
+GIT
   remote: git@github.com:rails/rails.git
   revision: c8190750f9d28b831f9b38b4ded8a3ee5b41fd9d
   specs:
@@ -285,6 +293,7 @@ DEPENDENCIES
   pg_query
   pg_search
   pghero
+  pgslice!
   prosopite
   pry
   puma
