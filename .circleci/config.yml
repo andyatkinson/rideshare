@@ -18,7 +18,7 @@ jobs:
       - image: cimg/postgres:13.6
         environment:
           POSTGRES_USER: root
-          POSTGRES_DB: rideshare_test
+          POSTGRES_DB: rideshare_ci
           POSTGRES_PASSWORD: ""
     environment:
       BUNDLE_JOBS: "3"
@@ -27,6 +27,7 @@ jobs:
       PGUSER: root
       PGPASSWORD: ""
       RAILS_ENV: test
+      PGSLICE_URL: "postgres://root@localhost:5432/rideshare_ci"
     steps:
       - checkout
       - ruby/install-deps
