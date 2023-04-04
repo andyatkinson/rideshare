@@ -16,6 +16,8 @@
 # - change PGSLICE_URL in .env, specify test DB
 # - run `bin/rails test`
 class PgsliceHelper
+  DEFAULT_COLUMN = 'created_at'
+
   def add_partitions(table_name:, intermediate: true, past:, future:, dry_run: true)
     cmd = %(./bin/pgslice add_partitions #{table_name} \
     #{"--intermediate " if intermediate} \
@@ -27,7 +29,7 @@ class PgsliceHelper
     system(cmd)
   end
 
-  def fill(table_name:, partition_column: 'created_at', swapped: false, from_date:)
+  def fill(table_name:, partition_column: DEFAULT_COLUMN, swapped: false, from_date:)
     cmd = %(./bin/pgslice fill #{table_name}
     #{"--where \"date(#{partition_column}) >= date('#{from_date}')\"" if from_date}
     #{"--swapped" if swapped}

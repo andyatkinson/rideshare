@@ -4,6 +4,7 @@ echo "Reminder: Set PGSLICE_URL to test DB in .env"
 
 echo "retire"
 bin/rails runner "PgsliceHelper.new.retire_default_partition(table_name: 'trip_positions')"
-
-# To unretire for mistakes, or to reset, invoke next line
-#bin/rails runner "PgsliceHelper.new.unretire_default_partition(table_name: 'trip_positions')"
+bin/rails runner "PgsliceHelper.new.add_partitions(table_name: 'trip_positions', past: 0, future: 3, dry_run: false)"
+bin/rails runner "PgsliceHelper.new.fill(table_name: 'trip_positions', from_date: '2023-03-01')"
+bin/rails runner "PgsliceHelper.new.analyze(table_name: 'trip_positions')"
+bin/rails runner "PgsliceHelper.new.swap(table_name: 'trip_positions')"
