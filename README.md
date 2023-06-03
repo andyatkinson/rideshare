@@ -14,8 +14,8 @@ To set up Rideshare yourself to develop on, please read the Prerequisites and In
 
 ## Prerequisites
 
-- Ruby 3.2 or whatever version is listed in `.ruby-version`
-    - Use a Ruby version manager to install multiple versions
+- Ruby `3.2.0` or whatever version is in `.ruby-version`
+    - Use a Ruby version manager to install Ruby
     - [rbenv](https://github.com/rbenv/rbenv) is recommended
 - Bundler. After installing Ruby, run `gem install bundler`
 - (optional) To generate a DB image [Install graphiz](https://voormedia.github.io/rails-erd/install.html)
@@ -24,22 +24,31 @@ To set up Rideshare yourself to develop on, please read the Prerequisites and In
 
 ## Installation Steps
 
-1. Install prerequisites. Ruby, Bundler, etc.
-1. `cd` into your source code project directory, e.g. `~/Projects`
-1. From there, run `git clone git@github.com:andyatkinson/rideshare.git`
-1. Go in to that directory, `cd rideshare`
+1. Install the Prerequisites above.
+1. `cd` in to your source code directory. Mine is `~/Projects`.
+1. From there run `git clone git@github.com:andyatkinson/rideshare.git`
+1. `cd rideshare`
 
-    You should now be in ~/Projects/rideshare. Since Bundler is installed, run `bundle install` to install all of the gems for Rideshare.
+    You're now in a directory like ~/Projects/rideshare.
 
-1. Once the gems are installed, create the database.
+    Since you installed Bundler earlier, and are running the Ruby version the project expects, you're ready to install the gems.
+
+    To install all the Rideshare gems, run `bundle install`.
+
+    If you run into errors, please open an Issue on this project. Errors are most common when installing gems with native dependencies like `pg`.
+
+1. If all gems were installed successfully, you're ready to set up the database. Run the following commands from your terminal.
 
     ```sh
     bin/rails db:create:all
     rake test
     ```
 
-1. You should now have development and test databases, e.g. `rideshare_development` and `rideshare_test`.
-1. (Optional) To confirm everything is working, try running `bin/rails test` to run the test suite.
+1. You should now have development and test databases, `rideshare_development` and `rideshare_test`.
+
+    You're done now, but if you want to do one more step, run tests to see if everything passes.
+
+1. (Optional) Try running `bin/rails test` to run the full test suite. If it passes 100%, you're in good shape.
 
 ## Installation Guides
 
