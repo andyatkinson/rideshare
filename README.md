@@ -2,11 +2,11 @@
 
 # Rideshare
 
-Rideshare is a Rails API only app. This means there is no user interface.
+Rideshare is a Rails API only app, that simulates a portion of a Rideshare company's app.
 
-Rideshare proudly runs on PostgreSQL.
+Since it's an API only app, there is no user interface. Interact with the app via the Rails server, console, and command line programs.
 
-This application will be continually updated to use the latest available versions of PostgreSQL, Ruby, and Ruby on Rails.
+Rideshare proudly runs on PostgreSQL. 🐘
 
 ## Local Development
 
