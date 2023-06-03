@@ -2,18 +2,15 @@
 
 # Rideshare
 
-An example Rails API app. Past iterations building it are documented, and recommendations are given.
+Rideshare is a Rails API only app. This means there is no user interface.
 
-I made this app to model the well-known *Ride Sharing* domain. Along the way, there are opportunities to call out Rails Best Practices, patterns, and trade-offs.
+Rideshare proudly runs on PostgreSQL.
 
-There are also opportunities to demonstrate my personal style and recommendations.
+This application will be continually updated to use the latest available versions of PostgreSQL, Ruby, and Ruby on Rails.
 
-## Goals
+## Local Development
 
-- Stay on `master`/`main` of Rails, modern Ruby versions
-- Use PostgreSQL
-- Run on Mac OS, use Homebrew
-
+To set up Rideshare yourself to develop on, please read the Prerequisites and Installation Steps sections below.
 
 ## Prerequisites
 
@@ -25,7 +22,7 @@ There are also opportunities to demonstrate my personal style and recommendation
     `brew install graphviz`
 
 
-## Install
+## Installation Steps
 
 1. Install prerequisites. Ruby, Bundler, etc.
 1. `cd` into your source code project directory, e.g. `~/Projects`
@@ -56,5 +53,4 @@ Although this was a side project started in 2019, in 2022 it took on new life as
 In that book, Rideshare is used as a Rails application and PostgreSQL databases readers use as they work on exercises.
 
 Going forward, Rideshare will continue to focus primarily on being a good app for the needs of the book.
-
 
