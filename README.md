@@ -26,7 +26,7 @@ To set up Rideshare yourself to develop on, please read the Prerequisites and In
 
 1. Install the Prerequisites above.
 1. `cd` in to your source code directory. Mine is `~/Projects`.
-1. From there run `git clone git@github.com:andyatkinson/rideshare.git`
+1. From there run `git clone https://github.com/andyatkinson/rideshare.git`
 1. `cd rideshare`
 
     You're now in a directory like ~/Projects/rideshare.
@@ -52,7 +52,7 @@ To set up Rideshare yourself to develop on, please read the Prerequisites and In
 
 ## Installation Guides
 
-In addition to what's here, refer to the [Installation Guides](https://github.com/andyatkinson/installation_guides) repo for even more guidance.
+In addition to what's here, refer to the [Development Guides](https://github.com/andyatkinson/development_guides) for more Installation support.
 
 
 ## High Performance PostgreSQL for Rails
