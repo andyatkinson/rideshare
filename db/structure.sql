@@ -182,7 +182,9 @@ CREATE TABLE public.locations (
     latitude numeric(15,10) NOT NULL,
     longitude numeric(15,10) NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    updated_at timestamp(6) without time zone NOT NULL,
+    city character varying,
+    state character(2)
 );
 
 
@@ -721,6 +723,7 @@ ALTER TABLE ONLY public.trip_requests
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20230619213546'),
 ('20230314210022'),
 ('20230314204931'),
 ('20230126025656'),
