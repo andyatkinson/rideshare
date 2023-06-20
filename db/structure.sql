@@ -586,20 +586,6 @@ CREATE UNIQUE INDEX index_locations_on_address ON public.locations USING btree (
 
 
 --
--- Name: index_locations_on_latitude; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_locations_on_latitude ON public.locations USING btree (latitude);
-
-
---
--- Name: index_locations_on_longitude; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_locations_on_longitude ON public.locations USING btree (longitude);
-
-
---
 -- Name: index_trip_requests_on_end_location_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -723,6 +709,7 @@ ALTER TABLE ONLY public.trip_requests
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20230620030038'),
 ('20230619213546'),
 ('20230314210022'),
 ('20230314204931'),
