@@ -679,6 +679,22 @@ ALTER TABLE ONLY public.trips
 
 
 --
+-- Name: vehicle_reservations fk_rails_7edc8e666a; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.vehicle_reservations
+    ADD CONSTRAINT fk_rails_7edc8e666a FOREIGN KEY (vehicle_id) REFERENCES public.vehicles(id);
+
+
+--
+-- Name: trip_positions fk_rails_9688ac8706; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.trip_positions
+    ADD CONSTRAINT fk_rails_9688ac8706 FOREIGN KEY (trip_id) REFERENCES public.trips(id);
+
+
+--
 -- Name: trip_requests fk_rails_c17a139554; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -709,6 +725,7 @@ ALTER TABLE ONLY public.trip_requests
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20230625151410'),
 ('20230620030038'),
 ('20230619213546'),
 ('20230314210022'),
