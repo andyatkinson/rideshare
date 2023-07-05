@@ -17,6 +17,7 @@ gem 'prosopite' # identify N+1 queries
 gem 'pg_query'
 gem 'pg_search'
 gem 'pgslice', git: 'git@github.com:andyatkinson/pgslice.git'
+gem 'prosopite'
 
 group :development, :test do
   gem 'faraday'
