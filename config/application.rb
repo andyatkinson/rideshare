@@ -29,5 +29,8 @@ module Rideshare
     # timestamps without a time zone. This application
     # would need to treat times based on the user's timezone.
     config.time_zone = 'Central Time (US & Canada)'
+
+    # Enable Query Logging
+    config.active_record.query_log_tags_enabled = true
   end
 end
