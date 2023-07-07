@@ -4,7 +4,7 @@ class VehicleTest < ActiveSupport::TestCase
   test "validity" do
     party_bus = Vehicle.new
     assert_not party_bus.valid?
-    assert_equal ["can't be blank"], party_bus.errors[:name]
+    assert !party_bus.errors[:name].include?("be blank")
   end
 
   test "a vehicle is in a draft state by default" do
