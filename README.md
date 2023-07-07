@@ -23,6 +23,7 @@ For Rideshare, you'll need a working Ruby application environment and a PostgreS
 - (optional) To generate a DB image [Install graphiz](https://voormedia.github.io/rails-erd/install.html)
     `brew install graphviz`
 
+- `importmap-rails` does not require yarn, npm etc. <https://fly.io/ruby-dispatch/making-sense-of-rails-assets/>
 
 ## Installation Steps
 

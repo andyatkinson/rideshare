@@ -132,7 +132,6 @@ GEM
     faraday-net_http (3.0.2)
     fast_jsonapi (1.5)
       activesupport (>= 4.2)
-    ffi (1.15.5)
     fx (0.7.0)
       activerecord (>= 4.0.0)
       railties (>= 4.0.0)
@@ -142,11 +141,11 @@ GEM
     google-protobuf (3.21.12)
     i18n (1.14.1)
       concurrent-ruby (~> 1.0)
+    importmap-rails (1.2.1)
+      actionpack (>= 6.0.0)
+      railties (>= 6.0.0)
     json (2.6.3)
     jwt (2.6.0)
-    listen (3.8.0)
-      rb-fsevent (~> 0.10, >= 0.10.3)
-      rb-inotify (~> 0.9, >= 0.9.10)
     loofah (2.19.1)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
@@ -169,7 +168,7 @@ GEM
       timeout
     net-smtp (0.3.3)
       net-protocol
-    nio4r (2.5.8)
+    nio4r (2.5.9)
     nokogiri (1.14.1-x86_64-darwin)
       racc (~> 1.4)
     nokogiri (1.14.1-x86_64-linux)
@@ -186,7 +185,7 @@ GEM
     pry (0.14.2)
       coderay (~> 1.1)
       method_source (~> 1.0)
-    puma (6.0.2)
+    puma (6.3.0)
       nio4r (~> 2.0)
     racc (1.6.2)
     rack (3.0.4.1)
@@ -219,9 +218,6 @@ GEM
       require_all (~> 3.0)
       ruby-progressbar
     rake (13.0.6)
-    rb-fsevent (0.11.2)
-    rb-inotify (0.10.1)
-      ffi (~> 1.0)
     require_all (3.0.0)
     rexml (3.2.5)
     ruby-graphviz (1.2.5)
@@ -229,22 +225,12 @@ GEM
     ruby-pg-extras (4.12.2)
       pg
       terminal-table
-    ruby-progressbar (1.11.0)
+    ruby-progressbar (1.13.0)
     ruby2_keywords (0.0.5)
-    sass-rails (6.0.0)
-      sassc-rails (~> 2.1, >= 2.1.1)
-    sassc (2.4.0)
-      ffi (~> 1.9)
-    sassc-rails (2.1.2)
-      railties (>= 4.0.0)
-      sassc (>= 2.0)
-      sprockets (> 3.0)
-      sprockets-rails
-      tilt
     scenic (1.7.0)
       activerecord (>= 4.0.0)
       railties (>= 4.0.0)
-    sexp_processor (4.16.1)
+    sexp_processor (4.17.0)
     sprockets (4.2.0)
       concurrent-ruby (~> 1.0)
       rack (>= 2.2.4, < 4)
@@ -257,7 +243,6 @@ GEM
     terminal-table (3.0.2)
       unicode-display_width (>= 1.1.1, < 3)
     thor (1.2.1)
-    tilt (2.0.11)
     timeout (0.3.1)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
@@ -286,11 +271,11 @@ DEPENDENCIES
   fast_jsonapi
   fx
   geocoder
+  importmap-rails
   json
   jwt
-  listen
   pg
-  pg_query
+  pg_query (>= 2)
   pg_search
   pghero
   pgslice!
@@ -301,8 +286,8 @@ DEPENDENCIES
   rails-erd
   rails-pg-extras
   rails_best_practices
-  sass-rails
   scenic
+  sprockets-rails
   strong_migrations
   whenever
 
