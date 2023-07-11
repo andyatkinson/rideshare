@@ -1,4 +1,11 @@
 GIT
+  remote: git@github.com:andyatkinson/pghero.git
+  revision: cec9cf9cd640383b91e3aba4a39010269bb1e2a8
+  specs:
+    pghero (3.3.3)
+      activerecord (>= 6)
+
+GIT
   remote: git@github.com:andyatkinson/pgslice.git
   revision: 1e8b5828b6927b908bb3deb8af2a6ff1c33d84cf
   specs:
@@ -189,8 +196,6 @@ GEM
     pg_search (2.3.6)
       activerecord (>= 5.2)
       activesupport (>= 5.2)
-    pghero (3.3.3)
-      activerecord (>= 6)
     prosopite (1.2.2)
     pry (0.14.2)
       coderay (~> 1.1)
@@ -292,7 +297,7 @@ DEPENDENCIES
   pg
   pg_query (>= 2)
   pg_search
-  pghero
+  pghero!
   pgslice!
   prosopite
   pry

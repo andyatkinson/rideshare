@@ -8,7 +8,7 @@ gem 'strong_migrations'
 gem 'fast_jsonapi'
 gem 'jwt' # Json Web Token
 gem 'bcrypt' # Use ActiveModel has_secure_password
-gem 'pghero'
+gem 'pghero', git: 'git@github.com:andyatkinson/pghero.git'
 gem 'fx' # manage DB Functions
 gem 'scenic' # manage DB Views
 gem 'whenever', require: false # manage scheduled jobs
