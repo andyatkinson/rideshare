@@ -101,6 +101,13 @@ GIT
       thor (~> 1.0, >= 1.2.2)
       zeitwerk (~> 2.6)
 
+GIT
+  remote: https://github.com/fatkodima/fast_count.git
+  revision: 0991b7d5ae37b89dc427fd9adaec31bfdec737a8
+  specs:
+    fast_count (0.1.0)
+      activerecord (>= 6.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -275,6 +282,7 @@ DEPENDENCIES
   database_consistency
   faker
   faraday
+  fast_count!
   fast_jsonapi
   fx
   geocoder
