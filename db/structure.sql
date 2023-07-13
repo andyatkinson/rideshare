@@ -140,6 +140,47 @@ DECLARE count bigint;
 $$;
 
 
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- Name: users; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.users (
+    id bigint NOT NULL,
+    first_name character varying NOT NULL,
+    last_name character varying NOT NULL,
+    email character varying NOT NULL,
+    type character varying NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL,
+    password_digest character varying,
+    trips_count integer,
+    drivers_license_number character varying(100),
+    searchable_full_name tsvector GENERATED ALWAYS AS ((setweight(to_tsvector('english'::regconfig, (COALESCE(first_name, ''::character varying))::text), 'A'::"char") || setweight(to_tsvector('english'::regconfig, (COALESCE(last_name, ''::character varying))::text), 'B'::"char"))) STORED
+);
+
+
+--
+-- Name: TABLE users; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON TABLE public.users IS 'sensitive_fields|first_name:scrub_text,last_name:scrub_text,email:scrub_email';
+
+
+--
+-- Name: random_user(); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.random_user() RETURNS public.users
+    LANGUAGE sql
+    AS $$
+SELECT * FROM users ORDER BY RANDOM() LIMIT 1;
+$$;
+
+
 --
 -- Name: scrub_email(character varying); Type: FUNCTION; Schema: public; Owner: -
 --
@@ -185,10 +226,6 @@ END;
 $$;
 
 
-SET default_tablespace = '';
-
-SET default_table_access_method = heap;
-
 --
 -- Name: ar_internal_metadata; Type: TABLE; Schema: public; Owner: -
 --
@@ -215,32 +252,6 @@ CREATE TABLE public.trips (
     updated_at timestamp(6) without time zone NOT NULL,
     CONSTRAINT rating_check CHECK (((rating IS NULL) OR ((rating >= 1) AND (rating <= 5))))
 );
-
-
---
--- Name: users; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.users (
-    id bigint NOT NULL,
-    first_name character varying NOT NULL,
-    last_name character varying NOT NULL,
-    email character varying NOT NULL,
-    type character varying NOT NULL,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL,
-    password_digest character varying,
-    trips_count integer,
-    drivers_license_number character varying(100),
-    searchable_full_name tsvector GENERATED ALWAYS AS ((setweight(to_tsvector('english'::regconfig, (COALESCE(first_name, ''::character varying))::text), 'A'::"char") || setweight(to_tsvector('english'::regconfig, (COALESCE(last_name, ''::character varying))::text), 'B'::"char"))) STORED
-);
-
-
---
--- Name: TABLE users; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON TABLE public.users IS 'sensitive_fields|first_name:scrub_text,last_name:scrub_text,email:scrub_email';
 
 
 --
