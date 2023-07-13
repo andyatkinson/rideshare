@@ -140,70 +140,23 @@ DECLARE count bigint;
 $$;
 
 
-SET default_tablespace = '';
-
-SET default_table_access_method = heap;
-
---
--- Name: users; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.users (
-    id bigint NOT NULL,
-    first_name character varying NOT NULL,
-    last_name character varying NOT NULL,
-    email character varying NOT NULL,
-    type character varying NOT NULL,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL,
-    password_digest character varying,
-    trips_count integer,
-    drivers_license_number character varying(100),
-    searchable_full_name tsvector GENERATED ALWAYS AS ((setweight(to_tsvector('english'::regconfig, (COALESCE(first_name, ''::character varying))::text), 'A'::"char") || setweight(to_tsvector('english'::regconfig, (COALESCE(last_name, ''::character varying))::text), 'B'::"char"))) STORED
-);
-
-
---
--- Name: TABLE users; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON TABLE public.users IS 'sensitive_fields|first_name:scrub_text,last_name:scrub_text,email:scrub_email';
-
-
---
--- Name: random_user(); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION public.random_user() RETURNS public.users
-    LANGUAGE sql
-    AS $$
-SELECT * FROM users ORDER BY RANDOM() LIMIT 1;
-$$;
-
-
 --
 -- Name: scrub_email(character varying); Type: FUNCTION; Schema: public; Owner: -
 --
 
 CREATE FUNCTION public.scrub_email(email_address character varying) RETURNS character varying
-    LANGUAGE plpgsql
+    LANGUAGE sql
     AS $$
-BEGIN
-RETURN
-  -- take random MD5 text that is the same
-  -- length as the first part of the email address
-  -- EXCEPT when it's less than 5 chars, since we might
-  -- have a collision. In that case use 5: greatest(length,6)
-  CONCAT(
-    substr(
-      md5(random()::text),
-      0,
-      greatest(length(split_part(email_address, '@', 1)) + 1, 6)
-    ),
-    '@',
-    split_part(email_address, '@', 2)
-  );
-END;
+SELECT
+CONCAT(
+  SUBSTR(
+    MD5(RANDOM()::text),
+    0,
+    GREATEST(LENGTH(SPLIT_PART(email_address, '@', 1)) + 1, 6)
+  ),
+  '@',
+  SPLIT_PART(email_address, '@', 2)
+);
 $$;
 
 
@@ -211,20 +164,22 @@ $$;
 -- Name: scrub_text(character varying); Type: FUNCTION; Schema: public; Owner: -
 --
 
-CREATE FUNCTION public.scrub_text(text character varying) RETURNS character varying
-    LANGUAGE plpgsql
+CREATE FUNCTION public.scrub_text(input character varying) RETURNS character varying
+    LANGUAGE sql
     AS $$
-BEGIN
-RETURN
-  -- replace from position 0, to max(length or 6)
-  substr(
-    md5(random()::text),
-    0,
-    greatest(length(text) + 1, 6)
-  );
-END;
+SELECT
+-- replace from position 0, to max(length or 6)
+SUBSTR(
+  MD5(RANDOM()::text),
+  0,
+  GREATEST(LENGTH(input) + 1, 6)
+);
 $$;
 
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
 
 --
 -- Name: ar_internal_metadata; Type: TABLE; Schema: public; Owner: -
@@ -252,6 +207,32 @@ CREATE TABLE public.trips (
     updated_at timestamp(6) without time zone NOT NULL,
     CONSTRAINT rating_check CHECK (((rating IS NULL) OR ((rating >= 1) AND (rating <= 5))))
 );
+
+
+--
+-- Name: users; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.users (
+    id bigint NOT NULL,
+    first_name character varying NOT NULL,
+    last_name character varying NOT NULL,
+    email character varying NOT NULL,
+    type character varying NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL,
+    password_digest character varying,
+    trips_count integer,
+    drivers_license_number character varying(100),
+    searchable_full_name tsvector GENERATED ALWAYS AS ((setweight(to_tsvector('english'::regconfig, (COALESCE(first_name, ''::character varying))::text), 'A'::"char") || setweight(to_tsvector('english'::regconfig, (COALESCE(last_name, ''::character varying))::text), 'B'::"char"))) STORED
+);
+
+
+--
+-- Name: TABLE users; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON TABLE public.users IS 'sensitive_fields|first_name:scrub_text,last_name:scrub_text,email:scrub_email';
 
 
 --
@@ -841,6 +822,8 @@ ALTER TABLE ONLY public.trip_requests
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20230713150710'),
+('20230713150550'),
 ('20230711015123'),
 ('20230625151410'),
 ('20230620030038'),
