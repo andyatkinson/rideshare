@@ -1,0 +1,28 @@
+attributes:
+  - content
+  - primary_keys
+  - foreign_keys
+  - inheritance
+  - timestamps
+disconnected: false
+filename: erd
+filetype: pdf
+indirect: true
+inheritance: false
+markup: true
+notation: simple
+orientation: horizontal
+polymorphism: true
+sort: true
+warn: true
+title: Rideshare
+exclude: null
+only: null
+only_recursion_depth: null
+prepend_primary: false
+cluster: false
+splines: spline
+fonts:
+ normal: "Arial"
+ bold: "Arial Bold"
+ italic: "Arial Italic"
