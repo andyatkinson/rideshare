@@ -205,7 +205,8 @@ CREATE TABLE public.trips (
     rating integer,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
-    CONSTRAINT rating_check CHECK (((rating IS NULL) OR ((rating >= 1) AND (rating <= 5))))
+    CONSTRAINT chk_rails_4743ddc2d2 CHECK ((completed_at > created_at)),
+    CONSTRAINT rating_check CHECK (((rating >= 1) AND (rating <= 5)))
 );
 
 
@@ -822,6 +823,7 @@ ALTER TABLE ONLY public.trip_requests
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20230714013609'),
 ('20230713150710'),
 ('20230713150550'),
 ('20230711015123'),

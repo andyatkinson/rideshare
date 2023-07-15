@@ -90,7 +90,7 @@ namespace :data_generators do
 
       request.create_trip!(
         driver: drivers.sample,
-        completed_at: 1.minute.ago,
+        completed_at: 1.minute.from_now,
         rating: rating
       )
     end

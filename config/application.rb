@@ -32,5 +32,8 @@ module Rideshare
 
     # Enable Query Logging
     config.active_record.query_log_tags_enabled = true
+
+    # https://www.bigbinary.com/blog/rails-7-adds-setting-for-enumerating-columns-in-select-statements#
+    config.active_record.enumerate_columns_in_select_statements = true
   end
 end

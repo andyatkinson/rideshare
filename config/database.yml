@@ -4,12 +4,13 @@ default: &default
   password:
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   timeout: 5000
-  prepared_statements: true
 
 development:
   host: localhost
   <<: *default
   database: rideshare_development
+  variables:
+    statement_timeout: 5000
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
@@ -24,4 +25,4 @@ production:
   <<: *default
   database: rideshare_production
   variables:
-    statement_timeout: 4000
+    statement_timeout: 5000
