@@ -3,7 +3,7 @@ class Vehicle < ApplicationRecord
 
   attr_accessor :status
 
-  has_many :vehicle_reservations
+  has_many :vehicle_reservations, dependent: :destroy
 
   enum status: {
     draft: VehicleStatus::DRAFT,

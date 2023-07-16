@@ -99,7 +99,7 @@ namespace :data_generators do
   desc "Generate Vehicles and Reservations"
   task vehicles_and_reservations: :environment do |t, args|
     riders = []
-    100.times do |i|
+    10.times do |i|
       fname = Faker::Name.first_name
       lname = Faker::Name.last_name
       riders << Rider.create!(
@@ -125,7 +125,7 @@ namespace :data_generators do
     end
 
     puts "creating trip requests and trips"
-    100.times do |i|
+    10.times do |i|
       request = TripRequest.create!(
         rider: riders.sample,
         start_location: nyc,
@@ -141,7 +141,7 @@ namespace :data_generators do
       )
     end
 
-    # create a reservation
+    # create reservation
     vehicle = Vehicle.order(Arel.sql('RANDOM()')).first
     trip_request = TripRequest.order(Arel.sql('RANDOM()')).first
     starts_at = (rand * 1000).floor.hours.from_now
@@ -152,7 +152,22 @@ namespace :data_generators do
       vehicle: vehicle,
       trip_request: trip_request,
       starts_at: starts_at,
-      ends_at: ends_at
+      ends_at: ends_at,
+      canceled: false
+    )
+    VehicleReservation.create!(
+      vehicle: vehicle,
+      trip_request: trip_request,
+      starts_at: starts_at + 1.hour,
+      ends_at: ends_at + 1.hour,
+      canceled: true
+    )
+    VehicleReservation.create!(
+      vehicle: vehicle,
+      trip_request: trip_request,
+      starts_at: starts_at + 1.hour,
+      ends_at: ends_at + 1.hour,
+      canceled: false
     )
   end
 
