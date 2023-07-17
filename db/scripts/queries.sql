@@ -28,3 +28,14 @@ select count(*),type from users group by type;
 -- update some rows with diverse primary key IDs
 
 -- delete some rows with diverse ids
+
+
+SELECT
+CONCAT(d.first_name, ' ', d.last_name) AS driver_name,
+COUNT(t.id) AS trip_count,
+AVG(t.rating) AS avg_rating,
+AVG(t.completed_at - t.created_at) AS avg_duraton
+FROM trips t
+JOIN users d ON t.driver_id = d.id AND d.type = 'Driver'
+GROUP BY t.driver_id, d.first_name, d.last_name
+ORDER BY COUNT(t.rating) DESC;
