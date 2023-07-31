@@ -327,7 +327,7 @@ CREATE SEQUENCE public.temp_users_id_seq
 
 CREATE TABLE public.trip_positions (
     id bigint NOT NULL,
-    "position" point,
+    "position" point NOT NULL,
     trip_id bigint NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
@@ -831,6 +831,7 @@ ALTER TABLE ONLY public.trip_requests
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20230726020548'),
 ('20230716174139'),
 ('20230714013609'),
 ('20230713150710'),
