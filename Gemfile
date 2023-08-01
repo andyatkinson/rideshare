@@ -17,6 +17,7 @@ gem 'pg_query', '>= 2'
 gem 'pg_search'
 gem 'pgslice', git: 'git@github.com:andyatkinson/pgslice.git'
 gem 'fast_count', git: 'https://github.com/fatkodima/fast_count.git'
+gem 'activerecord-import'
 
 # assets gems default Rails 7 app
 gem 'sprockets-rails'

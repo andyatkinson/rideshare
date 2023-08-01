@@ -120,6 +120,8 @@ GEM
   specs:
     active_record_doctor (1.10.0)
       activerecord (>= 4.2.0)
+    activerecord-import (1.4.1)
+      activerecord (>= 4.2)
     bcrypt (3.1.18)
     benchmark-ips (2.10.0)
     benchmark-memory (0.2.0)
@@ -281,6 +283,7 @@ PLATFORMS
 
 DEPENDENCIES
   active_record_doctor
+  activerecord-import
   bcrypt
   benchmark-ips
   benchmark-memory

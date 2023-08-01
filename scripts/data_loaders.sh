@@ -19,7 +19,8 @@ SELECT
   END,
   NOW(),
   NOW()
-FROM GENERATE_SERIES(1, 100000) seq;
+FROM GENERATE_SERIES(1, 10000000) seq;
 "
 
 psql --dbname rideshare_development -c "$query";
+psql --dbname rideshare_development -c "ANALYZE users";
