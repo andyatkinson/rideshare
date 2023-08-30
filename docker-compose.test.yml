@@ -6,6 +6,7 @@ services:
     container_name: rideshare_db
     environment:
       - POSTGRES_DB=rideshare_test
+      - POSTGRES_PASSWORD=postgres
     ports:
       - '5432'
 
