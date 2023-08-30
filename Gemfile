@@ -13,7 +13,7 @@ gem 'fx' # manage DB Functions
 gem 'scenic' # manage DB Views
 gem 'whenever', require: false # manage scheduled jobs
 gem 'prosopite' # identify N+1 queries
-gem 'pg_query', '>= 2'
+gem 'pg_query', '~> 4.2'
 gem 'pg_search'
 gem 'pgslice', git: 'git@github.com:andyatkinson/pgslice.git'
 gem 'fast_count', git: 'https://github.com/fatkodima/fast_count.git'
