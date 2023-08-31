@@ -1,7 +1,7 @@
 default: &default
   adapter: postgresql
   username: postgres
-  password:
+  password: postgres
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   timeout: 5000
 
@@ -17,7 +17,6 @@ development:
 # Do not set this db to the same as development or production.
 test:
   <<: *default
-  username: root
   host: localhost
   database: rideshare_test
 
