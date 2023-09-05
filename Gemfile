@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', git: 'git@github.com:rails/rails.git'
+gem 'rails', '~> 7.0', git: 'https://github.com/rails/rails.git'
 gem 'pg'
 gem 'puma'
 gem 'geocoder'
@@ -8,14 +8,14 @@ gem 'strong_migrations'
 gem 'fast_jsonapi'
 gem 'jwt' # Json Web Token
 gem 'bcrypt' # Use ActiveModel has_secure_password
-gem 'pghero', git: 'git@github.com:andyatkinson/pghero.git'
+gem 'pghero', git: 'https://github.com/andyatkinson/pghero.git'
 gem 'fx' # manage DB Functions
 gem 'scenic' # manage DB Views
 gem 'whenever', require: false # manage scheduled jobs
 gem 'prosopite' # identify N+1 queries
 gem 'pg_query', '~> 4.2'
 gem 'pg_search'
-gem 'pgslice', git: 'git@github.com:andyatkinson/pgslice.git'
+gem 'pgslice', git: 'https://github.com/andyatkinson/pgslice.git'
 gem 'fast_count', git: 'https://github.com/fatkodima/fast_count.git'
 gem 'activerecord-import'
 
