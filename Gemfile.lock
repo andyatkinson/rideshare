@@ -1,12 +1,12 @@
 GIT
-  remote: git@github.com:andyatkinson/pghero.git
+  remote: https://github.com/andyatkinson/pghero.git
   revision: cec9cf9cd640383b91e3aba4a39010269bb1e2a8
   specs:
     pghero (3.3.3)
       activerecord (>= 6)
 
 GIT
-  remote: git@github.com:andyatkinson/pgslice.git
+  remote: https://github.com/andyatkinson/pgslice.git
   revision: 1e8b5828b6927b908bb3deb8af2a6ff1c33d84cf
   specs:
     pgslice (0.5.0)
@@ -14,8 +14,15 @@ GIT
       thor
 
 GIT
-  remote: git@github.com:rails/rails.git
-  revision: a5fc471b3f4bbd02e6be38dae023526a49e7d049
+  remote: https://github.com/fatkodima/fast_count.git
+  revision: eb3ef87deb9d12ebbb25680048e6ab44d8dc57a4
+  specs:
+    fast_count (0.2.0)
+      activerecord (>= 6.0)
+
+GIT
+  remote: https://github.com/rails/rails.git
+  revision: 0f8377dd7533bc8dd3584786385a2b17df00b575
   specs:
     actioncable (7.1.0.alpha)
       actionpack (= 7.1.0.alpha)
@@ -42,7 +49,7 @@ GIT
       net-imap
       net-pop
       net-smtp
-      rails-dom-testing (~> 2.0)
+      rails-dom-testing (~> 2.2)
     actionpack (7.1.0.alpha)
       actionview (= 7.1.0.alpha)
       activesupport (= 7.1.0.alpha)
@@ -50,7 +57,7 @@ GIT
       rack (>= 2.2.4)
       rack-session (>= 1.0.1)
       rack-test (>= 0.6.3)
-      rails-dom-testing (~> 2.0)
+      rails-dom-testing (~> 2.2)
       rails-html-sanitizer (~> 1.6)
     actiontext (7.1.0.alpha)
       actionpack (= 7.1.0.alpha)
@@ -63,7 +70,7 @@ GIT
       activesupport (= 7.1.0.alpha)
       builder (~> 3.1)
       erubi (~> 1.11)
-      rails-dom-testing (~> 2.0)
+      rails-dom-testing (~> 2.2)
       rails-html-sanitizer (~> 1.6)
     activejob (7.1.0.alpha)
       activesupport (= 7.1.0.alpha)
@@ -73,6 +80,7 @@ GIT
     activerecord (7.1.0.alpha)
       activemodel (= 7.1.0.alpha)
       activesupport (= 7.1.0.alpha)
+      timeout (>= 0.4.0)
     activestorage (7.1.0.alpha)
       actionpack (= 7.1.0.alpha)
       activejob (= 7.1.0.alpha)
@@ -80,10 +88,14 @@ GIT
       activesupport (= 7.1.0.alpha)
       marcel (~> 1.0)
     activesupport (7.1.0.alpha)
+      base64
+      bigdecimal
       concurrent-ruby (~> 1.0, >= 1.0.2)
       connection_pool (>= 2.2.5)
+      drb
       i18n (>= 1.6, < 2)
       minitest (>= 5.1)
+      mutex_m
       tzinfo (~> 2.0)
     rails (7.1.0.alpha)
       actioncable (= 7.1.0.alpha)
@@ -108,24 +120,19 @@ GIT
       thor (~> 1.0, >= 1.2.2)
       zeitwerk (~> 2.6)
 
-GIT
-  remote: https://github.com/fatkodima/fast_count.git
-  revision: 0991b7d5ae37b89dc427fd9adaec31bfdec737a8
-  specs:
-    fast_count (0.1.0)
-      activerecord (>= 6.0)
-
 GEM
   remote: https://rubygems.org/
   specs:
-    active_record_doctor (1.10.0)
+    active_record_doctor (1.12.0)
       activerecord (>= 4.2.0)
-    activerecord-import (1.4.1)
+    activerecord-import (1.5.0)
       activerecord (>= 4.2)
-    bcrypt (3.1.18)
-    benchmark-ips (2.10.0)
+    base64 (0.1.1)
+    bcrypt (3.1.19)
+    benchmark-ips (2.12.0)
     benchmark-memory (0.2.0)
       memory_profiler (~> 1)
+    bigdecimal (3.1.4)
     builder (3.2.4)
     choice (0.2.0)
     chronic (0.10.2)
@@ -135,25 +142,27 @@ GEM
     concurrent-ruby (1.2.2)
     connection_pool (2.4.1)
     crass (1.0.6)
-    database_consistency (1.7.4)
+    database_consistency (1.7.20)
       activerecord (>= 3.2)
     date (3.3.3)
+    drb (2.1.1)
+      ruby2_keywords
     erubi (1.12.0)
     erubis (2.7.0)
-    faker (3.1.0)
+    faker (3.2.1)
       i18n (>= 1.8.11, < 2)
-    faraday (2.7.4)
+    faraday (2.7.10)
       faraday-net_http (>= 2.0, < 3.1)
       ruby2_keywords (>= 0.0.4)
     faraday-net_http (3.0.2)
     fast_jsonapi (1.5)
       activesupport (>= 4.2)
-    fx (0.7.0)
-      activerecord (>= 4.0.0)
-      railties (>= 4.0.0)
-    geocoder (1.8.1)
-    globalid (1.1.0)
-      activesupport (>= 5.0)
+    fx (0.8.0)
+      activerecord (>= 6.0.0)
+      railties (>= 6.0.0)
+    geocoder (1.8.2)
+    globalid (1.2.0)
+      activesupport (>= 6.1)
     google-protobuf (3.24.2-x86_64-darwin)
     google-protobuf (3.24.2-x86_64-linux)
     i18n (1.14.1)
@@ -162,10 +171,11 @@ GEM
       actionpack (>= 6.0.0)
       railties (>= 6.0.0)
     io-console (0.6.0)
-    irb (1.7.1)
-      reline (>= 0.3.0)
+    irb (1.8.1)
+      rdoc
+      reline (>= 0.3.8)
     json (2.6.3)
-    jwt (2.6.0)
+    jwt (2.7.1)
     loofah (2.21.3)
       crass (~> 1.0.2)
       nokogiri (>= 1.12.0)
@@ -177,9 +187,10 @@ GEM
     marcel (1.0.2)
     memory_profiler (1.0.1)
     method_source (1.0.0)
-    mini_mime (1.1.2)
-    minitest (5.18.1)
-    net-imap (0.3.6)
+    mini_mime (1.1.5)
+    minitest (5.19.0)
+    mutex_m (0.1.2)
+    net-imap (0.3.7)
       date
       net-protocol
     net-pop (0.1.2)
@@ -189,21 +200,23 @@ GEM
     net-smtp (0.3.3)
       net-protocol
     nio4r (2.5.9)
-    nokogiri (1.15.3-x86_64-darwin)
+    nokogiri (1.15.4-x86_64-darwin)
       racc (~> 1.4)
-    nokogiri (1.15.3-x86_64-linux)
+    nokogiri (1.15.4-x86_64-linux)
       racc (~> 1.4)
-    pg (1.4.5)
+    pg (1.5.4)
     pg_query (4.2.3)
       google-protobuf (>= 3.22.3)
     pg_search (2.3.6)
       activerecord (>= 5.2)
       activesupport (>= 5.2)
-    prosopite (1.3.2)
+    prosopite (1.3.3)
     pry (0.14.2)
       coderay (~> 1.1)
       method_source (~> 1.0)
-    puma (6.3.0)
+    psych (5.1.0)
+      stringio
+    puma (6.3.1)
       nio4r (~> 2.0)
     racc (1.7.1)
     rack (3.0.8)
@@ -214,7 +227,7 @@ GEM
     rackup (2.1.0)
       rack (>= 3)
       webrick (~> 1.8)
-    rails-dom-testing (2.1.1)
+    rails-dom-testing (2.2.0)
       activesupport (>= 5.0.0)
       minitest
       nokogiri (>= 1.6)
@@ -226,9 +239,9 @@ GEM
     rails-html-sanitizer (1.6.0)
       loofah (~> 2.21)
       nokogiri (~> 1.14)
-    rails-pg-extras (4.12.2)
+    rails-pg-extras (5.3.0)
       rails
-      ruby-pg-extras (= 4.12.2)
+      ruby-pg-extras (= 5.3.0)
     rails_best_practices (1.23.2)
       activesupport
       code_analyzer (~> 0.5.5)
@@ -238,13 +251,15 @@ GEM
       require_all (~> 3.0)
       ruby-progressbar
     rake (13.0.6)
-    reline (0.3.5)
+    rdoc (6.5.0)
+      psych (>= 4.0.0)
+    reline (0.3.8)
       io-console (~> 0.5)
     require_all (3.0.0)
-    rexml (3.2.5)
+    rexml (3.2.6)
     ruby-graphviz (1.2.5)
       rexml
-    ruby-pg-extras (4.12.2)
+    ruby-pg-extras (5.3.0)
       pg
       terminal-table
     ruby-progressbar (1.13.0)
@@ -260,7 +275,8 @@ GEM
       actionpack (>= 5.2)
       activesupport (>= 5.2)
       sprockets (>= 3.0.0)
-    strong_migrations (1.4.2)
+    stringio (3.0.8)
+    strong_migrations (1.6.1)
       activerecord (>= 5.2)
     terminal-table (3.0.2)
       unicode-display_width (>= 1.1.1, < 3)
@@ -270,12 +286,12 @@ GEM
       concurrent-ruby (~> 1.0)
     unicode-display_width (2.4.2)
     webrick (1.8.1)
-    websocket-driver (0.7.5)
+    websocket-driver (0.7.6)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
     whenever (1.0.0)
       chronic (>= 0.6.3)
-    zeitwerk (2.6.8)
+    zeitwerk (2.6.11)
 
 PLATFORMS
   x86_64-darwin-20
@@ -306,7 +322,7 @@ DEPENDENCIES
   prosopite
   pry
   puma
-  rails!
+  rails (~> 7.0)!
   rails-erd
   rails-pg-extras
   rails_best_practices
