@@ -56,6 +56,14 @@ For Rideshare, you'll need a working Ruby application environment and a PostgreS
 
 In addition to what's in this Readme, refer to the [Development Guides](https://github.com/andyatkinson/development_guides) for more Installation and Usage support.
 
+## Data Load
+
+To load a pre-made data dump, run the following script from the root directory:
+
+```sh
+sh scripts/reset_and_load_data_dump.sh
+```
+
 ## High Performance PostgreSQL for Rails
 
 This Rideshare repo started as a side project back in 2019 to share some good development practices and tools.

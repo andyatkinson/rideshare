@@ -11,7 +11,8 @@ mkdir -p tmp
 
 echo "Download dump file"
 curl -L \
-https://github.com/andyatkinson/rideshare/raw/master/rideshare_database_dump.sql.gz \
+https://github.com/andyatkinson/rideshare\
+/raw/master/rideshare_database_dump.sql.gz \
   -o tmp/rideshare_database_dump.sql.gz
 
 echo "Decompress file"
@@ -24,9 +25,13 @@ echo "Re-create the empty database"
 bin/rails db:drop:all
 bin/rails db:create
 
-echo "Load the dump file using psql. This will take a minute..."
-psql --set ON_ERROR_STOP=on --quiet --no-psqlrc --output /dev/null \
-  rideshare_development --file tmp/rideshare_database_dump.sql
+echo "Load the dump file using psql. \
+This will take a minute..."
+psql --set ON_ERROR_STOP=on --quiet \
+  --no-psqlrc \
+  --output /dev/null \
+  rideshare_development \
+  --file tmp/rideshare_database_dump.sql
 
 echo
 echo "done!"
