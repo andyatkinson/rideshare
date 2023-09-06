@@ -17,13 +17,6 @@ SET row_security = off;
 
 
 --
--- Name: temp; Type: SCHEMA; Schema: -; Owner: -
---
-
-CREATE SCHEMA temp;
-
-
---
 -- Name: btree_gist; Type: EXTENSION; Schema: -; Owner: -
 --
 
@@ -52,20 +45,6 @@ COMMENT ON EXTENSION pg_stat_statements IS 'track planning and execution statist
 
 
 --
--- Name: postgres_fdw; Type: EXTENSION; Schema: -; Owner: -
---
-
-CREATE EXTENSION IF NOT EXISTS postgres_fdw WITH SCHEMA public;
-
-
---
--- Name: EXTENSION postgres_fdw; Type: COMMENT; Schema: -; Owner: -
---
-
-COMMENT ON EXTENSION postgres_fdw IS 'foreign-data wrapper for remote PostgreSQL servers';
-
-
---
 -- Name: vehicle_status; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -76,38 +55,28 @@ CREATE TYPE public.vehicle_status AS ENUM (
 
 
 --
--- Name: count_estimate(text); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION public.count_estimate(tbl text) RETURNS text
-    LANGUAGE sql
-    AS $$
-SELECT reltuples::NUMERIC FROM pg_class WHERE relname='tbl';
-$$;
-
-
---
--- Name: counte(text); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION public.counte(tbl text) RETURNS numeric
-    LANGUAGE sql
-    AS $$
-analyze verbose tbl;
-
-SELECT reltuples::NUMERIC FROM pg_class WHERE relname=tbl;
-$$;
-
-
---
 -- Name: fast_count(text, bigint); Type: FUNCTION; Schema: public; Owner: -
 --
 
-CREATE FUNCTION public.fast_count(table_name text, threshold bigint) RETURNS bigint
+CREATE FUNCTION public.fast_count(identifier text, threshold bigint) RETURNS bigint
     LANGUAGE plpgsql
     AS $$
-DECLARE count bigint;
+DECLARE
+  count bigint;
+  table_parts text[];
+  schema_name text;
+  table_name text;
   BEGIN
+    SELECT PARSE_IDENT(identifier) INTO table_parts;
+
+    IF ARRAY_LENGTH(table_parts, 1) = 2 THEN
+      schema_name := ''''|| table_parts[1] ||'''';
+      table_name := ''''|| table_parts[2] ||'''';
+    ELSE
+      schema_name := 'ANY (current_schemas(false))';
+      table_name := ''''|| table_parts[1] ||'''';
+    END IF;
+
     EXECUTE '
       WITH tables_counts AS (
         -- inherited and partitioned tables counts
@@ -116,22 +85,26 @@ DECLARE count bigint;
             (SUM(pg_relation_size(child.oid))::float / (current_setting(''block_size'')::float))::integer AS estimate
         FROM pg_inherits
           INNER JOIN pg_class parent ON pg_inherits.inhparent = parent.oid
-          INNER JOIN pg_class child  ON pg_inherits.inhrelid  = child.oid
-        WHERE parent.relname = ''' || table_name || '''
+          LEFT JOIN pg_namespace n ON n.oid = parent.relnamespace
+          INNER JOIN pg_class child ON pg_inherits.inhrelid = child.oid
+        WHERE n.nspname = '|| schema_name ||' AND
+          parent.relname = '|| table_name ||'
 
         UNION ALL
 
         -- table count
         SELECT
           (reltuples::float / greatest(relpages, 1)) *
-            (pg_relation_size(pg_class.oid)::float / (current_setting(''block_size'')::float))::integer AS estimate
-        FROM pg_class
-        WHERE relname = '''|| table_name ||'''
+            (pg_relation_size(c.oid)::float / (current_setting(''block_size'')::float))::integer AS estimate
+        FROM pg_class c
+          LEFT JOIN pg_namespace n ON n.oid = c.relnamespace
+        WHERE n.nspname = '|| schema_name ||' AND
+          c.relname = '|| table_name ||'
       )
 
       SELECT
         CASE
-        WHEN SUM(estimate) < '|| threshold ||' THEN (SELECT COUNT(*) FROM "'|| table_name ||'")
+        WHEN SUM(estimate) < '|| threshold ||' THEN (SELECT COUNT(*) FROM '|| identifier ||')
         ELSE SUM(estimate)
         END AS count
       FROM tables_counts' INTO count;
@@ -307,18 +280,6 @@ CREATE VIEW public.search_results AS
      JOIN public.users d ON ((t.driver_id = d.id)))
   GROUP BY t.driver_id, d.first_name, d.last_name
   ORDER BY (count(t.rating)) DESC;
-
-
---
--- Name: temp_users_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.temp_users_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
 
 
 --
@@ -722,7 +683,7 @@ CREATE INDEX index_trips_on_trip_request_id ON public.trips USING btree (trip_re
 -- Name: index_users_on_email; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_users_on_email ON public.users USING btree (email);
+CREATE UNIQUE INDEX index_users_on_email ON public.users USING btree (email);
 
 
 --
@@ -751,13 +712,6 @@ CREATE INDEX index_vehicle_reservations_on_vehicle_id ON public.vehicle_reservat
 --
 
 CREATE UNIQUE INDEX index_vehicles_on_name ON public.vehicles USING btree (name);
-
-
---
--- Name: unique_driver_name; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX unique_driver_name ON public.fast_search_results USING btree (driver_name);
 
 
 --
