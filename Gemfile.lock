@@ -22,7 +22,7 @@ GIT
 
 GIT
   remote: https://github.com/rails/rails.git
-  revision: 0f8377dd7533bc8dd3584786385a2b17df00b575
+  revision: 4a08111ec678f4081a21a49adcaba5ccd6276ec6
   specs:
     actioncable (7.1.0.alpha)
       actionpack (= 7.1.0.alpha)
@@ -161,10 +161,10 @@ GEM
       activerecord (>= 6.0.0)
       railties (>= 6.0.0)
     geocoder (1.8.2)
-    globalid (1.2.0)
+    globalid (1.2.1)
       activesupport (>= 6.1)
-    google-protobuf (3.24.2-x86_64-darwin)
-    google-protobuf (3.24.2-x86_64-linux)
+    google-protobuf (3.24.3-x86_64-darwin)
+    google-protobuf (3.24.3-x86_64-linux)
     i18n (1.14.1)
       concurrent-ruby (~> 1.0)
     importmap-rails (1.2.1)
@@ -188,7 +188,7 @@ GEM
     memory_profiler (1.0.1)
     method_source (1.0.0)
     mini_mime (1.1.5)
-    minitest (5.19.0)
+    minitest (5.20.0)
     mutex_m (0.1.2)
     net-imap (0.3.7)
       date
@@ -268,7 +268,7 @@ GEM
       activerecord (>= 4.0.0)
       railties (>= 4.0.0)
     sexp_processor (4.17.0)
-    sprockets (4.2.0)
+    sprockets (4.2.1)
       concurrent-ruby (~> 1.0)
       rack (>= 2.2.4, < 4)
     sprockets-rails (3.4.2)
