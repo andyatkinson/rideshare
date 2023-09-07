@@ -10,7 +10,8 @@ class TripsCheckConstraints < ActiveRecord::Migration[7.1]
         name: "rating_check"
 
       add_check_constraint :trips,
-        "completed_at > created_at"
+        "completed_at > created_at",
+        validate: false # Some existing data in pre-made dump violates this
     end
 
   end

@@ -178,7 +178,6 @@ CREATE TABLE public.trips (
     rating integer,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
-    CONSTRAINT chk_rails_4743ddc2d2 CHECK ((completed_at > created_at)),
     CONSTRAINT rating_check CHECK (((rating >= 1) AND (rating <= 5)))
 );
 
@@ -548,6 +547,14 @@ ALTER TABLE ONLY public.vehicles ALTER COLUMN id SET DEFAULT nextval('public.veh
 
 ALTER TABLE ONLY public.ar_internal_metadata
     ADD CONSTRAINT ar_internal_metadata_pkey PRIMARY KEY (key);
+
+
+--
+-- Name: trips chk_rails_4743ddc2d2; Type: CHECK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE public.trips
+    ADD CONSTRAINT chk_rails_4743ddc2d2 CHECK ((completed_at > created_at)) NOT VALID;
 
 
 --
