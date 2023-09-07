@@ -70,3 +70,11 @@ To load a pre-made data dump, run the following script from the root directory:
 ```sh
 sh scripts/reset_and_load_data_dump.sh
 ```
+
+## UI
+
+Although Rideshare is an API-only app, technically there are some UI components.
+
+Rideshare proudly runs [PgHero](https://github.com/ankane/pghero), which can be reached at <http://localhost:3000/pghero>
+
+<https://i.imgur.com/VduvxSK.png>
