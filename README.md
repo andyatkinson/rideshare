@@ -2,9 +2,13 @@
 
 # Rideshare
 
-Rideshare is a Rails API only app that simulates a portion of a fictional Rideshare company app.
+Rideshare is a Rails API-only app that implements a portion of a fictional Rideshare service.
 
-Since it's an API only app, there is no user interface. You'll interact with the app via the Rails server, console, and command line programs.
+## High Performance PostgreSQL for Rails
+
+This repo started as a side project back in 2019 as a place to demonstrate good practices.
+
+In 2022, it took on a new purpose as the Rails application for exercises and examples in the book [High Performance PostgreSQL for Rails](https://pgrailsbook.com).
 
 Rideshare proudly runs on PostgreSQL. 🐘
 
@@ -16,9 +20,8 @@ To set up Rideshare for development, please read the Prerequisites and Installat
 
 For Rideshare, you'll need a working Ruby application environment and a PostgreSQL server to connect to.
 
-- Ruby `3.2.0` or whatever version is in `.ruby-version`
-    - Use a Ruby version manager to install Ruby
-    - [rbenv](https://github.com/rbenv/rbenv) is recommended
+- Ruby `3.2.2` (check `.ruby-version`)
+    - Use a Ruby version manager like [rbenv](https://github.com/rbenv/rbenv)
 - Bundler. After installing Ruby, run `gem install bundler`
 - (optional) To generate a DB image [Install graphiz](https://voormedia.github.io/rails-erd/install.html)
     `brew install graphviz`
@@ -38,21 +41,25 @@ For Rideshare, you'll need a working Ruby application environment and a PostgreS
 
     To install all the Rideshare gems, run `bundle install`.
 
-    If you run into a gem installation error, please open an Issue. Errors when installing gems with native dependencies like `pg` are common.
-
 1. If all gems were installed successfully, you're ready to set up the database. Run the following commands from your terminal.
+
+    You should have PostgreSQL 15 installed and your server should already be running. Create the databases for the application.
 
     ```sh
     bin/rails db:create
     ```
 
-1. You should now have development and test databases, `rideshare_development` and `rideshare_test`.
+    Apply any pending migrations. Install graphviz if needed (see above).
 
-    Installation is now complete. If you want to confirm more things are working as expected, try running the test suite.
+    ```sh
+    bin/rails db:migrate
+    ```
+
+1. You should now have development and test databases, `rideshare_development` and `rideshare_test`.
 
 1. (Optional) Run `bin/rails test` to run the full test suite. If the suite passes 100%, you're in good shape.
 
-## Installation Guides
+## Development Guides
 
 In addition to what's in this Readme, refer to the [Development Guides](https://github.com/andyatkinson/development_guides) for more Installation and Usage support.
 
@@ -63,11 +70,3 @@ To load a pre-made data dump, run the following script from the root directory:
 ```sh
 sh scripts/reset_and_load_data_dump.sh
 ```
-
-## High Performance PostgreSQL for Rails
-
-This Rideshare repo started as a side project back in 2019 to share some good development practices and tools.
-
-In 2022 it took on a new purpose as the Rails application to base exercises on for the book [High Performance PostgreSQL for Rails](https://pgrailsbook.com).
-
-Going forward, Rideshare will exclusively focus on the needs of the book, and the original purpose will be retired.
