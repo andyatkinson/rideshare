@@ -1,9 +1,8 @@
-
 # https://access.crunchydata.com/documentation/postgresql11/11.5/pgbench.html
 pgbench
   --host localhost
   --port 5432
-  --username root
+  --username postgres
   --protocol prepared
   --time 60
   --jobs 8

@@ -1,12 +1,14 @@
+# https://circleci.com/developer/orbs/orb/circleci/ruby
 version: 2.1
 
+# https://circleci.com/developer/orbs/orb/circleci/ruby
 orbs:
-  ruby: circleci/ruby@2.0.0
+  ruby: circleci/ruby@2.1.0
 
 jobs:
   build:
     docker:
-      - image: cimg/ruby:3.2.0
+      - image: cimg/ruby:3.2.2
     steps:
       - checkout
       - ruby/install-deps
@@ -14,8 +16,8 @@ jobs:
   test:
     parallelism: 3
     docker:
-      - image: cimg/ruby:3.2.0
-      - image: cimg/postgres:13.6
+      - image: cimg/ruby:3.2.2
+      - image: cimg/postgres:15.4
         environment:
           POSTGRES_USER: postgres
           POSTGRES_DB: rideshare_test
@@ -24,8 +26,6 @@ jobs:
       BUNDLE_JOBS: "3"
       BUNDLE_RETRY: "3"
       PGHOST: 127.0.0.1
-      PGUSER: root
-      PGPASSWORD: ""
       RAILS_ENV: test
       PGSLICE_URL: "postgres://postgres:postgres@localhost:5432/rideshare_test"
     steps:
