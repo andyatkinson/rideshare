@@ -8,7 +8,7 @@ Demonstrations of each of these items can be found in the app
     * Unique constraints
     * Exclusion
 * Code Quality
-  * Rails best practices gem (`rails_best_practices .`)
+  * Rails best practices gem (`bin/rails_best_practices .`)
   * Strong Migrations
   * Use `delegate` in models
   * Strong Params
