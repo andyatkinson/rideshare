@@ -77,4 +77,4 @@ Although Rideshare is an API-only app, technically there are some UI components.
 
 Rideshare proudly runs [PgHero](https://github.com/ankane/pghero), which can be reached at <http://localhost:3000/pghero>
 
-<https://i.imgur.com/VduvxSK.png>
+![Screenshot of PgHero for Rideshare](https://i.imgur.com/VduvxSK.png)
