@@ -1,12 +1,13 @@
 default: &default
+  host: localhost
   adapter: postgresql
-  username: postgres
-  password: postgres
+  username: rideshare_user # Run: sh scripts/db_setup.sh
+  # password: from ~/.pgpass. Run: sh scripts/db_setup.sh
+  schema: rideshare_schema
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   timeout: 5000
 
 development:
-  host: localhost
   <<: *default
   database: rideshare_development
   variables:
@@ -17,11 +18,4 @@ development:
 # Do not set this db to the same as development or production.
 test:
   <<: *default
-  host: localhost
   database: rideshare_test
-
-production:
-  <<: *default
-  database: rideshare_production
-  variables:
-    statement_timeout: 5000

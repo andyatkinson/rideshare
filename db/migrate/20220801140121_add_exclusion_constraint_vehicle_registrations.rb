@@ -1,6 +1,8 @@
 class AddExclusionConstraintVehicleRegistrations < ActiveRecord::Migration[7.0]
   def change
 
+    # NOTE: Depends on btree_gist extension being created in scripts/db_setup.sh by superuser
+    #
     # Prevent overlapping reservations for
     # the same vehicle
     #
@@ -11,12 +13,9 @@ class AddExclusionConstraintVehicleRegistrations < ActiveRecord::Migration[7.0]
     # - a reservation may be canceled
     safety_assured do
       execute <<-SQL
-
-      CREATE EXTENSION btree_gist;
-
       ALTER TABLE vehicle_reservations ADD CONSTRAINT non_overlapping_vehicle_registration
       EXCLUDE USING gist (
-        vehicle_id WITH =,
+        int4range(vehicle_id, vehicle_id, '[]') WITH =,
         tstzrange(starts_at, ends_at) WITH &&
       )
       WHERE (not canceled)
