@@ -12,6 +12,7 @@ export APP_DB_NAME=rideshare_development
 export APP_USER=rideshare_user
 export REPL_USER=repl # for replication
 export APP_SCHEMA_NAME=rideshare_schema
+export RIDESHARE_DB_URL=postgres://postgres:@localhost:5432/rideshare_development
 
 echo "%%%%%%%%%%%"
 echo "Rideshare main app DB"
@@ -21,17 +22,14 @@ echo "%%%%%%%%%%%"
 echo "SELECT 'CREATE USER $APP_USER' WHERE NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = '$APP_USER')\gexec" | psql $DB_URL
 echo "SELECT 'CREATE USER $REPL_USER' WHERE NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = '$REPL_USER')\gexec" | psql $DB_URL
 
-# SCHEMA
-psql $DB_URL -c "CREATE SCHEMA IF NOT EXISTS $APP_SCHEMA_NAME"
-
-# SEARCH PATH
-psql $DB_URL -c "ALTER DATABASE $APP_DB_NAME SET SEARCH_PATH TO $APP_SCHEMA_NAME"
-
 # APP DB
 # Credit: https://stackoverflow.com/a/56040183/126688
 echo "Creating datbase $APP_DB_NAME"
 echo "SELECT 'CREATE DATABASE $APP_DB_NAME' WHERE NOT EXISTS (SELECT datname FROM pg_database WHERE datname = '$APP_DB_NAME')\gexec" | psql $DB_URL;
 psql $DB_URL -c "ALTER DATABASE $APP_DB_NAME OWNER TO $APP_USER"
+
+
+
 
 # PRIVILEGES
 psql $DB_URL -c "ALTER DEFAULT PRIVILEGES FOR ROLE $APP_USER GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO $APP_USER;"
@@ -55,6 +53,13 @@ psql $DB_URL -c "GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA $APP_SCHEMA_NAME TO $A
 
 # CONNECT
 psql $DB_URL -c "GRANT CONNECT ON DATABASE $APP_DB_NAME TO $APP_USER;"
+
+# SCHEMA
+psql $RIDESHARE_DB_URL -c "CREATE SCHEMA AUTHORIZATION $APP_SCHEMA_NAME"
+psql $RIDESHARE_DB_URL -c "CREATE SCHEMA IF NOT EXISTS $APP_SCHEMA_NAME AUTHORIZATION $APP_USER"
+
+# SEARCH PATH
+psql $DB_URL -c "ALTER DATABASE $APP_DB_NAME SET SEARCH_PATH TO $APP_SCHEMA_NAME"
 
 # Load test script
 sh scripts/setup_db_test.sh
