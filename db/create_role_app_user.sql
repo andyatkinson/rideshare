@@ -2,7 +2,7 @@
 --
 CREATE ROLE app WITH
   LOGIN
-  ENCRYPTED PASSWORD ':RIDESHARE_DB_PASSWORD'
+  ENCRYPTED PASSWORD :'password_to_save' -- https://stackoverflow.com/a/72985243/126688
   CONNECTION LIMIT 90 -- because of postgres default of 100
   IN ROLE readwrite_users;
 

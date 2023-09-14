@@ -61,6 +61,16 @@ Front-end technologies were removed because this is an API only app.
 
     You should have PostgreSQL installed and your local machine. Normally you'd use `bin/rails db:create` but Rideshare has custom setup.
 
+    On MacOS run: export RIDESHARE_DB_PASSWORD=$(openssl rand -base64 12)
+
+    This generates a strong password like '2C6uw3LprgUMwSLQ' which is used in scripts.
+
+    To confirm the value run "echo $RIDESHARE_DB_PASSWORD"
+
+    You may also enter this password into the file ~/.pgpass
+
+    Once that's set, run the following script.
+
     ```sh
     sh db/setup.sh
     ```
@@ -70,6 +80,27 @@ Front-end technologies were removed because this is an API only app.
     ```sh
     bin/rails db:migrate
     ```
+## .pgpass
+
+Below is an example of the `~/.pgpass` file.
+
+```sh
+> cat ~/.pgpass
+localhost:5432:rideshare_development:owner:HSTnDDgFtyW9fyFI
+localhost:5432:rideshare_development:app:HSTnDDgFtyW9fyFI
+```
+
+This allows you to authenticate without the password (which comes from ~/.pgpass)
+
+```sh
+psql "postgres://app@localhost:5432/rideshare_development"
+```
+
+Or even:
+
+```sh
+psql -U owner -d rideshare_development
+```
 
 ## Installation Steps (Test)
 

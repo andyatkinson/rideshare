@@ -1,10 +1,10 @@
 export DB_URL="postgres://postgres:@localhost:5432/postgres"
 
 # roles
-psql $DB_URL -a -f db/create_role_owner.sql
+psql $DB_URL -v password_to_save=$RIDESHARE_DB_PASSWORD -a -f db/create_role_owner.sql
 psql $DB_URL -a -f db/create_role_readwrite_users.sql
 psql $DB_URL -a -f db/create_role_readonly_users.sql
-psql $DB_URL -a -f db/create_role_app_user.sql
+psql $DB_URL -v password_to_save=$RIDESHARE_DB_PASSWORD -a -f db/create_role_app_user.sql
 
 # database
 psql $DB_URL -a -f db/create_database.sql
