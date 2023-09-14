@@ -1,6 +1,6 @@
 export DB_URL=postgres://postgres:@localhost:5432/postgres # run as OS user/superuser/admin
 export APP_TEST_DB_NAME=rideshare_test
-export APP_TEST_USER=rideshare_admin
+export APP_TEST_USER=rideshare_test
 export TEST_DB_URL=postgres://postgres:@localhost:5432/rideshare_test # run as OS user/superuser/admin
 
 echo "%%%%%%%%%%%"
@@ -8,7 +8,7 @@ echo "Test DB"
 echo "%%%%%%%%%%%"
 
 # ROLES
-echo "SELECT 'CREATE USER $APP_TEST_USER WITH LOGIN ENCRYPTED PASSWORD "$PG_ROLE_PASSWORD"' WHERE NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = '$APP_TEST_USER')\gexec" | psql $DB_URL
+echo "SELECT 'CREATE USER $APP_TEST_USER WITH LOGIN' WHERE NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = '$APP_TEST_USER')\gexec" | psql $DB_URL
 
 # DATABASE
 echo "Creating database $APP_TEST_DB_NAME"

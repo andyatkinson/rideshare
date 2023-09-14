@@ -12,4 +12,4 @@ ALTER ROLE app SET lock_timeout = 750;
 -- v9.6+
 ALTER ROLE app SET idle_in_transaction_session_timeout = 1000;
 
-ALTER ROLE app SET search_path = rideshare_development;
+ALTER ROLE app SET search_path = rideshare;
