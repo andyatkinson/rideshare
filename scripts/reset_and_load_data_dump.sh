@@ -23,14 +23,13 @@ du -h tmp/rideshare_database_dump.sql
 
 echo "Re-create the empty database"
 bin/rails db:drop:all
-bin/rails db:create
+sh db/setup.sh
 
 echo "Load the dump file using psql. \
 This will take a minute..."
-psql --set ON_ERROR_STOP=on --quiet \
+psql $DATABASE_URL --set ON_ERROR_STOP=on --quiet \
   --no-psqlrc \
   --output /dev/null \
-  rideshare_development \
   --file tmp/rideshare_database_dump.sql
 
 echo

@@ -17,31 +17,10 @@ SET row_security = off;
 
 
 --
--- Name: btree_gist; Type: EXTENSION; Schema: -; Owner: -
+-- Name: rideshare; Type: SCHEMA; Schema: -; Owner: -
 --
 
-CREATE EXTENSION IF NOT EXISTS btree_gist WITH SCHEMA public;
-
-
---
--- Name: EXTENSION btree_gist; Type: COMMENT; Schema: -; Owner: -
---
-
-COMMENT ON EXTENSION btree_gist IS 'support for indexing common datatypes in GiST';
-
-
---
--- Name: pg_stat_statements; Type: EXTENSION; Schema: -; Owner: -
---
-
-CREATE EXTENSION IF NOT EXISTS pg_stat_statements WITH SCHEMA public;
-
-
---
--- Name: EXTENSION pg_stat_statements; Type: COMMENT; Schema: -; Owner: -
---
-
-COMMENT ON EXTENSION pg_stat_statements IS 'track planning and execution statistics of all SQL statements executed';
+CREATE SCHEMA rideshare;
 
 
 --
@@ -570,7 +549,7 @@ ALTER TABLE ONLY public.locations
 --
 
 ALTER TABLE ONLY public.vehicle_reservations
-    ADD CONSTRAINT non_overlapping_vehicle_registration EXCLUDE USING gist (vehicle_id WITH =, tstzrange(starts_at, ends_at) WITH &&) WHERE ((NOT canceled));
+    ADD CONSTRAINT non_overlapping_vehicle_registration EXCLUDE USING gist (int4range(vehicle_id, vehicle_id, '[]'::text) WITH =, tstzrange(starts_at, ends_at) WITH &&) WHERE ((NOT canceled));
 
 
 --

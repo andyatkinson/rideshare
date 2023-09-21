@@ -4,15 +4,15 @@ class CreateTripPositionsPartitionedIntermediateTable < ActiveRecord::Migration[
       execute <<-SQL.squish
       BEGIN;
 
-      CREATE TABLE "public"."trip_positions_intermediate" (
-        LIKE "public"."trip_positions"
+      CREATE TABLE trip_positions_intermediate (
+        LIKE trip_positions
         INCLUDING DEFAULTS
         INCLUDING CONSTRAINTS
         INCLUDING STORAGE
         INCLUDING COMMENTS
       ) PARTITION BY RANGE ("created_at");
 
-      COMMENT ON TABLE "public"."trip_positions_intermediate"
+      COMMENT ON TABLE trip_positions_intermediate
       IS 'column:created_at,period:month,cast:date,version:3';
 
       COMMIT;
