@@ -36,7 +36,7 @@ Front-end technologies were removed because this is an API only app.
 
 ### PostgreSQL
 
-- On MacOS, [Postgres.app](https://postgresapp.com) is the recommended way to install it
+- On macOS, [Postgres.app](https://postgresapp.com) is the recommended way to install it
 - Currently on PostgreSQL 16 (2023)
 - run `export RIDESHARE_DB_PASSWORD=<secret value here>` before running setup scripts (see below)
 - Configures PostgreSQL following [My GOTO Postgres Configuration for Web Services](https://tightlycoupled.io/my-goto-postgres-configuration-for-web-services/)
@@ -60,7 +60,7 @@ Front-end technologies were removed because this is an API only app.
 
     Normally you'd run `bin/rails db:create` to create databases, but Rideshare has a custom setup.
 
-    On MacOS run, for a brand new installation:
+    On macOS run, for a brand new installation:
 
     ```sh
     export RIDESHARE_DB_PASSWORD=$(openssl rand -base64 12)
