@@ -60,12 +60,15 @@ Front-end technologies were removed because this is an API only app.
 
     Normally you'd run `bin/rails db:create` to create databases, but Rideshare has a custom setup.
 
-    On MacOS run:
+    On MacOS run, for a brand new installation:
 
     ```sh
     export RIDESHARE_DB_PASSWORD=$(openssl rand -base64 12)
     ```
-    This sets an environment variable with a password like '2C6uw3LprgUMwSLQ' that will be used when creating roles.
+
+    For existing credentials (upgrades), set RIDESHARE_DB_PASSWORD using the password defined in ~/.pgpass.
+
+    This sets an environment variable with a value like '2C6uw3LprgUMwSLQ' that will be used when creating roles.
 
     Create the file `~/.pgpass` and refer to the sample file in the `postgresql` directory of this project, filling in your details.
 
@@ -74,6 +77,10 @@ Front-end technologies were removed because this is an API only app.
     ```sh
     sh db/setup.sh
     ```
+
+    Set up DATABASE_URL, which is used locally in `config/database.yml`. Use the `owner` role which is a readwrite role, and should have permissions to modify the schema, creating tables in the `rideshare` PostgreSQL schema.
+
+    Try connecting with `psql $DATABASE_URL` and run `\dn` from psql. You should see the `rideshare` schema and all the tables created in that schema.
 
     Run pending migrations. You may need to install graphviz (see above) to update the ERD.
 
