@@ -80,6 +80,8 @@ Front-end technologies were removed because this is an API only app.
 
     Set up DATABASE_URL, which is used locally in `config/database.yml`. Use the `owner` role which is a readwrite role, and should have permissions to modify the schema, creating tables in the `rideshare` PostgreSQL schema.
 
+    export DATABASE_URL="postgres://owner:@localhost:5432/rideshare_development"
+
     Try connecting with `psql $DATABASE_URL` and run `\dn` from psql. You should see the `rideshare` schema and all the tables created in that schema.
 
     Run pending migrations. You may need to install graphviz (see above) to update the ERD.
@@ -101,10 +103,10 @@ localhost:5432:rideshare_development:app:HSTnDDgFtyW9fyFI
 Authenticate without the password (supplied from from `~/.pgpass`)
 
 ```sh
-psql "postgres://app@localhost:5432/rideshare_development"
+psql $DATABASE_URL
 ```
 
-Or even:
+Or:
 
 ```sh
 psql -U owner -d rideshare_development
@@ -127,7 +129,9 @@ Refer to `.circleci/config.yml` for the Circle CI config.
 
 ## Development Guides
 
-In addition to this Readme, [Development Guides](https://github.com/andyatkinson/development_guides) go into greater depth for Rideshare.
+In addition to this Readme, [Development Guides](https://github.com/andyatkinson/development_guides) go into greater depth for setting up your machine for Rideshare development.
+
+For Guides specific to this repo, check [Guides](/GUIDES.md).
 
 ## Data Load
 
