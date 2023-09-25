@@ -1,19 +1,15 @@
 nyc:
   address: New York, NY
-  latitude: 40.7143528
-  longitude: -74.0059731
+  position: "(40.7143528,-74.0059731)"
 
 comedy_cellar:
-  address: 117 MacDougal St, New York, NY 10012
-  latitude: 40.7303492
-  longitude: -74.0003215
+  address: "117 MacDougal St, New York, NY 10012"
+  position: "(40.7303492,-74.0003215)"
 
 bos:
   address: Boston, MA
-  latitude: 42.361145
-  longitude: -71.057083
+  position: "(42.361145,-71.057083)"
 
 jfk:
   address: JFK Airport
-  latitude: 40.6413111
-  longitude: -73.7781391
+  position: "(40.6413111,-73.7781391)"
