@@ -9,7 +9,72 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
+ALTER TABLE IF EXISTS ONLY rideshare.trip_requests DROP CONSTRAINT IF EXISTS fk_rails_fa2679b626;
+ALTER TABLE IF EXISTS ONLY rideshare.trips DROP CONSTRAINT IF EXISTS fk_rails_e7560abc33;
+ALTER TABLE IF EXISTS ONLY rideshare.trip_requests DROP CONSTRAINT IF EXISTS fk_rails_c17a139554;
+ALTER TABLE IF EXISTS ONLY rideshare.trip_positions DROP CONSTRAINT IF EXISTS fk_rails_9688ac8706;
+ALTER TABLE IF EXISTS ONLY rideshare.vehicle_reservations DROP CONSTRAINT IF EXISTS fk_rails_7edc8e666a;
+ALTER TABLE IF EXISTS ONLY rideshare.trips DROP CONSTRAINT IF EXISTS fk_rails_6d92acb430;
+ALTER TABLE IF EXISTS ONLY rideshare.vehicle_reservations DROP CONSTRAINT IF EXISTS fk_rails_59996232fc;
+ALTER TABLE IF EXISTS ONLY rideshare.trip_requests DROP CONSTRAINT IF EXISTS fk_rails_3fdebbfaca;
+DROP INDEX IF EXISTS rideshare.index_vehicles_on_name;
+DROP INDEX IF EXISTS rideshare.index_vehicle_reservations_on_vehicle_id;
+DROP INDEX IF EXISTS rideshare.index_users_on_searchable_full_name;
+DROP INDEX IF EXISTS rideshare.index_users_on_last_name;
+DROP INDEX IF EXISTS rideshare.index_users_on_email;
+DROP INDEX IF EXISTS rideshare.index_trips_on_trip_request_id;
+DROP INDEX IF EXISTS rideshare.index_trips_on_rating;
+DROP INDEX IF EXISTS rideshare.index_trips_on_driver_id;
+DROP INDEX IF EXISTS rideshare.index_trip_requests_on_start_location_id;
+DROP INDEX IF EXISTS rideshare.index_trip_requests_on_rider_id;
+DROP INDEX IF EXISTS rideshare.index_trip_requests_on_end_location_id;
+DROP INDEX IF EXISTS rideshare.index_locations_on_address;
+ALTER TABLE IF EXISTS ONLY rideshare.vehicles DROP CONSTRAINT IF EXISTS vehicles_pkey;
+ALTER TABLE IF EXISTS ONLY rideshare.vehicle_reservations DROP CONSTRAINT IF EXISTS vehicle_reservations_pkey;
+ALTER TABLE IF EXISTS ONLY rideshare.users DROP CONSTRAINT IF EXISTS users_pkey;
+ALTER TABLE IF EXISTS ONLY rideshare.trips DROP CONSTRAINT IF EXISTS trips_pkey;
+ALTER TABLE IF EXISTS ONLY rideshare.trip_requests DROP CONSTRAINT IF EXISTS trip_requests_pkey;
+ALTER TABLE IF EXISTS ONLY rideshare.trip_positions DROP CONSTRAINT IF EXISTS trip_positions_pkey;
+ALTER TABLE IF EXISTS ONLY rideshare.trip_positions_intermediate_default DROP CONSTRAINT IF EXISTS trip_positions_intermediate_default_pkey;
+ALTER TABLE IF EXISTS ONLY rideshare.schema_migrations DROP CONSTRAINT IF EXISTS schema_migrations_pkey;
+ALTER TABLE IF EXISTS ONLY rideshare.vehicle_reservations DROP CONSTRAINT IF EXISTS non_overlapping_vehicle_registration;
+ALTER TABLE IF EXISTS ONLY rideshare.locations DROP CONSTRAINT IF EXISTS locations_pkey;
+ALTER TABLE IF EXISTS rideshare.trips DROP CONSTRAINT IF EXISTS chk_rails_4743ddc2d2;
+ALTER TABLE IF EXISTS ONLY rideshare.ar_internal_metadata DROP CONSTRAINT IF EXISTS ar_internal_metadata_pkey;
+ALTER TABLE IF EXISTS rideshare.vehicles ALTER COLUMN id DROP DEFAULT;
+ALTER TABLE IF EXISTS rideshare.vehicle_reservations ALTER COLUMN id DROP DEFAULT;
+ALTER TABLE IF EXISTS rideshare.users ALTER COLUMN id DROP DEFAULT;
+ALTER TABLE IF EXISTS rideshare.trips ALTER COLUMN id DROP DEFAULT;
+ALTER TABLE IF EXISTS rideshare.trip_requests ALTER COLUMN id DROP DEFAULT;
+ALTER TABLE IF EXISTS rideshare.trip_positions ALTER COLUMN id DROP DEFAULT;
+ALTER TABLE IF EXISTS rideshare.locations ALTER COLUMN id DROP DEFAULT;
+DROP SEQUENCE IF EXISTS rideshare.vehicles_id_seq;
+DROP TABLE IF EXISTS rideshare.vehicles;
+DROP SEQUENCE IF EXISTS rideshare.vehicle_reservations_id_seq;
+DROP TABLE IF EXISTS rideshare.vehicle_reservations;
+DROP SEQUENCE IF EXISTS rideshare.users_id_seq;
+DROP SEQUENCE IF EXISTS rideshare.trips_id_seq;
+DROP SEQUENCE IF EXISTS rideshare.trip_requests_id_seq;
+DROP TABLE IF EXISTS rideshare.trip_requests;
+DROP TABLE IF EXISTS rideshare.trip_positions_intermediate_default;
+DROP TABLE IF EXISTS rideshare.trip_positions_intermediate;
+DROP SEQUENCE IF EXISTS rideshare.trip_positions_id_seq;
+DROP TABLE IF EXISTS rideshare.trip_positions;
+DROP VIEW IF EXISTS rideshare.search_results;
+DROP TABLE IF EXISTS rideshare.schema_migrations;
+DROP SEQUENCE IF EXISTS rideshare.locations_id_seq;
+DROP TABLE IF EXISTS rideshare.locations;
+DROP MATERIALIZED VIEW IF EXISTS rideshare.fast_search_results;
+DROP TABLE IF EXISTS rideshare.users;
+DROP TABLE IF EXISTS rideshare.trips;
+DROP TABLE IF EXISTS rideshare.ar_internal_metadata;
+DROP FUNCTION IF EXISTS rideshare.scrub_text(input character varying);
+DROP FUNCTION IF EXISTS rideshare.scrub_email(email_address character varying);
+DROP FUNCTION IF EXISTS rideshare.fast_count(identifier text, threshold bigint);
+DROP TYPE IF EXISTS rideshare.vehicle_status;
+DROP SCHEMA IF EXISTS rideshare;
 --
+-- TOC entry 6 (class 2615 OID 20167)
 -- Name: rideshare; Type: SCHEMA; Schema: -; Owner: -
 --
 
@@ -17,16 +82,7 @@ CREATE SCHEMA rideshare;
 
 
 --
--- Name: vehicle_status; Type: TYPE; Schema: public; Owner: -
---
-
-CREATE TYPE public.vehicle_status AS ENUM (
-    'draft',
-    'published'
-);
-
-
---
+-- TOC entry 893 (class 1247 OID 20344)
 -- Name: vehicle_status; Type: TYPE; Schema: rideshare; Owner: -
 --
 
@@ -37,102 +93,7 @@ CREATE TYPE rideshare.vehicle_status AS ENUM (
 
 
 --
--- Name: fast_count(text, bigint); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION public.fast_count(identifier text, threshold bigint) RETURNS bigint
-    LANGUAGE plpgsql
-    AS $$
-DECLARE
-  count bigint;
-  table_parts text[];
-  schema_name text;
-  table_name text;
-  BEGIN
-    SELECT PARSE_IDENT(identifier) INTO table_parts;
-
-    IF ARRAY_LENGTH(table_parts, 1) = 2 THEN
-      schema_name := ''''|| table_parts[1] ||'''';
-      table_name := ''''|| table_parts[2] ||'''';
-    ELSE
-      schema_name := 'ANY (current_schemas(false))';
-      table_name := ''''|| table_parts[1] ||'''';
-    END IF;
-
-    EXECUTE '
-      WITH tables_counts AS (
-        -- inherited and partitioned tables counts
-        SELECT
-          ((SUM(child.reltuples::float) / greatest(SUM(child.relpages), 1))) *
-            (SUM(pg_relation_size(child.oid))::float / (current_setting(''block_size'')::float))::integer AS estimate
-        FROM pg_inherits
-          INNER JOIN pg_class parent ON pg_inherits.inhparent = parent.oid
-          LEFT JOIN pg_namespace n ON n.oid = parent.relnamespace
-          INNER JOIN pg_class child ON pg_inherits.inhrelid = child.oid
-        WHERE n.nspname = '|| schema_name ||' AND
-          parent.relname = '|| table_name ||'
-
-        UNION ALL
-
-        -- table count
-        SELECT
-          (reltuples::float / greatest(relpages, 1)) *
-            (pg_relation_size(c.oid)::float / (current_setting(''block_size'')::float))::integer AS estimate
-        FROM pg_class c
-          LEFT JOIN pg_namespace n ON n.oid = c.relnamespace
-        WHERE n.nspname = '|| schema_name ||' AND
-          c.relname = '|| table_name ||'
-      )
-
-      SELECT
-        CASE
-        WHEN SUM(estimate) < '|| threshold ||' THEN (SELECT COUNT(*) FROM '|| identifier ||')
-        ELSE SUM(estimate)
-        END AS count
-      FROM tables_counts' INTO count;
-    RETURN count;
-  END
-$$;
-
-
---
--- Name: scrub_email(character varying); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION public.scrub_email(email_address character varying) RETURNS character varying
-    LANGUAGE sql
-    AS $$
-SELECT
-CONCAT(
-  SUBSTR(
-    MD5(RANDOM()::text),
-    0,
-    GREATEST(LENGTH(SPLIT_PART(email_address, '@', 1)) + 1, 6)
-  ),
-  '@',
-  SPLIT_PART(email_address, '@', 2)
-);
-$$;
-
-
---
--- Name: scrub_text(character varying); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION public.scrub_text(input character varying) RETURNS character varying
-    LANGUAGE sql
-    AS $$
-SELECT
--- replace from position 0, to max(length or 6)
-SUBSTR(
-  MD5(RANDOM()::text),
-  0,
-  GREATEST(LENGTH(input) + 1, 6)
-);
-$$;
-
-
---
+-- TOC entry 247 (class 1255 OID 20404)
 -- Name: fast_count(text, bigint); Type: FUNCTION; Schema: rideshare; Owner: -
 --
 
@@ -192,6 +153,7 @@ $$;
 
 
 --
+-- TOC entry 248 (class 1255 OID 20405)
 -- Name: scrub_email(character varying); Type: FUNCTION; Schema: rideshare; Owner: -
 --
 
@@ -212,6 +174,7 @@ $$;
 
 
 --
+-- TOC entry 249 (class 1255 OID 20406)
 -- Name: scrub_text(character varying); Type: FUNCTION; Schema: rideshare; Owner: -
 --
 
@@ -233,337 +196,7 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
--- Name: ar_internal_metadata; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.ar_internal_metadata (
-    key character varying NOT NULL,
-    value character varying,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
-);
-
-
---
--- Name: trips; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.trips (
-    id bigint NOT NULL,
-    trip_request_id bigint NOT NULL,
-    driver_id integer NOT NULL,
-    completed_at timestamp without time zone,
-    rating integer,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL,
-    CONSTRAINT rating_check CHECK (((rating >= 1) AND (rating <= 5)))
-);
-
-
---
--- Name: users; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.users (
-    id bigint NOT NULL,
-    first_name character varying NOT NULL,
-    last_name character varying NOT NULL,
-    email character varying NOT NULL,
-    type character varying NOT NULL,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL,
-    password_digest character varying,
-    trips_count integer,
-    drivers_license_number character varying(100),
-    searchable_full_name tsvector GENERATED ALWAYS AS ((setweight(to_tsvector('english'::regconfig, (COALESCE(first_name, ''::character varying))::text), 'A'::"char") || setweight(to_tsvector('english'::regconfig, (COALESCE(last_name, ''::character varying))::text), 'B'::"char"))) STORED
-);
-
-
---
--- Name: TABLE users; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON TABLE public.users IS 'sensitive_fields|first_name:scrub_text,last_name:scrub_text,email:scrub_email';
-
-
---
--- Name: fast_search_results; Type: MATERIALIZED VIEW; Schema: public; Owner: -
---
-
-CREATE MATERIALIZED VIEW public.fast_search_results AS
- SELECT concat(d.first_name, ' ', d.last_name) AS driver_name,
-    avg(t.rating) AS avg_rating,
-    count(t.rating) AS trip_count
-   FROM (public.trips t
-     JOIN public.users d ON ((t.driver_id = d.id)))
-  GROUP BY t.driver_id, d.first_name, d.last_name
-  ORDER BY (count(t.rating)) DESC
-  WITH NO DATA;
-
-
---
--- Name: locations; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.locations (
-    id bigint NOT NULL,
-    address character varying NOT NULL,
-    latitude numeric(15,10) NOT NULL,
-    longitude numeric(15,10) NOT NULL,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL,
-    city character varying,
-    state character(2)
-);
-
-
---
--- Name: locations_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.locations_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: locations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.locations_id_seq OWNED BY public.locations.id;
-
-
---
--- Name: schema_migrations; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.schema_migrations (
-    version character varying NOT NULL
-);
-
-
---
--- Name: search_results; Type: VIEW; Schema: public; Owner: -
---
-
-CREATE VIEW public.search_results AS
- SELECT concat(d.first_name, ' ', d.last_name) AS driver_name,
-    avg(t.rating) AS avg_rating,
-    count(t.rating) AS trip_count
-   FROM (public.trips t
-     JOIN public.users d ON ((t.driver_id = d.id)))
-  GROUP BY t.driver_id, d.first_name, d.last_name
-  ORDER BY (count(t.rating)) DESC;
-
-
---
--- Name: trip_positions; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.trip_positions (
-    id bigint NOT NULL,
-    "position" point NOT NULL,
-    trip_id bigint NOT NULL,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
-);
-
-
---
--- Name: trip_positions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.trip_positions_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: trip_positions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.trip_positions_id_seq OWNED BY public.trip_positions.id;
-
-
---
--- Name: trip_positions_intermediate; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.trip_positions_intermediate (
-    id bigint DEFAULT nextval('public.trip_positions_id_seq'::regclass) NOT NULL,
-    "position" point,
-    trip_id bigint NOT NULL,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
-)
-PARTITION BY RANGE (created_at);
-
-
---
--- Name: TABLE trip_positions_intermediate; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON TABLE public.trip_positions_intermediate IS 'column:created_at,period:month,cast:date,version:3';
-
-
---
--- Name: trip_positions_intermediate_default; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.trip_positions_intermediate_default (
-    id bigint DEFAULT nextval('public.trip_positions_id_seq'::regclass) NOT NULL,
-    "position" point,
-    trip_id bigint NOT NULL,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
-);
-
-
---
--- Name: trip_requests; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.trip_requests (
-    id bigint NOT NULL,
-    rider_id integer NOT NULL,
-    start_location_id integer NOT NULL,
-    end_location_id integer NOT NULL,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
-);
-
-
---
--- Name: trip_requests_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.trip_requests_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: trip_requests_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.trip_requests_id_seq OWNED BY public.trip_requests.id;
-
-
---
--- Name: trips_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.trips_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: trips_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.trips_id_seq OWNED BY public.trips.id;
-
-
---
--- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.users_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
-
-
---
--- Name: vehicle_reservations; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.vehicle_reservations (
-    id bigint NOT NULL,
-    vehicle_id integer NOT NULL,
-    trip_request_id integer NOT NULL,
-    canceled boolean DEFAULT false NOT NULL,
-    starts_at timestamp with time zone NOT NULL,
-    ends_at timestamp with time zone NOT NULL,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
-);
-
-
---
--- Name: vehicle_reservations_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.vehicle_reservations_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: vehicle_reservations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.vehicle_reservations_id_seq OWNED BY public.vehicle_reservations.id;
-
-
---
--- Name: vehicles; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.vehicles (
-    id bigint NOT NULL,
-    name character varying NOT NULL,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL,
-    status public.vehicle_status DEFAULT 'draft'::public.vehicle_status NOT NULL
-);
-
-
---
--- Name: vehicles_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.vehicles_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: vehicles_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.vehicles_id_seq OWNED BY public.vehicles.id;
-
-
---
+-- TOC entry 217 (class 1259 OID 20181)
 -- Name: ar_internal_metadata; Type: TABLE; Schema: rideshare; Owner: -
 --
 
@@ -576,6 +209,7 @@ CREATE TABLE rideshare.ar_internal_metadata (
 
 
 --
+-- TOC entry 225 (class 1259 OID 20221)
 -- Name: trips; Type: TABLE; Schema: rideshare; Owner: -
 --
 
@@ -592,6 +226,7 @@ CREATE TABLE rideshare.trips (
 
 
 --
+-- TOC entry 219 (class 1259 OID 20189)
 -- Name: users; Type: TABLE; Schema: rideshare; Owner: -
 --
 
@@ -611,6 +246,8 @@ CREATE TABLE rideshare.users (
 
 
 --
+-- TOC entry 3739 (class 0 OID 0)
+-- Dependencies: 219
 -- Name: TABLE users; Type: COMMENT; Schema: rideshare; Owner: -
 --
 
@@ -618,6 +255,7 @@ COMMENT ON TABLE rideshare.users IS 'sensitive_fields|first_name:scrub_text,last
 
 
 --
+-- TOC entry 231 (class 1259 OID 20335)
 -- Name: fast_search_results; Type: MATERIALIZED VIEW; Schema: rideshare; Owner: -
 --
 
@@ -633,6 +271,7 @@ CREATE MATERIALIZED VIEW rideshare.fast_search_results AS
 
 
 --
+-- TOC entry 221 (class 1259 OID 20199)
 -- Name: locations; Type: TABLE; Schema: rideshare; Owner: -
 --
 
@@ -649,6 +288,7 @@ CREATE TABLE rideshare.locations (
 
 
 --
+-- TOC entry 220 (class 1259 OID 20198)
 -- Name: locations_id_seq; Type: SEQUENCE; Schema: rideshare; Owner: -
 --
 
@@ -661,6 +301,8 @@ CREATE SEQUENCE rideshare.locations_id_seq
 
 
 --
+-- TOC entry 3740 (class 0 OID 0)
+-- Dependencies: 220
 -- Name: locations_id_seq; Type: SEQUENCE OWNED BY; Schema: rideshare; Owner: -
 --
 
@@ -668,6 +310,7 @@ ALTER SEQUENCE rideshare.locations_id_seq OWNED BY rideshare.locations.id;
 
 
 --
+-- TOC entry 216 (class 1259 OID 20174)
 -- Name: schema_migrations; Type: TABLE; Schema: rideshare; Owner: -
 --
 
@@ -677,6 +320,7 @@ CREATE TABLE rideshare.schema_migrations (
 
 
 --
+-- TOC entry 230 (class 1259 OID 20330)
 -- Name: search_results; Type: VIEW; Schema: rideshare; Owner: -
 --
 
@@ -691,6 +335,7 @@ CREATE VIEW rideshare.search_results AS
 
 
 --
+-- TOC entry 233 (class 1259 OID 20366)
 -- Name: trip_positions; Type: TABLE; Schema: rideshare; Owner: -
 --
 
@@ -704,6 +349,7 @@ CREATE TABLE rideshare.trip_positions (
 
 
 --
+-- TOC entry 232 (class 1259 OID 20365)
 -- Name: trip_positions_id_seq; Type: SEQUENCE; Schema: rideshare; Owner: -
 --
 
@@ -716,6 +362,8 @@ CREATE SEQUENCE rideshare.trip_positions_id_seq
 
 
 --
+-- TOC entry 3741 (class 0 OID 0)
+-- Dependencies: 232
 -- Name: trip_positions_id_seq; Type: SEQUENCE OWNED BY; Schema: rideshare; Owner: -
 --
 
@@ -723,6 +371,7 @@ ALTER SEQUENCE rideshare.trip_positions_id_seq OWNED BY rideshare.trip_positions
 
 
 --
+-- TOC entry 234 (class 1259 OID 20384)
 -- Name: trip_positions_intermediate; Type: TABLE; Schema: rideshare; Owner: -
 --
 
@@ -737,6 +386,8 @@ PARTITION BY RANGE (created_at);
 
 
 --
+-- TOC entry 3742 (class 0 OID 0)
+-- Dependencies: 234
 -- Name: TABLE trip_positions_intermediate; Type: COMMENT; Schema: rideshare; Owner: -
 --
 
@@ -744,6 +395,7 @@ COMMENT ON TABLE rideshare.trip_positions_intermediate IS 'column:created_at,per
 
 
 --
+-- TOC entry 235 (class 1259 OID 20388)
 -- Name: trip_positions_intermediate_default; Type: TABLE; Schema: rideshare; Owner: -
 --
 
@@ -757,6 +409,7 @@ CREATE TABLE rideshare.trip_positions_intermediate_default (
 
 
 --
+-- TOC entry 223 (class 1259 OID 20211)
 -- Name: trip_requests; Type: TABLE; Schema: rideshare; Owner: -
 --
 
@@ -771,6 +424,7 @@ CREATE TABLE rideshare.trip_requests (
 
 
 --
+-- TOC entry 222 (class 1259 OID 20210)
 -- Name: trip_requests_id_seq; Type: SEQUENCE; Schema: rideshare; Owner: -
 --
 
@@ -783,6 +437,8 @@ CREATE SEQUENCE rideshare.trip_requests_id_seq
 
 
 --
+-- TOC entry 3743 (class 0 OID 0)
+-- Dependencies: 222
 -- Name: trip_requests_id_seq; Type: SEQUENCE OWNED BY; Schema: rideshare; Owner: -
 --
 
@@ -790,6 +446,7 @@ ALTER SEQUENCE rideshare.trip_requests_id_seq OWNED BY rideshare.trip_requests.i
 
 
 --
+-- TOC entry 224 (class 1259 OID 20220)
 -- Name: trips_id_seq; Type: SEQUENCE; Schema: rideshare; Owner: -
 --
 
@@ -802,6 +459,8 @@ CREATE SEQUENCE rideshare.trips_id_seq
 
 
 --
+-- TOC entry 3744 (class 0 OID 0)
+-- Dependencies: 224
 -- Name: trips_id_seq; Type: SEQUENCE OWNED BY; Schema: rideshare; Owner: -
 --
 
@@ -809,6 +468,7 @@ ALTER SEQUENCE rideshare.trips_id_seq OWNED BY rideshare.trips.id;
 
 
 --
+-- TOC entry 218 (class 1259 OID 20188)
 -- Name: users_id_seq; Type: SEQUENCE; Schema: rideshare; Owner: -
 --
 
@@ -821,6 +481,8 @@ CREATE SEQUENCE rideshare.users_id_seq
 
 
 --
+-- TOC entry 3745 (class 0 OID 0)
+-- Dependencies: 218
 -- Name: users_id_seq; Type: SEQUENCE OWNED BY; Schema: rideshare; Owner: -
 --
 
@@ -828,6 +490,7 @@ ALTER SEQUENCE rideshare.users_id_seq OWNED BY rideshare.users.id;
 
 
 --
+-- TOC entry 227 (class 1259 OID 20310)
 -- Name: vehicle_reservations; Type: TABLE; Schema: rideshare; Owner: -
 --
 
@@ -844,6 +507,7 @@ CREATE TABLE rideshare.vehicle_reservations (
 
 
 --
+-- TOC entry 226 (class 1259 OID 20309)
 -- Name: vehicle_reservations_id_seq; Type: SEQUENCE; Schema: rideshare; Owner: -
 --
 
@@ -856,6 +520,8 @@ CREATE SEQUENCE rideshare.vehicle_reservations_id_seq
 
 
 --
+-- TOC entry 3746 (class 0 OID 0)
+-- Dependencies: 226
 -- Name: vehicle_reservations_id_seq; Type: SEQUENCE OWNED BY; Schema: rideshare; Owner: -
 --
 
@@ -863,6 +529,7 @@ ALTER SEQUENCE rideshare.vehicle_reservations_id_seq OWNED BY rideshare.vehicle_
 
 
 --
+-- TOC entry 229 (class 1259 OID 20319)
 -- Name: vehicles; Type: TABLE; Schema: rideshare; Owner: -
 --
 
@@ -876,6 +543,7 @@ CREATE TABLE rideshare.vehicles (
 
 
 --
+-- TOC entry 228 (class 1259 OID 20318)
 -- Name: vehicles_id_seq; Type: SEQUENCE; Schema: rideshare; Owner: -
 --
 
@@ -888,6 +556,8 @@ CREATE SEQUENCE rideshare.vehicles_id_seq
 
 
 --
+-- TOC entry 3747 (class 0 OID 0)
+-- Dependencies: 228
 -- Name: vehicles_id_seq; Type: SEQUENCE OWNED BY; Schema: rideshare; Owner: -
 --
 
@@ -895,13 +565,7 @@ ALTER SEQUENCE rideshare.vehicles_id_seq OWNED BY rideshare.vehicles.id;
 
 
 --
--- Name: trip_positions_intermediate_default; Type: TABLE ATTACH; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.trip_positions_intermediate ATTACH PARTITION public.trip_positions_intermediate_default DEFAULT;
-
-
---
+-- TOC entry 3532 (class 0 OID 0)
 -- Name: trip_positions_intermediate_default; Type: TABLE ATTACH; Schema: rideshare; Owner: -
 --
 
@@ -909,55 +573,7 @@ ALTER TABLE ONLY rideshare.trip_positions_intermediate ATTACH PARTITION rideshar
 
 
 --
--- Name: locations id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.locations ALTER COLUMN id SET DEFAULT nextval('public.locations_id_seq'::regclass);
-
-
---
--- Name: trip_positions id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.trip_positions ALTER COLUMN id SET DEFAULT nextval('public.trip_positions_id_seq'::regclass);
-
-
---
--- Name: trip_requests id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.trip_requests ALTER COLUMN id SET DEFAULT nextval('public.trip_requests_id_seq'::regclass);
-
-
---
--- Name: trips id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.trips ALTER COLUMN id SET DEFAULT nextval('public.trips_id_seq'::regclass);
-
-
---
--- Name: users id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_id_seq'::regclass);
-
-
---
--- Name: vehicle_reservations id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.vehicle_reservations ALTER COLUMN id SET DEFAULT nextval('public.vehicle_reservations_id_seq'::regclass);
-
-
---
--- Name: vehicles id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.vehicles ALTER COLUMN id SET DEFAULT nextval('public.vehicles_id_seq'::regclass);
-
-
---
+-- TOC entry 3535 (class 2604 OID 20202)
 -- Name: locations id; Type: DEFAULT; Schema: rideshare; Owner: -
 --
 
@@ -965,6 +581,7 @@ ALTER TABLE ONLY rideshare.locations ALTER COLUMN id SET DEFAULT nextval('ridesh
 
 
 --
+-- TOC entry 3542 (class 2604 OID 20369)
 -- Name: trip_positions id; Type: DEFAULT; Schema: rideshare; Owner: -
 --
 
@@ -972,6 +589,7 @@ ALTER TABLE ONLY rideshare.trip_positions ALTER COLUMN id SET DEFAULT nextval('r
 
 
 --
+-- TOC entry 3536 (class 2604 OID 20214)
 -- Name: trip_requests id; Type: DEFAULT; Schema: rideshare; Owner: -
 --
 
@@ -979,6 +597,7 @@ ALTER TABLE ONLY rideshare.trip_requests ALTER COLUMN id SET DEFAULT nextval('ri
 
 
 --
+-- TOC entry 3537 (class 2604 OID 20224)
 -- Name: trips id; Type: DEFAULT; Schema: rideshare; Owner: -
 --
 
@@ -986,6 +605,7 @@ ALTER TABLE ONLY rideshare.trips ALTER COLUMN id SET DEFAULT nextval('rideshare.
 
 
 --
+-- TOC entry 3533 (class 2604 OID 20192)
 -- Name: users id; Type: DEFAULT; Schema: rideshare; Owner: -
 --
 
@@ -993,6 +613,7 @@ ALTER TABLE ONLY rideshare.users ALTER COLUMN id SET DEFAULT nextval('rideshare.
 
 
 --
+-- TOC entry 3538 (class 2604 OID 20313)
 -- Name: vehicle_reservations id; Type: DEFAULT; Schema: rideshare; Owner: -
 --
 
@@ -1000,6 +621,7 @@ ALTER TABLE ONLY rideshare.vehicle_reservations ALTER COLUMN id SET DEFAULT next
 
 
 --
+-- TOC entry 3540 (class 2604 OID 20322)
 -- Name: vehicles id; Type: DEFAULT; Schema: rideshare; Owner: -
 --
 
@@ -1007,102 +629,7 @@ ALTER TABLE ONLY rideshare.vehicles ALTER COLUMN id SET DEFAULT nextval('ridesha
 
 
 --
--- Name: ar_internal_metadata ar_internal_metadata_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.ar_internal_metadata
-    ADD CONSTRAINT ar_internal_metadata_pkey PRIMARY KEY (key);
-
-
---
--- Name: trips chk_rails_4743ddc2d2; Type: CHECK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE public.trips
-    ADD CONSTRAINT chk_rails_4743ddc2d2 CHECK ((completed_at > created_at)) NOT VALID;
-
-
---
--- Name: locations locations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.locations
-    ADD CONSTRAINT locations_pkey PRIMARY KEY (id);
-
-
---
--- Name: vehicle_reservations non_overlapping_vehicle_registration; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.vehicle_reservations
-    ADD CONSTRAINT non_overlapping_vehicle_registration EXCLUDE USING gist (int4range(vehicle_id, vehicle_id, '[]'::text) WITH =, tstzrange(starts_at, ends_at) WITH &&) WHERE ((NOT canceled));
-
-
---
--- Name: schema_migrations schema_migrations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.schema_migrations
-    ADD CONSTRAINT schema_migrations_pkey PRIMARY KEY (version);
-
-
---
--- Name: trip_positions_intermediate_default trip_positions_intermediate_default_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.trip_positions_intermediate_default
-    ADD CONSTRAINT trip_positions_intermediate_default_pkey PRIMARY KEY (id);
-
-
---
--- Name: trip_positions trip_positions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.trip_positions
-    ADD CONSTRAINT trip_positions_pkey PRIMARY KEY (id);
-
-
---
--- Name: trip_requests trip_requests_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.trip_requests
-    ADD CONSTRAINT trip_requests_pkey PRIMARY KEY (id);
-
-
---
--- Name: trips trips_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.trips
-    ADD CONSTRAINT trips_pkey PRIMARY KEY (id);
-
-
---
--- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.users
-    ADD CONSTRAINT users_pkey PRIMARY KEY (id);
-
-
---
--- Name: vehicle_reservations vehicle_reservations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.vehicle_reservations
-    ADD CONSTRAINT vehicle_reservations_pkey PRIMARY KEY (id);
-
-
---
--- Name: vehicles vehicles_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.vehicles
-    ADD CONSTRAINT vehicles_pkey PRIMARY KEY (id);
-
-
---
+-- TOC entry 3550 (class 2606 OID 20187)
 -- Name: ar_internal_metadata ar_internal_metadata_pkey; Type: CONSTRAINT; Schema: rideshare; Owner: -
 --
 
@@ -1111,6 +638,7 @@ ALTER TABLE ONLY rideshare.ar_internal_metadata
 
 
 --
+-- TOC entry 3545 (class 2606 OID 20408)
 -- Name: trips chk_rails_4743ddc2d2; Type: CHECK CONSTRAINT; Schema: rideshare; Owner: -
 --
 
@@ -1119,6 +647,7 @@ ALTER TABLE rideshare.trips
 
 
 --
+-- TOC entry 3558 (class 2606 OID 20206)
 -- Name: locations locations_pkey; Type: CONSTRAINT; Schema: rideshare; Owner: -
 --
 
@@ -1127,6 +656,7 @@ ALTER TABLE ONLY rideshare.locations
 
 
 --
+-- TOC entry 3571 (class 2606 OID 20329)
 -- Name: vehicle_reservations non_overlapping_vehicle_registration; Type: CONSTRAINT; Schema: rideshare; Owner: -
 --
 
@@ -1135,6 +665,7 @@ ALTER TABLE ONLY rideshare.vehicle_reservations
 
 
 --
+-- TOC entry 3548 (class 2606 OID 20180)
 -- Name: schema_migrations schema_migrations_pkey; Type: CONSTRAINT; Schema: rideshare; Owner: -
 --
 
@@ -1143,6 +674,7 @@ ALTER TABLE ONLY rideshare.schema_migrations
 
 
 --
+-- TOC entry 3580 (class 2606 OID 20393)
 -- Name: trip_positions_intermediate_default trip_positions_intermediate_default_pkey; Type: CONSTRAINT; Schema: rideshare; Owner: -
 --
 
@@ -1151,6 +683,7 @@ ALTER TABLE ONLY rideshare.trip_positions_intermediate_default
 
 
 --
+-- TOC entry 3578 (class 2606 OID 20371)
 -- Name: trip_positions trip_positions_pkey; Type: CONSTRAINT; Schema: rideshare; Owner: -
 --
 
@@ -1159,6 +692,7 @@ ALTER TABLE ONLY rideshare.trip_positions
 
 
 --
+-- TOC entry 3563 (class 2606 OID 20216)
 -- Name: trip_requests trip_requests_pkey; Type: CONSTRAINT; Schema: rideshare; Owner: -
 --
 
@@ -1167,6 +701,7 @@ ALTER TABLE ONLY rideshare.trip_requests
 
 
 --
+-- TOC entry 3568 (class 2606 OID 20226)
 -- Name: trips trips_pkey; Type: CONSTRAINT; Schema: rideshare; Owner: -
 --
 
@@ -1175,6 +710,7 @@ ALTER TABLE ONLY rideshare.trips
 
 
 --
+-- TOC entry 3555 (class 2606 OID 20196)
 -- Name: users users_pkey; Type: CONSTRAINT; Schema: rideshare; Owner: -
 --
 
@@ -1183,6 +719,7 @@ ALTER TABLE ONLY rideshare.users
 
 
 --
+-- TOC entry 3573 (class 2606 OID 20316)
 -- Name: vehicle_reservations vehicle_reservations_pkey; Type: CONSTRAINT; Schema: rideshare; Owner: -
 --
 
@@ -1191,6 +728,7 @@ ALTER TABLE ONLY rideshare.vehicle_reservations
 
 
 --
+-- TOC entry 3576 (class 2606 OID 20326)
 -- Name: vehicles vehicles_pkey; Type: CONSTRAINT; Schema: rideshare; Owner: -
 --
 
@@ -1199,90 +737,7 @@ ALTER TABLE ONLY rideshare.vehicles
 
 
 --
--- Name: index_locations_on_address; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_locations_on_address ON public.locations USING btree (address);
-
-
---
--- Name: index_trip_requests_on_end_location_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_trip_requests_on_end_location_id ON public.trip_requests USING btree (end_location_id);
-
-
---
--- Name: index_trip_requests_on_rider_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_trip_requests_on_rider_id ON public.trip_requests USING btree (rider_id);
-
-
---
--- Name: index_trip_requests_on_start_location_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_trip_requests_on_start_location_id ON public.trip_requests USING btree (start_location_id);
-
-
---
--- Name: index_trips_on_driver_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_trips_on_driver_id ON public.trips USING btree (driver_id);
-
-
---
--- Name: index_trips_on_rating; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_trips_on_rating ON public.trips USING btree (rating);
-
-
---
--- Name: index_trips_on_trip_request_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_trips_on_trip_request_id ON public.trips USING btree (trip_request_id);
-
-
---
--- Name: index_users_on_email; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_users_on_email ON public.users USING btree (email);
-
-
---
--- Name: index_users_on_last_name; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_users_on_last_name ON public.users USING btree (last_name);
-
-
---
--- Name: index_users_on_searchable_full_name; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_users_on_searchable_full_name ON public.users USING gin (searchable_full_name);
-
-
---
--- Name: index_vehicle_reservations_on_vehicle_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_vehicle_reservations_on_vehicle_id ON public.vehicle_reservations USING btree (vehicle_id);
-
-
---
--- Name: index_vehicles_on_name; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_vehicles_on_name ON public.vehicles USING btree (name);
-
-
---
+-- TOC entry 3556 (class 1259 OID 20351)
 -- Name: index_locations_on_address; Type: INDEX; Schema: rideshare; Owner: -
 --
 
@@ -1290,6 +745,7 @@ CREATE UNIQUE INDEX index_locations_on_address ON rideshare.locations USING btre
 
 
 --
+-- TOC entry 3559 (class 1259 OID 20219)
 -- Name: index_trip_requests_on_end_location_id; Type: INDEX; Schema: rideshare; Owner: -
 --
 
@@ -1297,6 +753,7 @@ CREATE INDEX index_trip_requests_on_end_location_id ON rideshare.trip_requests U
 
 
 --
+-- TOC entry 3560 (class 1259 OID 20217)
 -- Name: index_trip_requests_on_rider_id; Type: INDEX; Schema: rideshare; Owner: -
 --
 
@@ -1304,6 +761,7 @@ CREATE INDEX index_trip_requests_on_rider_id ON rideshare.trip_requests USING bt
 
 
 --
+-- TOC entry 3561 (class 1259 OID 20218)
 -- Name: index_trip_requests_on_start_location_id; Type: INDEX; Schema: rideshare; Owner: -
 --
 
@@ -1311,6 +769,7 @@ CREATE INDEX index_trip_requests_on_start_location_id ON rideshare.trip_requests
 
 
 --
+-- TOC entry 3564 (class 1259 OID 20228)
 -- Name: index_trips_on_driver_id; Type: INDEX; Schema: rideshare; Owner: -
 --
 
@@ -1318,6 +777,7 @@ CREATE INDEX index_trips_on_driver_id ON rideshare.trips USING btree (driver_id)
 
 
 --
+-- TOC entry 3565 (class 1259 OID 20229)
 -- Name: index_trips_on_rating; Type: INDEX; Schema: rideshare; Owner: -
 --
 
@@ -1325,6 +785,7 @@ CREATE INDEX index_trips_on_rating ON rideshare.trips USING btree (rating);
 
 
 --
+-- TOC entry 3566 (class 1259 OID 20352)
 -- Name: index_trips_on_trip_request_id; Type: INDEX; Schema: rideshare; Owner: -
 --
 
@@ -1332,6 +793,7 @@ CREATE INDEX index_trips_on_trip_request_id ON rideshare.trips USING btree (trip
 
 
 --
+-- TOC entry 3551 (class 1259 OID 20372)
 -- Name: index_users_on_email; Type: INDEX; Schema: rideshare; Owner: -
 --
 
@@ -1339,6 +801,7 @@ CREATE UNIQUE INDEX index_users_on_email ON rideshare.users USING btree (email);
 
 
 --
+-- TOC entry 3552 (class 1259 OID 20308)
 -- Name: index_users_on_last_name; Type: INDEX; Schema: rideshare; Owner: -
 --
 
@@ -1346,6 +809,7 @@ CREATE INDEX index_users_on_last_name ON rideshare.users USING btree (last_name)
 
 
 --
+-- TOC entry 3553 (class 1259 OID 20383)
 -- Name: index_users_on_searchable_full_name; Type: INDEX; Schema: rideshare; Owner: -
 --
 
@@ -1353,6 +817,7 @@ CREATE INDEX index_users_on_searchable_full_name ON rideshare.users USING gin (s
 
 
 --
+-- TOC entry 3569 (class 1259 OID 20317)
 -- Name: index_vehicle_reservations_on_vehicle_id; Type: INDEX; Schema: rideshare; Owner: -
 --
 
@@ -1360,6 +825,7 @@ CREATE INDEX index_vehicle_reservations_on_vehicle_id ON rideshare.vehicle_reser
 
 
 --
+-- TOC entry 3574 (class 1259 OID 20327)
 -- Name: index_vehicles_on_name; Type: INDEX; Schema: rideshare; Owner: -
 --
 
@@ -1367,70 +833,7 @@ CREATE UNIQUE INDEX index_vehicles_on_name ON rideshare.vehicles USING btree (na
 
 
 --
--- Name: trip_requests fk_rails_3fdebbfaca; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.trip_requests
-    ADD CONSTRAINT fk_rails_3fdebbfaca FOREIGN KEY (end_location_id) REFERENCES public.locations(id);
-
-
---
--- Name: vehicle_reservations fk_rails_59996232fc; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.vehicle_reservations
-    ADD CONSTRAINT fk_rails_59996232fc FOREIGN KEY (trip_request_id) REFERENCES public.trip_requests(id);
-
-
---
--- Name: trips fk_rails_6d92acb430; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.trips
-    ADD CONSTRAINT fk_rails_6d92acb430 FOREIGN KEY (trip_request_id) REFERENCES public.trip_requests(id);
-
-
---
--- Name: vehicle_reservations fk_rails_7edc8e666a; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.vehicle_reservations
-    ADD CONSTRAINT fk_rails_7edc8e666a FOREIGN KEY (vehicle_id) REFERENCES public.vehicles(id);
-
-
---
--- Name: trip_positions fk_rails_9688ac8706; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.trip_positions
-    ADD CONSTRAINT fk_rails_9688ac8706 FOREIGN KEY (trip_id) REFERENCES public.trips(id);
-
-
---
--- Name: trip_requests fk_rails_c17a139554; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.trip_requests
-    ADD CONSTRAINT fk_rails_c17a139554 FOREIGN KEY (rider_id) REFERENCES public.users(id);
-
-
---
--- Name: trips fk_rails_e7560abc33; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.trips
-    ADD CONSTRAINT fk_rails_e7560abc33 FOREIGN KEY (driver_id) REFERENCES public.users(id);
-
-
---
--- Name: trip_requests fk_rails_fa2679b626; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.trip_requests
-    ADD CONSTRAINT fk_rails_fa2679b626 FOREIGN KEY (start_location_id) REFERENCES public.locations(id);
-
-
---
+-- TOC entry 3581 (class 2606 OID 20286)
 -- Name: trip_requests fk_rails_3fdebbfaca; Type: FK CONSTRAINT; Schema: rideshare; Owner: -
 --
 
@@ -1439,6 +842,7 @@ ALTER TABLE ONLY rideshare.trip_requests
 
 
 --
+-- TOC entry 3586 (class 2606 OID 20409)
 -- Name: vehicle_reservations fk_rails_59996232fc; Type: FK CONSTRAINT; Schema: rideshare; Owner: -
 --
 
@@ -1447,6 +851,7 @@ ALTER TABLE ONLY rideshare.vehicle_reservations
 
 
 --
+-- TOC entry 3584 (class 2606 OID 20353)
 -- Name: trips fk_rails_6d92acb430; Type: FK CONSTRAINT; Schema: rideshare; Owner: -
 --
 
@@ -1455,6 +860,7 @@ ALTER TABLE ONLY rideshare.trips
 
 
 --
+-- TOC entry 3587 (class 2606 OID 20399)
 -- Name: vehicle_reservations fk_rails_7edc8e666a; Type: FK CONSTRAINT; Schema: rideshare; Owner: -
 --
 
@@ -1463,6 +869,7 @@ ALTER TABLE ONLY rideshare.vehicle_reservations
 
 
 --
+-- TOC entry 3588 (class 2606 OID 20394)
 -- Name: trip_positions fk_rails_9688ac8706; Type: FK CONSTRAINT; Schema: rideshare; Owner: -
 --
 
@@ -1471,6 +878,7 @@ ALTER TABLE ONLY rideshare.trip_positions
 
 
 --
+-- TOC entry 3582 (class 2606 OID 20291)
 -- Name: trip_requests fk_rails_c17a139554; Type: FK CONSTRAINT; Schema: rideshare; Owner: -
 --
 
@@ -1479,6 +887,7 @@ ALTER TABLE ONLY rideshare.trip_requests
 
 
 --
+-- TOC entry 3585 (class 2606 OID 20301)
 -- Name: trips fk_rails_e7560abc33; Type: FK CONSTRAINT; Schema: rideshare; Owner: -
 --
 
@@ -1487,6 +896,7 @@ ALTER TABLE ONLY rideshare.trips
 
 
 --
+-- TOC entry 3583 (class 2606 OID 20281)
 -- Name: trip_requests fk_rails_fa2679b626; Type: FK CONSTRAINT; Schema: rideshare; Owner: -
 --
 
@@ -1494,11 +904,13 @@ ALTER TABLE ONLY rideshare.trip_requests
     ADD CONSTRAINT fk_rails_fa2679b626 FOREIGN KEY (start_location_id) REFERENCES rideshare.locations(id);
 
 
+-- Completed on 2023-09-25 09:54:56 CDT
+
 --
 -- PostgreSQL database dump complete
 --
 
-SET search_path TO "$user", public;
+SET search_path TO rideshare;
 
 INSERT INTO "schema_migrations" (version) VALUES
 ('20230726020548'),

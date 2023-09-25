@@ -51,5 +51,9 @@ module Rideshare
 
     # https://www.bigbinary.com/blog/rails-7-adds-setting-for-enumerating-columns-in-select-statements#
     config.active_record.enumerate_columns_in_select_statements = true
+
+    # Add '--if-exists' flag to pg_dump
+    # https://github.com/rails/rails/issues/38695#issuecomment-763588402
+    ActiveRecord::Tasks::DatabaseTasks.structure_dump_flags = ['-v', '--clean', '--if-exists']
   end
 end
