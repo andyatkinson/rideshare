@@ -43,6 +43,7 @@ Front-end technologies were removed because this is an API only app.
 - Configuration uses a series of SQL scripts in `db` directory, run from `psql` via a shell script (see next step)
 - Run `sh db/setup.sh`
 - expects `DATABASE_URL` is set
+- Migrations will first run `SET role = owner` to run Migrations as `owner`, which will own the tables, check `lib/tasks/migration_hooks.rake`
 
 
 ## Installation Steps (Development)
