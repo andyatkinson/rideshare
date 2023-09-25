@@ -66,15 +66,13 @@ namespace :data_generators do
     nyc = Location.where(
       address: "New York, NY",
     ).first_or_create do |loc|
-      loc.latitude = 40.7143528,
-      loc.longitude = -74.0059731
+      loc.position = "(40.7143528,-74.0059731)"
     end
 
     bos = Location.where(
       address: "Boston, MA",
     ).first_or_create do |loc|
-      loc.latitude = 42.361145
-      loc.longitude = -71.057083
+      loc.position = "(42.361145,-71.057083)"
     end
 
     puts "creating Trip Requests and Trips"
@@ -113,15 +111,13 @@ namespace :data_generators do
     nyc = Location.where(
       address: "New York, NY",
     ).first_or_create do |loc|
-      loc.latitude = 40.7143528,
-      loc.longitude = -74.0059731
+      loc.position = "(40.7143528,-74.0059731)"
     end
 
     bos = Location.where(
       address: "Boston, MA",
     ).first_or_create do |loc|
-      loc.latitude = 42.361145
-      loc.longitude = -71.057083
+      loc.position = "(42.361145,-71.057083)"
     end
 
     puts "creating trip requests and trips"

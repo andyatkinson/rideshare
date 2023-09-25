@@ -266,12 +266,11 @@ CREATE MATERIALIZED VIEW rideshare.fast_search_results AS
 CREATE TABLE rideshare.locations (
     id bigint NOT NULL,
     address character varying NOT NULL,
-    latitude numeric(15,10) NOT NULL,
-    longitude numeric(15,10) NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
     city character varying,
-    state character(2)
+    state character(2),
+    "position" point NOT NULL
 );
 
 
@@ -828,6 +827,8 @@ ALTER TABLE ONLY rideshare.trip_requests
 SET search_path TO rideshare;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20230925150831'),
+('20230925150207'),
 ('20230726020548'),
 ('20230716174139'),
 ('20230714013609'),
