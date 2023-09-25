@@ -54,6 +54,6 @@ module Rideshare
 
     # Add '--if-exists' flag to pg_dump
     # https://github.com/rails/rails/issues/38695#issuecomment-763588402
-    ActiveRecord::Tasks::DatabaseTasks.structure_dump_flags = ['-v', '--clean', '--if-exists']
+    ActiveRecord::Tasks::DatabaseTasks.structure_dump_flags = ['--clean', '--if-exists']
   end
 end
