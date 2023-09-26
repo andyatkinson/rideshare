@@ -64,7 +64,7 @@ Front-end technologies were removed because this is an API only app.
     On macOS run, for a brand new installation:
 
     ```sh
-    export RIDESHARE_DB_PASSWORD=$(openssl rand -base64 12)
+    export RIDESHARE_DB_PASSWORD=$(openssl rand -hex 12)
     ```
 
     For existing credentials (upgrades), set RIDESHARE_DB_PASSWORD using the password defined in ~/.pgpass.
