@@ -1,10 +1,11 @@
 #!/bin/bash
 #
 # Run from Rideshare dir
-# create a network "rideshare-net"
+# Use bind dir: ./postgres-docker/db01
+# network: "rideshare-net"
 docker run \
   --name db01 \
-  --volume ${PWD}/postgres-docker:/var/lib/postgresql/db01data \
+  --volume ${PWD}/postgres-docker/db01:/var/lib/postgresql \
   --publish 54321:5432 \
   --env POSTGRES_USER=postgres \
   --env POSTGRES_PASSWORD=postgres \

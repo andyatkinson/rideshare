@@ -7,7 +7,19 @@ pg_ctl: cannot be run as root
 ```
 docker restart <container>
 
-### Creating replication_user
+### Replacing `pg_hba.conf` content
+
+```sh
+docker cp db01:/var/lib/postgresql/data/pg_hba.conf .
+cp pg_hba.conf pg_hba.backup.conf
+
+vim pg_hba.conf
+host    replication     replication_user 172.19.0.2/32               md5
+
+docker cp pg_hba.conf db01:/var/lib/postgresql/data/.
+
+docker restart db01
+```
 
 
 ### Standby process

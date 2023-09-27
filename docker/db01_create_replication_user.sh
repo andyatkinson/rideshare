@@ -21,7 +21,7 @@ chmod 0600 .pgpass
 docker cp replication_user.sql db01:.
 
 # Copy .pgpass to db02 container
-docker cp .pgpass db01:/root/.
+docker cp .pgpass db02:/root/.
 
 # Create replication_user on db01
 docker exec -it db01 \

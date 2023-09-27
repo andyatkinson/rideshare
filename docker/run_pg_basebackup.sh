@@ -14,7 +14,7 @@ docker exec -it db02 \
   pg_basebackup \
   --host db01 \
   --pgdata $PGDATA \
-  --username replication_user \
+  --username=replication_user \
   --slot rideshare_slot \
   --verbose \
   --progress \
