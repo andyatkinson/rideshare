@@ -35,3 +35,13 @@ yarn-debug.log*
 .yarn-integrity
 
 .sql
+
+
+# Docker volume directory
+docker/postgres-docker/*
+
+# Ignore backup files
+docker/pg_hba.backup.conf
+docker/postgresql.backup.conf
+docker/pg_hba.conf
+docker/postgresql.conf

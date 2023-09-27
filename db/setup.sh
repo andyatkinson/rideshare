@@ -1,4 +1,4 @@
-export DB_URL="postgres://postgres:@localhost:5432/postgres"
+#export DB_URL="postgres://postgres:@localhost:5432/postgres"
 
 # roles
 psql $DB_URL -v password_to_save=$RIDESHARE_DB_PASSWORD -a -f db/create_role_owner.sql

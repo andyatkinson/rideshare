@@ -1,4 +1,4 @@
-export DB_URL="postgres://postgres:@localhost:5432/postgres"
+#export DB_URL="postgres://postgres:@localhost:5432/postgres"
 
 psql $DB_URL -c "DROP DATABASE IF EXISTS rideshare_development"
 psql $DB_URL -c "DROP DATABASE IF EXISTS rideshare_test"
