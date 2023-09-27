@@ -1,0 +1,19 @@
+default: &default
+  adapter: postgresql
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  timeout: 5000
+  schema_search_path: rideshare
+
+development:
+  <<: *default
+  rideshare:
+    url: <%= ENV['DATABASE_URL_PRIMARY'] %>
+    database: rideshare_development
+    variables:
+      statement_timeout: 5000
+  rideshare_replica:
+    url: <%= ENV['DATABASE_URL_REPLICA'] %>
+    database: rideshare_development
+    replica: true
+    variables:
+      statement_timeout: 5000
