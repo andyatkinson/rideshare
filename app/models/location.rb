@@ -7,5 +7,5 @@ class Location < ApplicationRecord
 
   geocoded_by :address
 
-  after_validation :geocode, if: ->(obj) { obj.address_changed? && obj.point.nil? }
+  after_validation :geocode, if: ->(obj) { obj.address_changed? && obj.position.nil? }
 end
