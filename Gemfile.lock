@@ -22,7 +22,7 @@ GIT
 
 GIT
   remote: https://github.com/rails/rails.git
-  revision: d38dcdc0094360de7efbc6d52d36bf71559a0870
+  revision: 536d1680a1e79ca9e6cb95de7d914f762cac5b7e
   specs:
     actioncable (7.2.0.alpha)
       actionpack (= 7.2.0.alpha)
@@ -257,7 +257,7 @@ GEM
     rake (13.0.6)
     rdoc (6.5.0)
       psych (>= 4.0.0)
-    reline (0.3.8)
+    reline (0.3.9)
       io-console (~> 0.5)
     require_all (3.0.0)
     rexml (3.2.6)
