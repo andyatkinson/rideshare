@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', '~> 7.0', git: 'https://github.com/rails/rails.git'
+gem 'rails', '>= 7.1'#, git: 'https://github.com/rails/rails.git'
 gem 'pg'
 gem 'puma'
 gem 'geocoder'
