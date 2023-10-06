@@ -7,6 +7,7 @@ namespace :custom do
   task :db_reset do
     sh "db/teardown.sh"
     sh "db/setup.sh"
+    sh "db/setup_test_database.sh"
 
     Rake::Task["db:migrate"].invoke
   end
