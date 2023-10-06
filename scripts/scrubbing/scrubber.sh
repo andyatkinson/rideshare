@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export SOURCE_DB="postgres://localhost:5432/rideshare_development"
+export SOURCE_DB="postgres://owner:@localhost:5432/rideshare_development"
 
 echo "Create the users_copy table"
 psql $SOURCE_DB -f create_tables.sql
