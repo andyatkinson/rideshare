@@ -26,5 +26,5 @@ end
 every 1.month do
   command "pgslice add_partitions trip_positions
   --future 6
-  --url postgres://localhost/rideshare_development"
+  --url postgres://owner:@localhost/rideshare_development"
 end

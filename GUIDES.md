@@ -70,6 +70,10 @@ circleci local execute -c process.yml test # error
 ## Scrub a Unscrubbed Download
 
 ```sh
-
+sh scrubbing/scrubber.sh
 ```
+
+## Check for sensitive fields
+
+Basic search of common field names, against flat list of columns.
 
