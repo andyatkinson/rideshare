@@ -1,4 +1,4 @@
-## Set up Databases
+## Set Up Databases
 
 ```sh
 sh db/setup.sh
@@ -9,15 +9,17 @@ sh db/setup_test_database.sh
 
 ## Set Database Connection
 
-Use the readwrite "owner" role for schema modifications.
+Use the readwrite `owner` role for schema modifications.
 
-This is not a superuser role.
+This is not a superuser role, although it does have write capabilities.
 
 The password is supplied from `~/.pgpass`.
 
 ```sh
-export DATABASE_URL="postgres://owner:@localhost:5432/rideshare_development"
+export DATABASE_URL="postgres://app:@localhost:5432/rideshare_development"
 ```
+
+The `app` user cannot `TRUNCATE` tables.
 
 ## Teardown Databases
 
@@ -58,3 +60,16 @@ circleci local execute -c process.yml build # works
 
 circleci local execute -c process.yml test # error
 ```
+
+## Rebuild the Data Dump
+
+```sh
+
+```
+
+## Scrub a Unscrubbed Download
+
+```sh
+
+```
+
