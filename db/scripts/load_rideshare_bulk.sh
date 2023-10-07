@@ -1,3 +1,4 @@
+#!/bin/bash
 # https://www.citusdata.com/blog/2016/10/12/count-performance/
 cat << EOF > randgen.sql
 COPY (
@@ -9,5 +10,5 @@ COPY (
   ) TO STDOUT;
 EOF
 
-psql --dbname rideshare_development --quiet --file randgen.sql | \
-psql --dbname rideshare_development --command "COPY items (n, s) FROM STDIN"
+psql $DATABASE_URL --quiet --file randgen.sql | \
+psql $DATABASE_URL --command "COPY items (n, s) FROM STDIN"

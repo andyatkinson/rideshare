@@ -4,6 +4,8 @@
 # -s/--schema-only
 # -f/--file send output to a file
 
+#export DATABASE_URL="postgres://owner:@localhost:5432/rideshare_development"
+
 pg_dump $DATABASE_URL --file tmp/rideshare_database_dump.sql
 
 echo "dump file created."

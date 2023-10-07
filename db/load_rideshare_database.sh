@@ -1,4 +1,4 @@
-# optionally created the DB from scratch if it does not already exist
+# optionally create the DB from scratch if it does not already exist
 #
 
 echo "found dump file. Size before unzip."

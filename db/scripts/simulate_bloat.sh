@@ -1,4 +1,6 @@
-# first run ./scripts/data_loaders.sh
+#!/bin/bash
+#
+# first run scripts/bulk_load.sh
 # which will load at least 100,000 user records
 # consider working with 1 million or 10 million records
 
@@ -16,8 +18,8 @@ SET first_name =
     WHEN 0 THEN 'Bill' || FLOOR(RANDOM() * 10) || FLOOR(RANDOM() * 10)
     ELSE 'Jane'
   END
-FROM GENERATE_SERIES(1,100000) seq
+FROM GENERATE_SERIES(1,100_000) seq
 WHERE id = seq;
 "
 
-psql --dbname rideshare_development -c "$query";
+psql $DATABASE_URL -c "$query";

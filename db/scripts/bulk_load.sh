@@ -1,8 +1,9 @@
+#!/bin/bash
 # inspiration: https://vnegrisolo.github.io/postgresql/generate-fake-data-using-sql
 
 # create large amounts of fake drivers and riders
 query="
-INSERT INTO users(first_name, last_name, email, type, created_at, updated_at)
+INSERT INTO rideshare.users(first_name, last_name, email, type, created_at, updated_at)
 SELECT
   'fname' || seq,
   'lname' || seq,
@@ -19,8 +20,10 @@ SELECT
   END,
   NOW(),
   NOW()
-FROM GENERATE_SERIES(1, 10000000) seq;
+FROM GENERATE_SERIES(1, 10_000_000) seq;
 "
 
-psql --dbname rideshare_development -c "$query";
-psql --dbname rideshare_development -c "ANALYZE users";
+echo "Bulk loading 10_000_000 Drivers and Riders"
+echo "Raising the statement_timeout"
+psql $DATABASE_URL -c "SET statement_timeout = 600000; $query";
+psql $DATABASE_URL -c "ANALYZE (VERBOSE) rideshare.users";

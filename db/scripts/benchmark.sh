@@ -1,12 +1,17 @@
+#!/bin/bash
+#
 # https://access.crunchydata.com/documentation/postgresql11/11.5/pgbench.html
-pgbench
-  --host localhost
-  --port 5432
-  --username postgres
-  --protocol prepared
-  --time 60
-  --jobs 8
-  --client 8
-  --no-vacuum
-  --file queries.sql
-  --report-latencies rideshare_development
+#
+# Tested on 16.0
+
+echo "Running pgbench"
+pgbench \
+  --username owner \
+  --protocol prepared \
+  --time 10 \
+  --jobs 2 \
+  --client 2 \
+  --no-vacuum \
+  --file scripts/queries.sql \
+  --report-per-command \
+  rideshare_development
