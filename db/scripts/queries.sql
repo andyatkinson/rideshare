@@ -1,5 +1,5 @@
 
--- source thes from a couple of places:
+-- source these from a couple of places:
 -- 1) run "rake test", and get them from "test.log"
 -- 2) get them from pg_stat_statements
 --
