@@ -122,8 +122,6 @@ For the test database, you'll keep it simpler. Use the postgres superuser and th
 
 1. Run `sh db/setup_test_database.sh` to set up `rideshare_test`
 
-1. Currently need to `RAILS_ENV=test bin/rails db:migrate` first, to apply migrations to `rideshare_test`. In test, the tables are created in the `public` schema. May change to app-schema as well.
-
 1. Run `bin/rails test`
 
 Refer to `.circleci/config.yml` for the Circle CI config.
@@ -133,14 +131,6 @@ Refer to `.circleci/config.yml` for the Circle CI config.
 In addition to this Readme, [Development Guides](https://github.com/andyatkinson/development_guides) go into greater depth for setting up your machine for Rideshare development.
 
 For Guides specific to this repo, check [Guides](/GUIDES.md).
-
-## Data Load
-
-To load a pre-made data dump, run the following script from the root directory:
-
-```sh
-sh scripts/reset_and_load_data_dump.sh
-```
 
 ## UI
 
