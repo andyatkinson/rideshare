@@ -1,4 +1,0 @@
-BEGIN;
-  DROP TABLE IF EXISTS users CASCADE;
-  ALTER TABLE users_copy RENAME TO users;
-COMMIT;

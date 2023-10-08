@@ -1,16 +1,9 @@
-
--- source these from a couple of places:
--- 1) run "rake test", and get them from "test.log"
--- 2) get them from pg_stat_statements
---
--- Add specific arguments
+-- Used by benchmark.sh
 
 -- one "Transaction" counts as one run of this file
 -- but file can contain multiple SQL statements, terminated
 -- by a semicolon
 -- https://access.crunchydata.com/documentation/postgresql11/11.5/pgbench.html
-
--- Run the data loaders first
 
 -- perhaps need an expression index
 SELECT
@@ -24,11 +17,6 @@ ORDER BY COUNT(t.rating) DESC;
 
 -- group the users, need an index on 'type'
 select count(*),type from users group by type;
-
--- update some rows with diverse primary key IDs
-
--- delete some rows with diverse ids
-
 
 SELECT
 CONCAT(d.first_name, ' ', d.last_name) AS driver_name,

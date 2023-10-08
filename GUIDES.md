@@ -6,7 +6,6 @@ sh db/setup.sh
 sh db/setup_test_database.sh
 ```
 
-
 ## Set Database Connection
 
 Use the readwrite `owner` role for schema modifications.
@@ -63,13 +62,13 @@ circleci local execute -c process.yml test # error
 
 ## Rebuild the Data Dump
 
-```sh
+See Bulk Loading in [db/scripts/README.md](db/scripts/README.md)
 
-```
-
-## Scrub a Unscrubbed Download
+## Scrub Database
 
 ```sh
+cd db
+
 sh scrubbing/scrubber.sh
 ```
 
@@ -77,3 +76,4 @@ sh scrubbing/scrubber.sh
 
 Basic search of common field names, against flat list of columns.
 
+See Bulk Loading in [db/scripts/README.md](db/scripts/README.md)

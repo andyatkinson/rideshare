@@ -79,7 +79,7 @@ Front-end technologies were removed because this is an API only app.
     sh db/setup.sh
     ```
 
-    Set up DATABASE_URL, which is used locally in `config/database.yml`. Use the `owner` role which is a readwrite role, and should have permissions to modify the schema, creating tables in the `rideshare` PostgreSQL schema.
+    `DATABASE_URL` should be set, which is used locally in `config/database.yml`. Use the `owner` role which is a readwrite role, and should have permissions to modify the schema, creating tables in the `rideshare` PostgreSQL schema.
 
     export DATABASE_URL="postgres://owner:@localhost:5432/rideshare_development"
 

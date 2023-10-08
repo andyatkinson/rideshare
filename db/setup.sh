@@ -9,6 +9,9 @@ psql $DB_URL -v password_to_save=$RIDESHARE_DB_PASSWORD -a -f db/create_role_app
 # database
 psql $DB_URL -a -f db/create_database.sql
 
+# revoke all on public, drop public schema
+psql $DB_URL -a -f db/revoke_drop_public_schema.sql
+
 # schema
 psql $DB_URL -a -f db/create_schema.sql
 
