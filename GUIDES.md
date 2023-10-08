@@ -64,7 +64,7 @@ circleci local execute -c process.yml test # error
 
 See Bulk Loading in [db/scripts/README.md](db/scripts/README.md)
 
-## Scrub a Unscrubbed Download
+## Scrub Database
 
 ```sh
 cd db
