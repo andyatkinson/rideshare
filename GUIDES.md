@@ -77,17 +77,3 @@ sh scrubbing/scrubber.sh
 Basic search of common field names, against flat list of columns.
 
 See Bulk Loading in [db/scripts/README.md](db/scripts/README.md)
-
-## Generate New Data Dump file
-
-```sh
-sh db/dump_rideshare_database.sh
-```
-
-## Generate New Data Dump file
-
-Load from local dump file (see above)
-
-```sh
-sh db/load_rideshare_database.sh
-```
