@@ -6,6 +6,3 @@
 
 REASSIGN OWNED BY owner TO postgres;
 DROP OWNED BY owner;
-
-REASSIGN OWNED BY app TO postgres;
-DROP OWNED BY app;
