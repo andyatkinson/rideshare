@@ -7,15 +7,15 @@ GIT
 
 GIT
   remote: https://github.com/andyatkinson/pgslice.git
-  revision: 1e8b5828b6927b908bb3deb8af2a6ff1c33d84cf
+  revision: 4511982987865657962758a2cd29eb15d7c8614f
   specs:
-    pgslice (0.5.0)
-      pg (>= 0.18.2)
+    pgslice (0.6.1)
+      pg (>= 1)
       thor
 
 GIT
   remote: https://github.com/fatkodima/fast_count.git
-  revision: eb3ef87deb9d12ebbb25680048e6ab44d8dc57a4
+  revision: fd37a9f950687b45ad9f9bca5870846526e88da6
   specs:
     fast_count (0.2.0)
       activerecord (>= 6.0)
@@ -137,9 +137,9 @@ GEM
     geocoder (1.8.2)
     globalid (1.2.1)
       activesupport (>= 6.1)
-    google-protobuf (3.24.3-aarch64-linux)
-    google-protobuf (3.24.3-x86_64-darwin)
-    google-protobuf (3.24.3-x86_64-linux)
+    google-protobuf (3.24.4-aarch64-linux)
+    google-protobuf (3.24.4-x86_64-darwin)
+    google-protobuf (3.24.4-x86_64-linux)
     i18n (1.14.1)
       concurrent-ruby (~> 1.0)
     importmap-rails (1.2.1)
@@ -283,7 +283,7 @@ GEM
     timeout (0.4.0)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
-    unicode-display_width (2.4.2)
+    unicode-display_width (2.5.0)
     webrick (1.8.1)
     websocket-driver (0.7.6)
       websocket-extensions (>= 0.1.0)
