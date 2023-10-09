@@ -5,6 +5,7 @@ psql $DB_URL -v password_to_save=$RIDESHARE_DB_PASSWORD -a -f db/create_role_own
 psql $DB_URL -a -f db/create_role_readwrite_users.sql
 psql $DB_URL -a -f db/create_role_readonly_users.sql
 psql $DB_URL -v password_to_save=$RIDESHARE_DB_PASSWORD -a -f db/create_role_app_user.sql
+psql $DB_URL -v password_to_save=$RIDESHARE_DB_PASSWORD -a -f db/create_role_app_readonly.sql
 
 # database
 psql $DB_URL -a -f db/create_database.sql
