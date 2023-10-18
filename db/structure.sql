@@ -29,6 +29,7 @@ DROP INDEX IF EXISTS rideshare.index_trip_requests_on_start_location_id;
 DROP INDEX IF EXISTS rideshare.index_trip_requests_on_rider_id;
 DROP INDEX IF EXISTS rideshare.index_trip_requests_on_end_location_id;
 DROP INDEX IF EXISTS rideshare.index_locations_on_address;
+DROP INDEX IF EXISTS rideshare.index_fast_search_results_on_driver_id;
 ALTER TABLE IF EXISTS ONLY rideshare.vehicles DROP CONSTRAINT IF EXISTS vehicles_pkey;
 ALTER TABLE IF EXISTS ONLY rideshare.vehicle_reservations DROP CONSTRAINT IF EXISTS vehicle_reservations_pkey;
 ALTER TABLE IF EXISTS ONLY rideshare.users DROP CONSTRAINT IF EXISTS users_pkey;
@@ -249,7 +250,8 @@ COMMENT ON TABLE rideshare.users IS 'sensitive_fields|first_name:scrub_text,last
 --
 
 CREATE MATERIALIZED VIEW rideshare.fast_search_results AS
- SELECT concat(d.first_name, ' ', d.last_name) AS driver_name,
+ SELECT t.driver_id,
+    concat(d.first_name, ' ', d.last_name) AS driver_name,
     avg(t.rating) AS avg_rating,
     count(t.rating) AS trip_count
    FROM (rideshare.trips t
@@ -673,6 +675,13 @@ ALTER TABLE ONLY rideshare.vehicles
 
 
 --
+-- Name: index_fast_search_results_on_driver_id; Type: INDEX; Schema: rideshare; Owner: -
+--
+
+CREATE UNIQUE INDEX index_fast_search_results_on_driver_id ON rideshare.fast_search_results USING btree (driver_id);
+
+
+--
 -- Name: index_locations_on_address; Type: INDEX; Schema: rideshare; Owner: -
 --
 
@@ -827,6 +836,8 @@ ALTER TABLE ONLY rideshare.trip_requests
 SET search_path TO rideshare;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20231018153712'),
+('20231018153441'),
 ('20230925150831'),
 ('20230925150207'),
 ('20230726020548'),
