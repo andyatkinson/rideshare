@@ -2,7 +2,7 @@
 # This overrides the built-in db:reset task
 #
 namespace :custom do
-  desc "This take does something useful!"
+  desc "Custom database tasks"
 
   task :db_reset do
     sh "db/teardown.sh"
