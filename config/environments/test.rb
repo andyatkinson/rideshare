@@ -44,4 +44,12 @@ Rails.application.configure do
 
   # Raises error for missing translations.
   # config.action_view.raise_on_missing_translations = true
+  #
+end
+
+# Rails Guides:
+# https://guides.rubyonrails.org/configuring.html\
+# activerecord-connectionadapters-postgresqladapter-create-unlogged-tables
+ActiveSupport.on_load(:active_record_postgresqladapter) do
+  self.create_unlogged_tables = true
 end
