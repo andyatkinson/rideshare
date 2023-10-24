@@ -77,3 +77,10 @@ sh scrubbing/scrubber.sh
 Basic search of common field names, against flat list of columns.
 
 See Bulk Loading in [db/scripts/README.md](db/scripts/README.md)
+
+## PgBouncer Prepared Statements
+
+* Configure `pool_mode` to be `statement` in the PgBouncer config file
+* Disable Query Logs (unfortunately) (`config/application.rb`)
+* Make sure Prepared Statements aren't disabled in `config/database.yml`
+* Connect through port 6432 and confirm prepared statements work correctly
