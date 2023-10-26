@@ -26,3 +26,13 @@ Remove `sample` from the file name
 
 * Remove `sample`
 * Copy to `~/.psqlrc`
+
+### PgBouncer
+
+> The mode that results in a more sane balance of improved concurrency and retained critical database features is transaction mode.
+From: [PgBouncer is useful, important, and fraught with peril](https://jpcamara.com/2023/04/12/pgbouncer-is-useful.html)
+
+* For 1.21.0, recommend `transaction` pool mode (compatible with multi-statement transactions)
+* For macOS, install with Homebrew
+* Copy changes from `pgbouncer.sample.ini` file
+* Restart with `brew services restart pgbouncer`
