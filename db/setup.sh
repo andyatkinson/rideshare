@@ -1,4 +1,21 @@
-#export DB_URL="postgres://postgres:@localhost:5432/postgres"
+#!/bin/bash
+
+
+# Set each of these:
+# Or use existing value for RIDESHARE_DB_PASSWORD from ~/.pgpass
+#
+# export RIDESHARE_DB_PASSWORD=$(openssl rand -hex 12)
+# export DB_URL="postgres://postgres:@localhost:5432/postgres"
+
+# Check if the environment variable DB_URL is set
+if [ -z "$DB_URL" ]; then
+    echo "Error: DB_URL is not set."
+    exit 1
+fi
+if [ -z "$RIDESHARE_DB_PASSWORD" ]; then
+    echo "Error: RIDESHARE_DB_PASSWORD is not set."
+    exit 1
+fi
 
 # roles
 psql $DB_URL -v password_to_save=$RIDESHARE_DB_PASSWORD -a -f db/create_role_owner.sql

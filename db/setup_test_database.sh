@@ -1,3 +1,5 @@
+#!/bin/bash
+
 export DB_URL=postgres://postgres:@localhost:5432/postgres # run as OS user/superuser/admin
 export APP_TEST_DB_NAME=rideshare_test
 export APP_TEST_USER=rideshare_test
