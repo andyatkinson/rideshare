@@ -116,14 +116,14 @@ GEM
     concurrent-ruby (1.2.2)
     connection_pool (2.4.1)
     crass (1.0.6)
-    database_consistency (1.7.21)
+    database_consistency (1.7.22)
       activerecord (>= 3.2)
     date (3.3.4)
     drb (2.2.0)
       ruby2_keywords
     erubi (1.12.0)
     erubis (2.7.0)
-    faker (3.2.1)
+    faker (3.2.2)
       i18n (>= 1.8.11, < 2)
     faraday (2.7.11)
       base64
@@ -138,13 +138,14 @@ GEM
     geocoder (1.8.2)
     globalid (1.2.1)
       activesupport (>= 6.1)
-    google-protobuf (3.24.4-aarch64-linux)
-    google-protobuf (3.24.4-x86_64-darwin)
-    google-protobuf (3.24.4-x86_64-linux)
+    google-protobuf (3.25.0-aarch64-linux)
+    google-protobuf (3.25.0-x86_64-darwin)
+    google-protobuf (3.25.0-x86_64-linux)
     i18n (1.14.1)
       concurrent-ruby (~> 1.0)
-    importmap-rails (1.2.1)
+    importmap-rails (1.2.3)
       actionpack (>= 6.0.0)
+      activesupport (>= 6.0.0)
       railties (>= 6.0.0)
     io-console (0.6.0)
     irb (1.9.0)
@@ -152,7 +153,7 @@ GEM
       reline (>= 0.3.8)
     json (2.6.3)
     jwt (2.7.1)
-    loofah (2.21.4)
+    loofah (2.22.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.12.0)
     mail (2.8.1)
@@ -166,7 +167,7 @@ GEM
     mini_mime (1.1.5)
     minitest (5.20.0)
     mutex_m (0.2.0)
-    net-imap (0.4.4)
+    net-imap (0.4.5)
       date
       net-protocol
     net-pop (0.1.2)
@@ -302,36 +303,36 @@ PLATFORMS
 
 DEPENDENCIES
   active_record_doctor
-  activerecord-import
-  bcrypt
+  activerecord-import (~> 1.5)
+  bcrypt (~> 3.1)
   benchmark-ips
   benchmark-memory
   database_consistency
   faker
   faraday
   fast_count!
-  fast_jsonapi
+  fast_jsonapi (~> 1.5)
   fx
-  geocoder
-  importmap-rails
+  geocoder (~> 1.8)
+  importmap-rails (~> 1.2)
   json
-  jwt
-  pg
+  jwt (~> 2.7)
+  pg (~> 1.5)
   pg_query (~> 4.2)
-  pg_search
+  pg_search (~> 2.3)
   pghero!
   pgslice!
-  prosopite
+  prosopite (~> 1.4)
   pry
-  puma
-  rails (>= 7.1)
+  puma (~> 6.4)
+  rails (~> 7.1, >= 7.1)
   rails-erd
   rails-pg-extras
   rails_best_practices
   scenic
-  sprockets-rails
+  sprockets-rails (~> 3.4)
   strong_migrations
-  whenever
+  whenever (~> 1.0)
 
 BUNDLED WITH
    2.3.6
