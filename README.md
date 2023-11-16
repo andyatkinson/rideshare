@@ -15,29 +15,29 @@ Prepare your development machine.
 
 #### Homebrew
 
-- Install [Homebrew](https://brew.sh).
-- `brew install graphviz`
+- Install [Homebrew](https://brew.sh)
+    - `brew install graphviz`
 
 #### Ruby Version Manager
 
-First, install a Ruby version manager. [rbenv](https://github.com/rbenv/rbenv) is recommended.
-    - Recommendation: [Basic Git Checkout installation](https://github.com/rbenv/rbenv#basic-git-checkout)
+First, install a Ruby version manager.
+    - [rbenv](https://github.com/rbenv/rbenv) is recommended.
+    - Recommended method: [Basic Git Checkout installation](https://github.com/rbenv/rbenv#basic-git-checkout)
 
 #### PostgreSQL
 
-Install PostgreSQL, but not the databases for Rideshare yet.
-
 - On macOS, [Postgres.app](https://postgresapp.com) is recommended
-    - Note: If you're happy with PostgreSQL installed from Homebrew, you don't need `Postgres.app`.
-- *NOTE*: You'll use PostgreSQL 16 (Released 2023)
+    - Use PostgreSQL 16 (Released 2023)
+    - *Note*: If you're happy with PostgreSQL installed via Homebrew, no need for `Postgres.app`
 
 ### Rideshare Installation
 
 ### Repository
 Download the repository and install the code.
 
-1. `cd` into your source code directory, e.g.: `~/Projects`
-1. From there, clone the repo: `git clone https://github.com/andyatkinson/rideshare.git`
+1. `cd` to your source code directory, e.g.: `~/Projects`
+1. From there, clone the repo:
+    - `git clone https://github.com/andyatkinson/rideshare.git`
 1. `cd rideshare`
 
 ### Ruby Version
