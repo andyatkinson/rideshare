@@ -44,3 +44,10 @@ psql $DB_URL -a -f db/create_grants_schema.sql
 psql $DB_URL -a -f db/alter_default_privileges_readwrite.sql
 psql $DB_URL -a -f db/alter_default_privileges_readonly.sql
 psql $DB_URL -a -f db/alter_default_privileges_public.sql
+
+echo
+echo "DONE!"
+echo "Notes:"
+echo "Make sure graphviz is installed: 'brew install graphviz'"
+echo
+echo "Next up: run 'bin/rails db:migrate' to apply pending migrations"
