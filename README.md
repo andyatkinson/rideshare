@@ -13,10 +13,13 @@ Rideshare is the Rails application for the book: [High Performance PostgreSQL fo
 
 Prepare your development machine.
 
-#### Homebrew
+#### Homebrew Packages
 
-- Install [Homebrew](https://brew.sh)
-    - `brew install graphviz`
+First, install [Homebrew](https://brew.sh).
+
+Using Homebrew, install these:
+
+- `brew install graphviz`
 
 #### Ruby Version Manager
 
@@ -42,32 +45,69 @@ Download the repository and install the code.
 
 ### Ruby Version
 
-- Install the version listed in `~/.ruby_version`
-    - For example, `rbenv install 3.2.2`
-- Once Ruby is installed, install bundler
-    - `gem install bundler`
-- When Bundler is installed, use it to install gems
-    - `bundle install`
+`cd` into Rideshare, and run:
+
+```sh
+cat .ruby-version
+3.2.2
+```
+
+Using rbenv, install whatever version is listed. For example:
+
+- `rbenv install 3.2.2`
+
+Run `rbenv versions` to see available versions. Make sure you are *not* using the `system` version.
+
+You should see something like this:
+
+```sh
+rbenv versions
+  system
+* 3.2.2 (set by /Users/andy/Projects/rideshare/.ruby-version)
+```
+
+With the version of Ruby installed for the app, make sure it's being used.
+
+Running `ruby -v` or `which ruby` should show the expected version, installed using `rbenv`.
+
+```sh
+> ruby -v
+ruby 3.2.2 (2023-03-30 revision e51014f9c0) [x86_64-darwin22]
+> which ruby
+/Users/andy/.rbenv/shims/ruby
+```
+
+*Note*: Review *Learn how to load rbenv in your shell.*, and use [`rbenv init`](https://github.com/rbenv/rbenv) if the version is not correct.
+
+With Ruby installed, you're ready to install [Bundler](https://bundler.io). To do that, run:
+
+- `gem install bundler`
+
+With Bundler installed, from Rideshare, run:
+
+- `bundle install`
+
+You should now have all Rideshare gems installed.
 
 ### Rideshare development database
 
 Normally in Rails, you'd run `bin/rails db:create` to create databases. Rideshare has a custom setup.
 
-Before running the script, create a unique secure password for database users.
+Before running the script, create a unique secure password for database users. If you've already set it, retrieve the value from `~/.pgpass`.
 
-On macOS, run the following command from your terminal:
+For first-time creation, on macOS run the following command:
 
 ```sh
 export RIDESHARE_DB_PASSWORD=$(openssl rand -hex 12)
 ```
 
-You've now set `RIDESHARE_DB_PASSWORD` with a secure password. Or set it from `~/.pgpass` if it's set there.
+You've now set `RIDESHARE_DB_PASSWORD` with a secure password. Or fetched the value you set earlier from `~/.pgpass`.
 
 The value will be something like `2C6uw3LprgUMwSLQ`.
 
 Find or create the file `~/.pgpass`, by running `touch ~/.pgpass`.
 
-Populate the file following the example in: `postgresql/.pgpass.sample`. For example:
+Populate the file following the sample in: `postgresql/.pgpass.sample`. For example:
 
 ```sh
 localhost:5432:rideshare_development:owner:2C6uw3LprgUMwSLQ
@@ -81,19 +121,18 @@ From your terminal in the Rideshare directory, run:
 sh db/setup.sh
 ```
 
-From the terminal, run: `psql $DATABASE_URL`. From psql:
-- Run `SELECT current_user;` Confirm connected as `owner`
-- Run`\dn`, confirm `rideshare` is visible
+Great. Once this completes, run `psql $DATABASE_URL`. From psql:
 
-Create the tables.
+- Run `SELECT current_user;`. Confirm that you're connected as `owner`.
+- Run`\dn`. Confirm the `rideshare` `schema` is visible.
 
-Run pending migrations. Run the following in the terminal, from the Rideshare directory:
+Run pending migrations, by running the following command:
 
 ```sh
 bin/rails db:migrate
 ```
-Installation complete!
 
+If tables are created successfully, your development environment is ready to go!
 
 ## Test Environment Setup
 
