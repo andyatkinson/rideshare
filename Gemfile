@@ -35,4 +35,5 @@ group :development, :test do
   gem 'active_record_doctor'
   gem 'rails-pg-extras'
   gem 'database_consistency'
+  gem 'dotenv-rails' # Manage .env
 end

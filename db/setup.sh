@@ -5,7 +5,8 @@
 # Or use existing value for RIDESHARE_DB_PASSWORD from ~/.pgpass
 #
 # export RIDESHARE_DB_PASSWORD=$(openssl rand -hex 12)
-# export DB_URL="postgres://postgres:@localhost:5432/postgres"
+export DB_URL="postgres://postgres:@localhost:5432/postgres"
+export DATABASE_URL="postgres://owner:@localhost:5432/rideshare_development"
 
 # Check if the environment variable DB_URL is set
 if [ -z "$DB_URL" ]; then
