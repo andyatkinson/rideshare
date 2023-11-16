@@ -15,6 +15,8 @@ if [ -z "$DB_URL" ]; then
 fi
 if [ -z "$RIDESHARE_DB_PASSWORD" ]; then
     echo "Error: RIDESHARE_DB_PASSWORD is not set."
+    echo "Set the password from the ~/.pgpass file"
+    echo 'e.g.: export RIDESHARE_DB_PASSWORD="HSnDDgFtyW9fyFI"'
     exit 1
 fi
 
