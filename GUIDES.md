@@ -74,7 +74,7 @@ sh scrubbing/scrubber.sh
 
 ## Check for sensitive fields
 
-Basic search of common field names, against flat list of columns.
+Basic search of common field names, against a flat list of columns.
 
 See Bulk Loading in [db/scripts/README.md](db/scripts/README.md)
 

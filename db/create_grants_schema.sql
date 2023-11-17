@@ -15,3 +15,5 @@ GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA rideshare TO app_readonly;
 
 -- Use pg_read_all_data instead of using Default Privileges
 GRANT pg_read_all_data TO app_readonly;
+GRANT pg_read_all_data TO owner;
+GRANT pg_read_all_stats TO owner;

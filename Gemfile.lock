@@ -119,6 +119,10 @@ GEM
     database_consistency (1.7.22)
       activerecord (>= 3.2)
     date (3.3.4)
+    dotenv (2.8.1)
+    dotenv-rails (2.8.1)
+      dotenv (= 2.8.1)
+      railties (>= 3.2)
     drb (2.2.0)
       ruby2_keywords
     erubi (1.12.0)
@@ -308,6 +312,7 @@ DEPENDENCIES
   benchmark-ips
   benchmark-memory
   database_consistency
+  dotenv-rails
   faker
   faraday
   fast_count!
