@@ -1,9 +1,5 @@
 [![CircleCI](https://circleci.com/gh/andyatkinson/rideshare.svg?style=svg)](https://circleci.com/gh/andyatkinson/rideshare)
 
-# Rideshare
-
-Rideshare is a Rails *API-only* app that implements a portion of a fictional Ridesharing service.
-
 # High Performance PostgreSQL for Rails
 
 Rideshare is the Rails application for the book: [High Performance PostgreSQL for Rails](https://pgrailsbook.com).
