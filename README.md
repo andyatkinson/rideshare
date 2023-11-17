@@ -125,7 +125,7 @@ Great. Once this completes, run `psql $DATABASE_URL`. From psql:
 
 ## Run Migrations
 
-Run pending migrations, by running the following command:
+Run pending migrations by running the following command from your terminal:
 
 ```sh
 bin/rails db:migrate
