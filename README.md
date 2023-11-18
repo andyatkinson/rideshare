@@ -149,11 +149,13 @@ In addition to this file, the [Development Guides](https://github.com/andyatkins
 
 In that repo, you'll also find out about additional software to install that's not necessary now, but used for examples and exercises in later chapters of the book.
 
-For Guides and tasks, check out: [Guides](/GUIDES.md)
+For Guides and tasks, check out: [Guides](GUIDES.md)
 
 For PostgreSQL guidance, check out: [postgresql/README.md](postgresql/README.md)
 
 For database scripts, check out: [db/scripts/README.md](db/scripts/README.md)
+
+To testing details for Rideshare, check out: [TESTING.md](TESTING.md)
 
 # UI
 
