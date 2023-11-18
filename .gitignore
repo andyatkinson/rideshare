@@ -45,3 +45,5 @@ docker/pg_hba.backup.conf
 docker/postgresql.backup.conf
 docker/pg_hba.conf
 docker/postgresql.conf
+
+output.log

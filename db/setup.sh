@@ -10,10 +10,17 @@
 # Check if the environment variable DB_URL is set
 if [ -z "$DB_URL" ]; then
     echo "Error: DB_URL is not set."
+    echo
+    echo "See: db/setup.sh"
+    echo "Run: export DB_URL='postgres://postgres:@localhost:5432/postgres'"
     exit 1
 fi
 if [ -z "$RIDESHARE_DB_PASSWORD" ]; then
     echo "Error: RIDESHARE_DB_PASSWORD is not set."
+    echo
+    echo "Check for existing value in ~/.pgpass"
+    echo 'e.g. export RIDESHARE_DB_PASSWORD="HSnDDgFtyW9fyFI"'
+    echo "OR generate new value (See: db/setup.sh)"
     exit 1
 fi
 

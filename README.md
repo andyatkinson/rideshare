@@ -39,12 +39,20 @@ Front-end technologies were removed because this is an API only app.
 - On macOS, [Postgres.app](https://postgresapp.com) is the recommended way to install it
 - Currently on PostgreSQL 16 (2023)
 - run `export RIDESHARE_DB_PASSWORD=<secret value here>` before running setup scripts (see below)
-- Configures PostgreSQL following [My GOTO Postgres Configuration for Web Services](https://tightlycoupled.io/my-goto-postgres-configuration-for-web-services/)
-- Configuration uses a series of SQL scripts in `db` directory, run from `psql` via a shell script (see next step)
-- Run `sh db/setup.sh`
-- expects `DATABASE_URL` is set
-- Migrations will first run `SET role = owner` to run Migrations as `owner`, which will own the tables, check `lib/tasks/migration_hooks.rake`
+- Scripts execpt `DB_URL` and `DATABASE_URL` are set. Review script comments.
+- PostgreSQL is configured following [My GOTO Postgres Configuration for Web Services](https://tightlycoupled.io/my-goto-postgres-configuration-for-web-services/)
 
+Run:
+```sh
+sh db/setup.sh
+```
+
+Or to capture output to `output.log`:
+
+```sh
+sh db/setup.sh 2>&1 | tee -a output.log
+```
+Note that *Active Record Migrations* run `SET role = owner`, so that they run as the `owner` user. This user owns the tables. See: `lib/tasks/migration_hooks.rake`
 
 ## Installation Steps (Development)
 
