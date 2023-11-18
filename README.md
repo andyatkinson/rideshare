@@ -1,11 +1,10 @@
 [![CircleCI](https://circleci.com/gh/andyatkinson/rideshare.svg?style=svg)](https://circleci.com/gh/andyatkinson/rideshare)
 
 # High Performance PostgreSQL for Rails
-Rideshare is the Rails application for the book: [High Performance PostgreSQL for Rails](https://pgrailsbook.com).
+Rideshare is the Rails application for: [High Performance PostgreSQL for Rails](https://pgrailsbook.com)
 
 # Installation
-Prepare your development machine. Review the [Development Guides](https://github.com/andyatkinson/development_guides) repo to make sure your development machine has all dependencies installed.
-
+Prepare your development machine.
 ## Homebrew Packages
 First, install [Homebrew](https://brew.sh).
 
@@ -144,11 +143,17 @@ bin/rails db:migrate
 If tables are created successfully, your development environment is ready to go!
 
 
-# Development Guides
+# Development Guides and Documentation
 
 In addition to this file, the [Development Guides](https://github.com/andyatkinson/development_guides) go into greater depth for preparing your development machine.
 
-For Guides specific to this repo, check [Guides](/GUIDES.md).
+In that repo, you'll also find out about additional software to install that's not necessary now, but used for examples and exercises in later chapters of the book.
+
+For Guides and tasks, check out: [Guides](/GUIDES.md)
+
+For PostgreSQL guidance, check out: [postgresql/README.md](postgresql/README.md)
+
+For database scripts, check out: [db/scripts/README.md](db/scripts/README.md)
 
 # UI
 
