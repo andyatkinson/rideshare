@@ -5,7 +5,8 @@
 # Or use existing value for RIDESHARE_DB_PASSWORD from ~/.pgpass
 #
 # export RIDESHARE_DB_PASSWORD=$(openssl rand -hex 12)
-# export DB_URL="postgres://postgres:@localhost:5432/postgres"
+export DB_URL="postgres://postgres:@localhost:5432/postgres"
+export DATABASE_URL="postgres://owner:@localhost:5432/rideshare_development"
 
 # Check if the environment variable DB_URL is set
 if [ -z "$DB_URL" ]; then
@@ -48,3 +49,10 @@ psql $DB_URL -a -f db/create_grants_schema.sql
 psql $DB_URL -a -f db/alter_default_privileges_readwrite.sql
 psql $DB_URL -a -f db/alter_default_privileges_readonly.sql
 psql $DB_URL -a -f db/alter_default_privileges_public.sql
+
+echo
+echo "DONE!"
+echo "Notes:"
+echo "Make sure graphviz is installed: 'brew install graphviz'"
+echo
+echo "Next up: run 'bin/rails db:migrate' to apply pending migrations"
