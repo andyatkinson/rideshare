@@ -15,5 +15,9 @@ GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA rideshare TO app_readonly;
 
 -- Use pg_read_all_data instead of using Default Privileges
 GRANT pg_read_all_data TO app_readonly;
+
+-- Needed for: SHOW data_directory;
+-- export PGDATA="$(psql $DATABASE_URL -c 'SHOW data_directory' --tuples-only)"
+GRANT pg_read_all_settings TO owner;
 GRANT pg_read_all_data TO owner;
 GRANT pg_read_all_stats TO owner;

@@ -1,14 +1,11 @@
 [![CircleCI](https://circleci.com/gh/andyatkinson/rideshare.svg?style=svg)](https://circleci.com/gh/andyatkinson/rideshare)
 
 # High Performance PostgreSQL for Rails
-
-Rideshare is the Rails application for the book: [High Performance PostgreSQL for Rails](https://pgrailsbook.com).
+Rideshare is the Rails application for: [High Performance PostgreSQL for Rails](https://pgrailsbook.com)
 
 # Installation
-Prepare your development machine. Review the [Development Guides](https://github.com/andyatkinson/development_guides) repo to make sure your development machine has all dependencies installed.
-
+Prepare your development machine.
 ## Homebrew Packages
-
 First, install [Homebrew](https://brew.sh).
 
 Using Homebrew, install these:
@@ -16,25 +13,41 @@ Using Homebrew, install these:
 - `brew install graphviz`
 
 ## Ruby Version Manager
-
 Before installing Ruby, install a *Ruby Version Manager*. The version manager makes it easy to manage multiple versions at once.
 
-[rbenv](https://github.com/rbenv/rbenv) is recommended.
-- Recommended method: [Basic Git Checkout installation](https://github.com/rbenv/rbenv#basic-git-checkout)
+- [rbenv](https://github.com/rbenv/rbenv) is recommended.
+- `brew install rbenv`
 
 ## PostgreSQL
 
 - On macOS, [Postgres.app](https://postgresapp.com) is recommended
-    - Use PostgreSQL 16 (Released 2023)
-    - *Note*: If you're happy with PostgreSQL installed via Homebrew, no need for `Postgres.app`
+- Using PostgreSQL 16 (2023)
+- run `export RIDESHARE_DB_PASSWORD=<secret value here>` before running setup scripts (see below)
+- Scripts expect that `DB_URL` and `DATABASE_URL` are set.
+- PostgreSQL is configured following [My GOTO Postgres Configuration for Web Services](https://tightlycoupled.io/my-goto-postgres-configuration-for-web-services/)
+- Migrations run `SET role = owner` to run Migrations as `owner`, which owns the tables, check `lib/tasks/migration_hooks.rake`
 
-## Repository
-Clone the repository and install the code.
+Run:
+```sh
+sh db/setup.sh
+```
 
+Or to capture output to `output.log`:
+
+```sh
+sh db/setup.sh 2>&1 | tee -a output.log
+```
+Note that *Active Record Migrations* run `SET role = owner`, so that they run as the `owner` user. This user owns the tables. See: `lib/tasks/migration_hooks.rake`
+
+
+## Clone the Repository
+
+1. Install the Prerequisites
 1. `cd` to your source code directory, e.g.: `~/Projects`
 1. From there, clone the repo:
     - `git clone https://github.com/andyatkinson/rideshare.git`
 1. `cd rideshare`
+
 
 ## Ruby Version
 
@@ -85,39 +98,49 @@ You should now have all Rideshare gems installed.
 
 ## Rideshare development database
 
-Normally in Rails, you'd run `bin/rails db:create` to create databases. Rideshare has a custom setup.
+Normally in Rails, you'd run `bin/rails db:create`. In Rideshare you'll use a custom script.
 
-Before running the script, create a unique secure password for database users. If you've already set it, retrieve the value from `~/.pgpass`.
+Before running the script, you'll need to configure several environment variables. You'll create a secure password for the database users that get created.
 
-For first-time creation, on macOS run the following command:
+These are the variables you'll set:
+
+```sh
+RIDESHARE_DB_PASSWORD
+DB_URL
+DATABASE_URL
+```
+
+If you're creating the roles for the first time, you can generate a password on macOS by running this command from your terminal:
 
 ```sh
 export RIDESHARE_DB_PASSWORD=$(openssl rand -hex 12)
 ```
-You've now set `RIDESHARE_DB_PASSWORD` with a secure password. Or fetched the value you set earlier from `~/.pgpass`.
-
-The value will be something like `2C6uw3LprgUMwSLQ`.
+Once you've created a value for `RIDESHARE_DB_PASSWORD`, you'll set it in `~/.pgpass`. Refer to `postgresql/.pgpass.sample` for an example.
 
 Find or create the file `~/.pgpass`, by running `touch ~/.pgpass`.
 
-Populate the file following the sample in: `postgresql/.pgpass.sample`. For example:
+If you are running this later, then you can assign `RIDESHARE_DB_PASSWORD` to the existing password value you've set in `~/.pgpass`.
+
+The content of `~/.pgpass` might look like below, and the last segment is the password.
 
 ```sh
 localhost:5432:rideshare_development:owner:2C6uw3LprgUMwSLQ
 ```
 
-With `RIDESHARE_DB_PASSWORD` set, you're ready to run the custom database creation and setup script.
+Once you've set `RIDESHARE_DB_PASSWORD`, `DB_URL`, and `DATABASE_URL`, you're ready to run the database creation script.
 
-From your terminal in the Rideshare directory, run:
+To do that, run the following from your terminal:
 
 ```sh
 sh db/setup.sh
 ```
 
-Great. Once this completes, run `psql $DATABASE_URL`. From psql:
+If environment variables aren't populated, you'll be prompted to do that.
 
-- Run `SELECT current_user;`. Confirm that you're connected as `owner`.
-- Run`\dn`. Confirm the `rideshare` `schema` is visible.
+Once this completes, you'll have the database set up. Let's verify that you can connect. Run `psql $DATABASE_URL`. Once connected, run this from psql:
+
+- `SELECT current_user;`. Confirm that you're connected as `owner`
+- `\dn`. Confirm that the `rideshare` schema is visible
 
 ## Run Migrations
 
@@ -129,28 +152,20 @@ bin/rails db:migrate
 
 If tables are created successfully, your development environment is ready to go!
 
-# Test Environment Installation
 
-For development, you'll use some good practices in PostgreSQL like a custom app schema and app user, with reduced explicitly granted privileges.
-
-For test environment, you'll keep it simpler.
-
-Use the `postgres` superuser and the `public` schema. The test configuration is also used for Circle CI.
-
-From the Rideshare directory, run:
-
-1. `sh db/setup_test_database.sh`, which sets up `rideshare_test`
-1. `bin/rails test`
-
-Refer to `.circleci/config.yml` for the Circle CI config.
-
-You should now have a test database, and tests should have passed.
-
-# Development Guides
+# Development Guides and Documentation
 
 In addition to this file, the [Development Guides](https://github.com/andyatkinson/development_guides) go into greater depth for preparing your development machine.
 
-For Guides specific to this repo, check [Guides](/GUIDES.md).
+In that repo, you'll also find out about additional software to install that's not necessary now, but used for examples and exercises in later chapters of the book.
+
+For Guides and tasks, check out: [Guides](GUIDES.md)
+
+For PostgreSQL guidance, check out: [postgresql/README.md](postgresql/README.md)
+
+For database scripts, check out: [db/scripts/README.md](db/scripts/README.md)
+
+To testing details for Rideshare, check out: [TESTING.md](TESTING.md)
 
 # UI
 
@@ -162,14 +177,3 @@ Rideshare runs [PgHero](https://github.com/ankane/pghero) which has a UI.
 * Navigate to <http://localhost:3000/pghero>
 
 ![Screenshot of PgHero for Rideshare](https://i.imgur.com/VduvxSK.png)
-
-# Databases
-
-- PostgreSQL configuration follows [My GOTO Postgres Configuration for Web Services](https://tightlycoupled.io/my-goto-postgres-configuration-for-web-services/)
-- Review SQL scripts in the `db` directory
-
-# UI
-
-Note: Front-end technologies were removed because this is an *API-only* app.
-
-- `importmap-rails` does not require yarn, npm etc. <https://fly.io/ruby-dispatch/making-sense-of-rails-assets/>

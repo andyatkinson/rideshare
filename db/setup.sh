@@ -11,12 +11,17 @@ export DATABASE_URL="postgres://owner:@localhost:5432/rideshare_development"
 # Check if the environment variable DB_URL is set
 if [ -z "$DB_URL" ]; then
     echo "Error: DB_URL is not set."
+    echo
+    echo "See: db/setup.sh"
+    echo "Run: export DB_URL='postgres://postgres:@localhost:5432/postgres'"
     exit 1
 fi
 if [ -z "$RIDESHARE_DB_PASSWORD" ]; then
     echo "Error: RIDESHARE_DB_PASSWORD is not set."
-    echo "Set the password from the ~/.pgpass file"
-    echo 'e.g.: export RIDESHARE_DB_PASSWORD="HSnDDgFtyW9fyFI"'
+    echo
+    echo "Check for existing value in ~/.pgpass"
+    echo 'e.g. export RIDESHARE_DB_PASSWORD="HSnDDgFtyW9fyFI"'
+    echo "OR generate new value (See: db/setup.sh)"
     exit 1
 fi
 
@@ -46,8 +51,11 @@ psql $DB_URL -a -f db/alter_default_privileges_readonly.sql
 psql $DB_URL -a -f db/alter_default_privileges_public.sql
 
 echo
-echo "DONE!"
+echo "DONE! 🎉"
 echo "Notes:"
 echo "Make sure graphviz is installed: 'brew install graphviz'"
 echo
-echo "Next up: run 'bin/rails db:migrate' to apply pending migrations"
+echo "Next: run 'bin/rails db:migrate' to apply pending migrations"
+echo
+echo "If you ran as: 'sh db/setup.sh 2>&1 | tee -a output.log'"
+echo "Review 'output.log' for any errors"
