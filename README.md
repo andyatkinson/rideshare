@@ -98,39 +98,49 @@ You should now have all Rideshare gems installed.
 
 ## Rideshare development database
 
-Normally in Rails, you'd run `bin/rails db:create` to create databases. Rideshare has a custom setup.
+Normally in Rails, you'd run `bin/rails db:create`. In Rideshare you'll use a custom script.
 
-Before running the script, create a unique secure password for database users. If you've already set it, retrieve the value from `~/.pgpass`.
+Before running the script, you'll need to configure several environment variables. You'll create a secure password for the database users that get created.
 
-For first-time creation, on macOS run the following command:
+These are the variables you'll set:
+
+```sh
+RIDESHARE_DB_PASSWORD
+DB_URL
+DATABASE_URL
+```
+
+If you're creating the roles for the first time, you can generate a password on macOS by running this command from your terminal:
 
 ```sh
 export RIDESHARE_DB_PASSWORD=$(openssl rand -hex 12)
 ```
-You've now set `RIDESHARE_DB_PASSWORD` with a secure password. Or fetched the value you set earlier from `~/.pgpass`.
-
-The value will be something like `2C6uw3LprgUMwSLQ`.
+Once you've created a value for `RIDESHARE_DB_PASSWORD`, you'll set it in `~/.pgpass`. Refer to `postgresql/.pgpass.sample` for an example.
 
 Find or create the file `~/.pgpass`, by running `touch ~/.pgpass`.
 
-Populate the file following the sample in: `postgresql/.pgpass.sample`. For example:
+If you are running this later, then you can assign `RIDESHARE_DB_PASSWORD` to the existing password value you've set in `~/.pgpass`.
+
+The content of `~/.pgpass` might look like below, and the last segment is the password.
 
 ```sh
 localhost:5432:rideshare_development:owner:2C6uw3LprgUMwSLQ
 ```
 
-With `RIDESHARE_DB_PASSWORD` set, you're ready to run the custom database creation and setup script.
+Once you've set `RIDESHARE_DB_PASSWORD`, `DB_URL`, and `DATABASE_URL`, you're ready to run the database creation script.
 
-From your terminal in the Rideshare directory, run:
+To do that, run the following from your terminal:
 
 ```sh
 sh db/setup.sh
 ```
 
-Great. Once this completes, run `psql $DATABASE_URL`. From psql:
+If environment variables aren't populated, you'll be prompted to do that.
 
-- Run `SELECT current_user;`. Confirm that you're connected as `owner`.
-- Run`\dn`. Confirm the `rideshare` `schema` is visible.
+Once this completes, you'll have the database set up. Let's verify that you can connect. Run `psql $DATABASE_URL`. Once connected, run this from psql:
+
+- `SELECT current_user;`. Confirm that you're connected as `owner`
+- `\dn`. Confirm that the `rideshare` schema is visible
 
 ## Run Migrations
 
