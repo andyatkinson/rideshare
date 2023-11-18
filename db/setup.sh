@@ -51,8 +51,11 @@ psql $DB_URL -a -f db/alter_default_privileges_readonly.sql
 psql $DB_URL -a -f db/alter_default_privileges_public.sql
 
 echo
-echo "DONE!"
+echo "DONE! 🎉"
 echo "Notes:"
 echo "Make sure graphviz is installed: 'brew install graphviz'"
 echo
-echo "Next up: run 'bin/rails db:migrate' to apply pending migrations"
+echo "Next: run 'bin/rails db:migrate' to apply pending migrations"
+echo
+echo "If you ran as: 'sh db/setup.sh 2>&1 | tee -a output.log'"
+echo "Review 'output.log' for any errors"
