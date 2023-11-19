@@ -6,6 +6,10 @@ From the Rideshare root, `cd` into `db`.
 
 ## Bulk Load
 
+Create `10_000_000` records, mix of Drivers and Riders, in `rideshare.users` using SQL
+
+Inspiration: <https://vnegrisolo.github.io/postgresql/generate-fake-data-using-sql>
+
 ```sh
 sh scripts/bulk_load.sh
 ```
