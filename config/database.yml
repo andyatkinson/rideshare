@@ -1,8 +1,18 @@
+#
+# Configuring Active Record:
+# <https://guides.rubyonrails.org/configuring.html#configuring-active-record>
+#
+# Database Connection Control Functions
+# <https://www.postgresql.org/docs/current/libpq-connect.html>
+#
 default: &default
   adapter: postgresql
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  timeout: 5000
   schema_search_path: rideshare
+  prepared_statements: true # enabled by default
+  advisory_locks: true # enabled by default
+  # Optional (PostgreSQL):
+  # checkout_timeout, read_timeout
 
 test:
   <<: *default
@@ -13,4 +23,10 @@ development:
   url: <%= ENV['DATABASE_URL'] %>
   database: rideshare_development
   variables:
-    statement_timeout: 5000
+    # https://www.postgresql.org/docs/current/runtime-config-client.html
+    statement_timeout: 5000 # seconds, set at client level
+    idle_in_transaction_session_timeout: 300000 # milliseconds
+    # PostgreSQL params:
+    # idle_timeout
+    # lock_timeout
+    # idle_session_timeout
