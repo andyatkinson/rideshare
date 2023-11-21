@@ -5,17 +5,22 @@ Rideshare is the Rails application for: [High Performance PostgreSQL for Rails](
 
 # Installation
 Prepare your development machine.
+
 ## Homebrew Packages
 First, install [Homebrew](https://brew.sh).
 
 Using Homebrew, install these:
 
-- `brew install graphviz`
+```sh
+brew install graphviz
+```
 
 ## Ruby Version Manager
 Before installing Ruby, install a *Ruby version manager*. The recommended version manager is [Rbenv](https://github.com/rbenv/rbenv). Install it with Homebrew.
 
-- `brew install rbenv`
+```sh
+brew install rbenv
+```
 
 ## PostgreSQL
 
@@ -30,16 +35,13 @@ PostgreSQL configuration for Rideshare follows: [My GOTO Postgres Configuration 
 
 Run `cat .ruby-version` to find the version of Ruby that Rideshare uses.
 
+To install version `3.2.2`, run the following:
+
 ```sh
-cat .ruby-version
-3.2.2
+rbenv install 3.2.2
 ```
 
-Install that version using Rbenv:
-
-- `rbenv install 3.2.2`
-
-Run `rbenv versions` to confirm that the correct version of Ruby is configured as the current version (with an asterisk):
+Run `rbenv versions` to confirm the correct version is configured as the current version (has an asterisk):
 
 ```sh
   system
@@ -52,7 +54,9 @@ Review *Learn how to load rbenv in your shell.* using [`rbenv init`](https://git
 
 Bundler is included when you install Ruby using Rbenv. You're ready to install the Rideshare gems:
 
-- `bundle install`
+```sh
+bundle install
+```
 
 ## Rideshare development database
 
@@ -84,8 +88,17 @@ localhost:5432:rideshare_development:owner:2C6uw3LprgUMwSLQ
 
 Once this completes, you'll have the database set up. Verify that you can connect by running: `psql $DATABASE_URL`. Once connected, run this from psql:
 
-- `SELECT current_user;`. Confirm that you're connected as `owner`
-- `\dn`. Confirm that the `rideshare` schema is visible
+```sql
+SELECT current_user;
+```
+
+Confirm that you're connected as `owner`:
+
+```sql
+\dn
+```
+
+Verify the `rideshare` schema is visible, and all the tables: `\dt`.
 
 ## Run Migrations
 
@@ -115,7 +128,12 @@ Although Rideshare is an *API-only* app, there are some UI elements.
 
 Rideshare runs [PgHero](https://github.com/ankane/pghero) which has a UI.
 
-* Run `bin/rails server`
-* Navigate to <http://localhost:3000/pghero>
+Connect to it:
+
+```sh
+bin/rails server
+```
+
+Visit <http://localhost:3000/pghero> in your browser.
 
 ![Screenshot of PgHero for Rideshare](https://i.imgur.com/VduvxSK.png)
