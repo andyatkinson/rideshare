@@ -155,17 +155,12 @@ If tables are created successfully, your development environment is ready to go!
 
 # Development Guides and Documentation
 
-In addition to this file, the [Development Guides](https://github.com/andyatkinson/development_guides) go into greater depth for preparing your development machine.
-
-In that repo, you'll also find out about additional software to install that's not necessary now, but used for examples and exercises in later chapters of the book.
-
-For Guides and tasks, check out: [Guides](GUIDES.md)
-
-For PostgreSQL guidance, check out: [postgresql/README.md](postgresql/README.md)
-
-For database scripts, check out: [db/scripts/README.md](db/scripts/README.md)
-
-To testing details for Rideshare, check out: [TESTING.md](TESTING.md)
+- In addition to this file, the [Development Guides](https://github.com/andyatkinson/development_guides) go into greater depth for preparing your development machine.
+- For Guides and Tasks, check out: [Guides](GUIDES.md)
+- For PostgreSQL guidance, check out: [postgresql/README.md](postgresql/README.md)
+- For database scripts, check out: [db/scripts/README.md](db/scripts/README.md)
+- To testing details for Rideshare, check out: [TESTING.md](TESTING.md)
+- Check out [db/README.md](db/README.md)
 
 # UI
 
