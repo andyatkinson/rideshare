@@ -13,144 +13,91 @@ Using Homebrew, install these:
 - `brew install graphviz`
 
 ## Ruby Version Manager
-Before installing Ruby, install a *Ruby Version Manager*. The version manager makes it easy to manage multiple versions at once.
+Before installing Ruby, install a *Ruby version manager*. The recommended version manager is [Rbenv](https://github.com/rbenv/rbenv). Install it with Homebrew.
 
-- [rbenv](https://github.com/rbenv/rbenv) is recommended.
 - `brew install rbenv`
 
 ## PostgreSQL
 
-- On macOS, [Postgres.app](https://postgresapp.com) is recommended
-- Using PostgreSQL 16 (2023)
-- run `export RIDESHARE_DB_PASSWORD=<secret value here>` before running setup scripts (see below)
-- Scripts expect that `DB_URL` and `DATABASE_URL` are set.
-- PostgreSQL is configured following [My GOTO Postgres Configuration for Web Services](https://tightlycoupled.io/my-goto-postgres-configuration-for-web-services/)
-- Migrations run `SET role = owner` to run Migrations as `owner`, which owns the tables, check `lib/tasks/migration_hooks.rake`
+If you've installed version 16 of PostgreSQL via Homebrew, that's fine. If not:
 
-Run:
-```sh
-sh db/setup.sh
-```
+- Install [Postgres.app](https://postgresapp.com)
+- Add a PostgreSQL 16 server, and initialize it from the application
 
-Or to capture output to `output.log`:
-
-```sh
-sh db/setup.sh 2>&1 | tee -a output.log
-```
-Note that *Active Record Migrations* run `SET role = owner`, so that they run as the `owner` user. This user owns the tables. See: `lib/tasks/migration_hooks.rake`
-
-
-## Clone the Repository
-
-1. Install the Prerequisites
-1. `cd` to your source code directory, e.g.: `~/Projects`
-1. From there, clone the repo:
-    - `git clone https://github.com/andyatkinson/rideshare.git`
-1. `cd rideshare`
-
+PostgreSQL configuration for Rideshare follows: [My GOTO Postgres Configuration for Web Services](https://tightlycoupled.io/my-goto-postgres-configuration-for-web-services/)
 
 ## Ruby Version
 
-`cd` into Rideshare, and run `cat .ruby-version`. This is the Ruby version you'll install.
+Run `cat .ruby-version` to find the version of Ruby that Rideshare uses.
 
 ```sh
 cat .ruby-version
 3.2.2
 ```
 
-Install the version that's listed:
+Install that version using Rbenv:
 
 - `rbenv install 3.2.2`
 
-Run `rbenv versions` to confirm the version you've installed has an asterisk next to it. Do *not* use the `system` version.
-
-You should see something like this:
+Run `rbenv versions` to confirm that the correct version of Ruby is configured as the current version (with an asterisk):
 
 ```sh
-rbenv versions
   system
 * 3.2.2 (set by /Users/andy/Projects/rideshare/.ruby-version)
 ```
 
-Running `ruby -v` or `which ruby` should also show the expected version:
-
-```sh
-ruby -v
-ruby 3.2.2 (2023-03-30 revision e51014f9c0) [x86_64-darwin22]
-
-which ruby
-/Users/andy/.rbenv/shims/ruby
-```
-
-Review *Learn how to load rbenv in your shell.* using [`rbenv init`](https://github.com/rbenv/rbenv) if the version isn't correct.
+Review *Learn how to load rbenv in your shell.* using [`rbenv init`](https://github.com/rbenv/rbenv) if needed.
 
 ## Bundler and Gems
 
-With Ruby installed, you're ready to install [Bundler](https://bundler.io). To do that, run:
-
-- `gem install bundler`
-
-With Bundler installed, from Rideshare, run:
+Bundler is included when you install Ruby using Rbenv. You're ready to install the Rideshare gems:
 
 - `bundle install`
 
-You should now have all Rideshare gems installed.
-
 ## Rideshare development database
 
-Normally in Rails, you'd run `bin/rails db:create`. In Rideshare you'll use a custom script.
+Normally in Rails, you'd run `bin/rails db:create`. Rideshare uses a custom script.
 
-Before running the script, you'll need to configure several environment variables. You'll create a secure password for the database users that get created.
+To create the database and configuration, you'll run the custom script: [`db/setup.sh`](db/setup.sh)
 
-These are the variables you'll set:
+Before running it, ensure the following environment variables are set:
+
+- `RIDESHARE_DB_PASSWORD`
+- `DB_URL`
+- `DATABASE_URL`
+
+Review the script comment header section for more information on the values. The `DATABASE_URL` variable is set in `.env`, which makes it available for Rails commands, but not psql. Copy and paste the assignment into your shell, or add it to your shell file that's loaded for new shells.
+
+Once you've set all 3 environment variables, run the script. To run it, capturing output to `output.log`, run the following command from the root directory of Rideshare:
 
 ```sh
-RIDESHARE_DB_PASSWORD
-DB_URL
-DATABASE_URL
+sh db/setup.sh 2>&1 | tee -a output.log
 ```
 
-If you're creating the roles for the first time, you can generate a password on macOS by running this command from your terminal:
+Since you set `RIDESHARE_DB_PASSWORD` earlier, create or update the file `~/.pgpass` and add the password. Refer to `postgresql/.pgpass.sample` for an example of the format of lines in the file.
 
-```sh
-export RIDESHARE_DB_PASSWORD=$(openssl rand -hex 12)
-```
-Once you've created a value for `RIDESHARE_DB_PASSWORD`, you'll set it in `~/.pgpass`. Refer to `postgresql/.pgpass.sample` for an example.
-
-Find or create the file `~/.pgpass`, by running `touch ~/.pgpass`.
-
-If you are running this later, then you can assign `RIDESHARE_DB_PASSWORD` to the existing password value you've set in `~/.pgpass`.
-
-The content of `~/.pgpass` might look like below, and the last segment is the password.
+When you've updated it, `~/.pgpass` should look as follows. Replace the last segment `2C6uw3LprgUMwSLQ` below with the password value you generated.
 
 ```sh
 localhost:5432:rideshare_development:owner:2C6uw3LprgUMwSLQ
 ```
 
-Once you've set `RIDESHARE_DB_PASSWORD`, `DB_URL`, and `DATABASE_URL`, you're ready to run the database creation script.
-
-To do that, run the following from your terminal:
-
-```sh
-sh db/setup.sh
-```
-
-If environment variables aren't populated, you'll be prompted to do that.
-
-Once this completes, you'll have the database set up. Let's verify that you can connect. Run `psql $DATABASE_URL`. Once connected, run this from psql:
+Once this completes, you'll have the database set up. Verify that you can connect by running: `psql $DATABASE_URL`. Once connected, run this from psql:
 
 - `SELECT current_user;`. Confirm that you're connected as `owner`
 - `\dn`. Confirm that the `rideshare` schema is visible
 
 ## Run Migrations
 
-Run pending migrations by running the following command from your terminal:
+Migrations in Rideshare first run `SET role = owner`, so that they run as the `owner` user, which ends up owning the tables. See: `lib/tasks/migration_hooks.rake`
+
+Run migrations the standard way:
 
 ```sh
 bin/rails db:migrate
 ```
 
-If tables are created successfully, your development environment is ready to go!
+If the tables were created successfully in the `rideshare` schema, you're good to go!
 
 
 # Development Guides and Documentation
