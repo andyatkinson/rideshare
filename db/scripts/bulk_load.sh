@@ -31,6 +31,12 @@ SELECT
 FROM GENERATE_SERIES(1, 10_000_000) seq;
 "
 
+if [ -z "$DATABASE_URL" ]; then
+    echo "Error: DATABASE_URL is not set."
+    echo "Run: export DATABASE_URL='postgres://owner:@localhost:5432/rideshare_development'"
+    exit 1
+fi
+
 echo "Creating 10_000_000 rideshare.users rows, raising statement_timeout to 600000 (10 minutes)..."
 psql $DATABASE_URL -c "SET statement_timeout = 600000; $query";
 
