@@ -9,76 +9,71 @@ Prepare your development machine.
 ## Homebrew Packages
 First, install [Homebrew](https://brew.sh).
 
-Using Homebrew, install these:
-
+### Graphviz
 ```sh
 brew install graphviz
 ```
 
 ## Ruby Version Manager
-Before installing Ruby, install a *Ruby version manager*. The recommended version manager is [Rbenv](https://github.com/rbenv/rbenv). Install it with Homebrew.
+Before installing Ruby, install a *Ruby version manager*. The recommended one is [Rbenv](https://github.com/rbenv/rbenv). Install:
 
 ```sh
 brew install rbenv
 ```
 
 ## PostgreSQL
-
 If you've installed version 16 of PostgreSQL via Homebrew, that's fine. If not:
 
-- Install [Postgres.app](https://postgresapp.com)
-- Add a PostgreSQL 16 server, and initialize it from the application
+- Install [Postgres.app](https://postgresapp.com), which is the recommended method
+- From the Menu Bar app, click "+", then add a PostgreSQL 16 server
 
-PostgreSQL configuration for Rideshare follows: [My GOTO Postgres Configuration for Web Services](https://tightlycoupled.io/my-goto-postgres-configuration-for-web-services/)
+PostgreSQL configuration follows: [My GOTO Postgres Configuration for Web Services](https://tightlycoupled.io/my-goto-postgres-configuration-for-web-services/)
 
 ## Ruby Version
-
 Run `cat .ruby-version` to find the version of Ruby that Rideshare uses.
 
-To install version `3.2.2`, run the following:
+To install `3.2.2`, run:
 
 ```sh
 rbenv install 3.2.2
 ```
 
-Run `rbenv versions` to confirm the correct version is configured as the current version (has an asterisk):
+Run `rbenv versions` to confirm the correct version is used (has an asterisk):
 
 ```sh
   system
 * 3.2.2 (set by /Users/andy/Projects/rideshare/.ruby-version)
 ```
 
-Review *Learn how to load rbenv in your shell.* using [`rbenv init`](https://github.com/rbenv/rbenv) if needed.
+Running into trouble? Review *Learn how to load rbenv in your shell.* using [`rbenv init`](https://github.com/rbenv/rbenv).
 
 ## Bundler and Gems
 
-Bundler is included when you install Ruby using Rbenv. You're ready to install the Rideshare gems:
+Bundler is included when you install Ruby using Rbenv. You're ready to install gems:
 
 ```sh
 bundle install
 ```
 
 ## Rideshare development database
-
 Normally in Rails, you'd run `bin/rails db:create`. Rideshare uses a custom script.
 
-To create the database and configuration, you'll run the custom script: [`db/setup.sh`](db/setup.sh)
+To create the database and objects, you'll use [`db/setup.sh`](db/setup.sh)
 
 Before running it, ensure the following environment variables are set:
 
 - `RIDESHARE_DB_PASSWORD`
 - `DB_URL`
-- `DATABASE_URL`
 
-Review the script comment header section for more information on the values. The `DATABASE_URL` variable is set in `.env`, which makes it available for Rails commands, but not psql. Copy and paste the assignment into your shell, or add it to your shell file that's loaded for new shells.
+Review the script comment header section for more information on the values.
 
-Once you've set all 3 environment variables, run the script. To run it, capturing output to `output.log`, run the following command from the root directory of Rideshare:
+Once you've both environment variables, run the script as follows. This version captures output to `output.log`.
 
 ```sh
 sh db/setup.sh 2>&1 | tee -a output.log
 ```
 
-Since you set `RIDESHARE_DB_PASSWORD` earlier, create or update the file `~/.pgpass` and add the password. Refer to `postgresql/.pgpass.sample` for an example of the format of lines in the file.
+Since you set `RIDESHARE_DB_PASSWORD` earlier, create or update the file `~/.pgpass` and add the password value. Refer to `postgresql/.pgpass.sample` for a sample entry.
 
 When you've updated it, `~/.pgpass` should look as follows. Replace the last segment `2C6uw3LprgUMwSLQ` below with the password value you generated.
 
@@ -86,40 +81,44 @@ When you've updated it, `~/.pgpass` should look as follows. Replace the last seg
 localhost:5432:rideshare_development:owner:2C6uw3LprgUMwSLQ
 ```
 
-Once this completes, you'll have the database set up. Verify that you can connect by running: `psql $DATABASE_URL`. Once connected, run this from psql:
+Run `chmod 0600 ~/.pgpass`.
+
+Finally, run `export DATABASE_URL=<value from .env>`, setting the value from the `.env` file. Once that's set:
+
+Verify you can connect by running: `psql $DATABASE_URL`. Once connected, run this from psql:
 
 ```sql
 SELECT current_user;
 ```
 
-Confirm that you're connected as `owner`:
+Confirm you're connected as `owner`. Then run the *describe namespace* meta-command:
 
 ```sql
 \dn
 ```
 
-Verify the `rideshare` schema is visible, and all the tables: `\dt`.
+Verify the `rideshare` schema is visible. Run the *describe table* meta command: `\dt` to view the Rideshare tables.
 
 ## Run Migrations
 
-Migrations in Rideshare first run `SET role = owner`, so that they run as the `owner` user, which ends up owning the tables. See: `lib/tasks/migration_hooks.rake`
+Migrations in Rideshare are preceded by `SET role = owner`, so they run as `owner`. This user owns the tables.
+
+See: `lib/tasks/migration_hooks.rake`
 
 Run migrations the standard way:
 
 ```sh
 bin/rails db:migrate
 ```
-
 If the tables were created successfully in the `rideshare` schema, you're good to go!
-
 
 # Development Guides and Documentation
 
-- In addition to this file, the [Development Guides](https://github.com/andyatkinson/development_guides) go into greater depth for preparing your development machine.
-- For Guides and Tasks, check out: [Guides](GUIDES.md)
+- For expanded installation and troubleshooting, navigate to the [Development Guides](https://github.com/andyatkinson/development_guides) go into greater depth for preparing your development machine.
+- For Guides and Tasks in this repo, check out: [Guides](GUIDES.md)
 - For PostgreSQL guidance, check out: [postgresql/README.md](postgresql/README.md)
 - For database scripts, check out: [db/scripts/README.md](db/scripts/README.md)
-- To testing details for Rideshare, check out: [TESTING.md](TESTING.md)
+- For test environment details in Rideshare, check out: [TESTING.md](TESTING.md)
 - Check out [db/README.md](db/README.md)
 
 # UI
@@ -134,6 +133,6 @@ Connect to it:
 bin/rails server
 ```
 
-Visit <http://localhost:3000/pghero> in your browser.
+Once that's running, visit <http://localhost:3000/pghero> in your browser.
 
 ![Screenshot of PgHero for Rideshare](https://i.imgur.com/VduvxSK.png)
