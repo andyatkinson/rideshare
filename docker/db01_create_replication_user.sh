@@ -1,4 +1,22 @@
 #!/bin/bash
+#
+# Make sure db01 is running, or exit
+running_containers=$(docker ps --format "{{.Names}}")
+if echo "$running_containers" | grep -q "db01"; then
+  echo "db01 is running...continuing"
+else
+  echo "db01 is not running"
+  echo "Exiting."
+  exit 1
+fi
+
+if echo "$running_containers" | grep -q "db02"; then
+  echo "db02 is running...continuing"
+else
+  echo "db02 is not running"
+  echo "Exiting."
+  exit 1
+fi
 
 export DB_PASSWORD=$(openssl rand -hex 12)
 echo "Setting DB_PASSWORD"
