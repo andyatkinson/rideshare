@@ -25,8 +25,7 @@ echo $DB_PASSWORD
 # Create a little template SQL file, and then
 # populate it with DB_PASSWORD
 # Then copy the file to the container
-cat <<< "CREATE USER replication_user
-WITH ENCRYPTED PASSWORD '$DB_PASSWORD'
+echo "CREATE USER replication_user WITH ENCRYPTED PASSWORD '$DB_PASSWORD'
 REPLICATION LOGIN" > replication_user.sql
 
 # Create a .pgpass file for user
