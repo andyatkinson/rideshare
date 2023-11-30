@@ -1,6 +1,7 @@
 #!/bin/bash
 #
 # db03 uses Logical Replication
+#
 docker run \
   --name db03 \
   --volume ${PWD}/postgres-docker/db03:/var/lib/postgresql/data \
@@ -8,4 +9,4 @@ docker run \
   --env POSTGRES_USER=postgres \
   --env POSTGRES_PASSWORD=postgres \
   --net=rideshare-net \
-  --detach postgres:16
+  --detach postgres:16.1

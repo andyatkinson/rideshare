@@ -10,4 +10,4 @@ docker run \
   --env POSTGRES_USER=postgres \
   --env POSTGRES_PASSWORD=postgres \
   --net=rideshare-net \
-  --detach postgres:16
+  --detach postgres:16.1

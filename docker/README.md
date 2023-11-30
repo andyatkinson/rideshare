@@ -14,7 +14,7 @@ docker cp db01:/var/lib/postgresql/data/pg_hba.conf .
 cp pg_hba.conf pg_hba.backup.conf
 
 vim pg_hba.conf
-host    replication     replication_user 172.19.0.2/32               md5
+host    replication     replication_user 172.19.0.3/32               md5
 
 docker cp pg_hba.conf db01:/var/lib/postgresql/data/.
 
