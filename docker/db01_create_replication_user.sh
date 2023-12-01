@@ -48,11 +48,17 @@ echo "*:*:*:replication_user:$REP_USER_PASSWORD" >> .pgpass
 # Copy replication_user.sql to db01
 docker cp replication_user.sql db01:.
 
-echo "Copy .pgpass, chown, chmod it"
+echo "Copy .pgpass, chown, chmod it for db02"
 # Copy .pgpass to db02 postgres home dir
 docker cp .pgpass db02:/var/lib/postgresql/.
 docker exec --user root -it db02 chown postgres:root /var/lib/postgresql/.pgpass
 docker exec --user root -it db02 chmod 0600 /var/lib/postgresql/.pgpass
+
+echo "Copy .pgpass, chown, chmod it for db03"
+# Copy .pgpass to db03 postgres home dir
+docker cp .pgpass db03:/var/lib/postgresql/.
+docker exec --user root -it db03 chown postgres:root /var/lib/postgresql/.pgpass
+docker exec --user root -it db03 chmod 0600 /var/lib/postgresql/.pgpass
 
 # Create replication_user on db01
 docker exec -it db01 \

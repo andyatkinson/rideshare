@@ -22,3 +22,9 @@ sh db01_create_replication_slot.sh
 
 echo "Configure replication_user"
 sh db01_create_replication_user.sh
+
+echo "Copy existing postgresql.conf to db01"
+docker cp postgresql.conf db01:/var/lib/postgresql/data/.
+
+echo "restart db01"
+docker restart db01
