@@ -40,18 +40,19 @@ REPLICATION LOGIN;
 GRANT SELECT ON ALL TABLES IN SCHEMA public
 TO replication_user;
 ALTER DEFAULT PRIVILEGES IN SCHEMA public
-GRANT SELECT ON TABLES TO replication_user;" > replication_user.sql
+GRANT SELECT ON TABLES TO replication_user;" >> replication_user.sql
 
-# "rm .rep_user_password" for a clean starting point
-# Create a .rep_user_password file for replication_user
-rm -f .rep_user_password
-echo "$REP_USER_PASSWORD" >> .rep_user_password
+rm -f .pgpass
+echo "*:*:*:replication_user:$REP_USER_PASSWORD" >> .pgpass
 
 # Copy replication_user.sql to db01
 docker cp replication_user.sql db01:.
 
-# Copy .rep_user_password to db02 postgres home dir
-docker cp .rep_user_password db02:/var/lib/postgresql/.
+echo "Copy .pgpass, chown, chmod it"
+# Copy .pgpass to db02 postgres home dir
+docker cp .pgpass db02:/var/lib/postgresql/.
+docker exec --user root -it db02 chown postgres:root /var/lib/postgresql/.pgpass
+docker exec --user root -it db02 chmod 0600 /var/lib/postgresql/.pgpass
 
 # Create replication_user on db01
 docker exec -it db01 \

@@ -1,17 +1,8 @@
 # Connect to db02 as "postgres". Why?
 # postgres - kicks off replication
 # replication_user - authenticates for replication
+# against db01
 docker exec --user postgres -it db02 /bin/bash
-
-# Confirm ~/.rep_user_password is accessible
-cat ~/.rep_user_password
-
-# ~/.pgpass isn't working
-# See issue #143: https://github.com/andyatkinson/rideshare/issues/143
-# Used workaround: for the pg_basebackup process, and for ongoing authentication
-# Use PGPASSWORD env var instead of ~/.pgpass
-export PGPASSWORD=$(cat ~/.rep_user_password)
-echo $PGPASSWORD
 
 # ############# WARNING ############
 #
