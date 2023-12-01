@@ -1,10 +1,10 @@
 # Preconditions:
-# - wal_level = logical on db01
-#
-# Verify wal_level:
+# db01
+# - wal_level = logical
 # docker exec --user postgres -it db01 psql -c "SHOW wal_level"
 #
 # - May need to stop db02: docker stop db02
+# - Publication 'my_pub_inserts_only' exists on db01
 
 # Duplicate this line, using the new IP address:
 # host    replication     replication_user 172.18.0.3/32               md5
@@ -29,7 +29,7 @@ docker exec --user postgres -it db01 \
 docker exec --user postgres -it db03 /bin/bash
 
 # Generate snippet and send to psql
-echo "CREATE SUBSCRIPTION my_subscription
+echo "CREATE SUBSCRIPTION my_sub
 CONNECTION 'dbname=postgres host=db01 user=replication_user'
 PUBLICATION my_pub_inserts_only;" | psql
 
