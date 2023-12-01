@@ -48,7 +48,6 @@ Run `rbenv versions` to confirm the correct version is used (has an asterisk):
 Running into trouble? Review *Learn how to load rbenv in your shell.* using [`rbenv init`](https://github.com/rbenv/rbenv).
 
 ## Bundler and Gems
-
 Bundler is included when you install Ruby using Rbenv. You're ready to install gems:
 
 ```sh
@@ -100,7 +99,6 @@ Confirm you're connected as `owner`. Then run the *describe namespace* meta-comm
 Verify the `rideshare` schema is visible. Run the *describe table* meta command: `\dt` to view the Rideshare tables.
 
 ## Run Migrations
-
 Migrations in Rideshare are preceded by `SET role = owner`, so they run as `owner`. This user owns the tables.
 
 See: `lib/tasks/migration_hooks.rake`

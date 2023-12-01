@@ -19,7 +19,7 @@ The connection string connects to the Rideshare database, using the `owner` user
 
 ## Configuring Host Based Authentication (HBA)
 
-You may want to configure *Host Based Authentication* (`HBA`)[^pghba]. Check out the sample `pg_hba.sample.conf` file in the `db` directory.
+You may want to configure *Host Based Authentication* (`HBA`)[^pghba].
 
 Do that by editing your `pg_hba.conf` file. Changes in `pg_hba.conf` can be applied by *reloading* PostgreSQL.
 
@@ -49,3 +49,17 @@ export PGDATA="$(psql $DATABASE_URL \
 With `PGDATA` set, run `pg_ctl reload` again. Once PostgreSQL config reloads, you're all set.
 
 [^pghba]: <https://www.postgresql.org/docs/current/auth-pg-hba-conf.html>
+
+## Docker
+
+Reset everything:
+
+```sh
+sh reset_docker_instances.sh
+```
+
+Tear down docker:
+
+```sh
+sh teardown_docker.sh
+```
