@@ -24,8 +24,8 @@ gem 'fast_count', git: 'https://github.com/fatkodima/fast_count.git'
 
 # Keep these updated
 gem 'strong_migrations' # Use safe Migration patterns
-gem 'fx' # manage DB Functions
-gem 'scenic' # manage DB Views
+gem 'fx' # manage DB functions, triggers
+gem 'scenic' # manage DB views, materialized views
 
 group :development, :test do
   gem 'faraday'

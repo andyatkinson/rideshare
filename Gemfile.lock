@@ -155,7 +155,7 @@ GEM
     irb (1.9.1)
       rdoc
       reline (>= 0.3.8)
-    json (2.6.3)
+    json (2.7.0)
     jwt (2.7.1)
     loofah (2.22.0)
       crass (~> 1.0.2)
