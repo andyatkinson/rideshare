@@ -1,11 +1,12 @@
 #!/bin/bash
 #
-# Purpose: Create replication_user user
-# - Create on primary instance: db01
-# - Copy generated password to replica: db02
+# Purpose:
+# - Generate password, and place in .pgpass
+# - Create replication_user using generated password, on db01
+# - Copy .pgpass to db02
 #
-# The password is used for authentication when running pg_basebackup
-# for the replication_user user
+# The .pgpass password is used to authenticate replication_user, 
+# when they run pg_basebackup
 #
 # Precondition: Make sure db01 and db02 are running
 #
