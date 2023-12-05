@@ -1,17 +1,17 @@
-# Connect to db02 as "postgres". Why?
-# postgres - kicks off replication
-# replication_user - authenticates for replication
-# against db01
+# Connect to db02 as "postgres"
+# replication_user - authenticates from db02 host
 docker exec --user postgres -it db02 /bin/bash
 
 # ############# WARNING ############
 #
 # Copy the "rm" and "pg_basebackup" commands
-# together as one, and paste them together
+# to clipboard at once, so they can be pasted together
 #
-# pg_basebackup run immediately, before container stops
+# Dependencies:
+# - "rideshare_slot" exists
+# - replication_user exists, with password supplied from ~/.pgpass
+# - db01 and db02 are running
 #
-# This expects "rideshare_slot" to exist
 # ##################################
 rm -rf /var/lib/postgresql/data/*
 
