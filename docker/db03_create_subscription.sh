@@ -1,32 +1,17 @@
 # Preconditions:
-# db01
-# - wal_level = logical
-# docker exec --user postgres -it db01 psql -c "SHOW wal_level"
-#
-# - May need to stop db02: docker stop db02
-# - Publication 'my_pub_inserts_only' exists on db01
+# - db01: wal_level = logical
+#   - docker exec --user postgres -it db01 psql -c "SHOW wal_level"
+# - db03 is running
+# - db01 permits access from IP address of db03:
+#   - See: ./db03_create_subscription_prepare.sh
+# - db01 has publication "my_pub_inserts_only"
 
-# Duplicate this line, using the new IP address:
-# host    replication     replication_user 172.18.0.3/32               md5
-# host    replication     replication_user 172.18.0.4/32               md5
-vim pg_hba.conf
-
-# Copy pg_hba.conf to db01
-docker cp pg_hba.conf db01:/var/lib/postgresql/data/.
-
-# Reload the config (or restart with docker restart db01)
-# Monitor logs: docker logs -f db01
-docker exec --user postgres -it db01 \
-  psql -c "SELECT pg_reload_conf();"
-
-# (Drop slot if needed)
-# Corresponding replication slot for my_subscription
-# PGPASSWORD=postgres docker exec -it db01 \
-#   psql -U postgres -c \
-#   "SELECT PG_DROP_REPLICATION_SLOT('my_subscription');"
-
-# Connect as "postgres"
+# Connect to db03 as "postgres"
 docker exec --user postgres -it db03 /bin/bash
+
+# To remove the subscription from /bin/bash db03 if needed:
+# This also removes "my_sub" replication slot on db01
+# psql -U postgres -c "DROP SUBSCRIPTION my_sub"
 
 # Generate snippet and send to psql
 echo "CREATE SUBSCRIPTION my_sub

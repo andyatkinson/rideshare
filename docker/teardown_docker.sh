@@ -5,7 +5,7 @@
 # - rideshare_slot
 PGPASSWORD=postgres docker exec -it db01 \
   psql -U postgres -c \
-  "SELECT pg_drop_replication_slot('my_subscription');"
+  "SELECT pg_drop_replication_slot('my_sub');"
 PGPASSWORD=postgres docker exec -it db01 \
   psql -U postgres -c \
   "SELECT pg_drop_replication_slot('rideshare_slot');"
@@ -16,7 +16,6 @@ PGPASSWORD=postgres docker exec -it db01 \
 PGPASSWORD=postgres docker exec -it db01 \
   psql -U postgres -c \
   "DROP OWNED BY replication_user;"
-
 
 docker exec -it db01 \
   psql -U postgres \
