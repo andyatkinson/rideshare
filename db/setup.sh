@@ -50,6 +50,15 @@ psql $DB_URL -a -f db/alter_default_privileges_readwrite.sql
 psql $DB_URL -a -f db/alter_default_privileges_readonly.sql
 psql $DB_URL -a -f db/alter_default_privileges_public.sql
 
+echo "Add to ~/.pgpass"
+echo "localhost:5432:rideshare_development:owner:$RIDESHARE_DB_PASSWORD
+localhost:6432:rideshare_development:owner:$RIDESHARE_DB_PASSWORD
+localhost:5432:rideshare_development:app:$RIDESHARE_DB_PASSWORD
+localhost:54321:rideshare_development:owner:$RIDESHARE_DB_PASSWORD
+localhost:54322:rideshare_development:owner:$RIDESHARE_DB_PASSWORD
+*:*:*:replication_user:$RIDESHARE_DB_PASSWORD
+*:*:*:app_readonly:$RIDESHARE_DB_PASSWORD" >> ~/.pgpass
+
 echo
 echo "DONE! 🎉"
 echo "Notes:"
@@ -59,3 +68,8 @@ echo "Next: run 'bin/rails db:migrate' to apply pending migrations"
 echo
 echo "If you ran as: 'sh db/setup.sh 2>&1 | tee -a output.log'"
 echo "Review 'output.log' for any errors"
+echo
+echo "~/.pgpass received changes."
+
+echo "Set DATABASE URL, which you can find in .env"
+echo "Run: export $(cat .env|grep DATABASE_URL|head -n1)"

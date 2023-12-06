@@ -16,11 +16,23 @@ Remove `sample` from the file name
 * Copy to `~/.pg_service.conf`
 * Edit the service info with your config
 
-### `.pg_pass`
+### `~/.pgpass`
 
-* Remove `sample`
-* Copy to `~/.pgpass`
+* Remove `sample` from the sample file
+* Copy file content to `~/.pgpass` (scripts will populate it as well)
 * Edit the file with your specific credentials
+* Perform the following changes:
+
+```sh
+chown <user>:<group> /home/dir/.pgpass
+chmod 0600 /home/dir/.pgpass
+```
+
+Replace `/home/dir` with the path to the home directory of the user.
+
+On PostgreSQL docker containers, that's `/var/lib/postgresql/`
+
+For user and group on PostgreSQL docker containers, the user is `postgres` and the group is `root`
 
 ### `.psqlrc`
 
