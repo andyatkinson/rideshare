@@ -59,6 +59,9 @@ localhost:54322:rideshare_development:owner:$RIDESHARE_DB_PASSWORD
 *:*:*:replication_user:$RIDESHARE_DB_PASSWORD
 *:*:*:app_readonly:$RIDESHARE_DB_PASSWORD" >> ~/.pgpass
 
+echo "chmod ~/.pgpass"
+chmod 0600 ~/.pgpass
+
 echo
 echo "DONE! 🎉"
 echo "Notes:"
