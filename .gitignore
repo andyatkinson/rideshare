@@ -49,3 +49,5 @@ docker/replication_user.sql
 docker/.pgpass
 
 output.log
+
+.pgpass
