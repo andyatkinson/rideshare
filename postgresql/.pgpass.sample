@@ -1,4 +1,6 @@
 localhost:5432:rideshare_development:owner:HSnDDgFtyW9fyFI
+localhost:54321:rideshare_development:owner:HSnDDgFtyW9fyFI
+localhost:54322:rideshare_development:owner:HSnDDgFtyW9fyFI
 localhost:5432:rideshare_development:app:HSTnDDgFtyW9fyFI
 localhost:6432:rideshare_development:owner:HSnDDgFtyW9fyFI
 *:*:*:replication_user:cd58b7e22c0af34a34c1572a

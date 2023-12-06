@@ -1,8 +1,8 @@
 GIT
   remote: https://github.com/andyatkinson/pghero.git
-  revision: cec9cf9cd640383b91e3aba4a39010269bb1e2a8
+  revision: 8c42de4a8bfa873a6db9c87857a225513277c005
   specs:
-    pghero (3.3.3)
+    pghero (3.4.0)
       activerecord (>= 6)
 
 GIT
