@@ -20,3 +20,11 @@ PGPASSWORD=postgres docker exec -it db01 \
 docker exec -it db01 \
   psql -U postgres \
   -c "DROP USER IF EXISTS replication_user"
+
+echo "Stop everything if needed"
+docker stop db01 && docker rm db01
+docker stop db02 && docker rm db02
+docker stop db03 && docker rm db03
+
+echo "Removing local postgres-docker directory"
+rm -rf postgres-docker
