@@ -19,7 +19,6 @@ ALTER TABLE IF EXISTS ONLY rideshare.vehicle_reservations DROP CONSTRAINT IF EXI
 ALTER TABLE IF EXISTS ONLY rideshare.trip_requests DROP CONSTRAINT IF EXISTS fk_rails_3fdebbfaca;
 DROP INDEX IF EXISTS rideshare.index_vehicles_on_name;
 DROP INDEX IF EXISTS rideshare.index_vehicle_reservations_on_vehicle_id;
-DROP INDEX IF EXISTS rideshare.index_users_on_searchable_full_name;
 DROP INDEX IF EXISTS rideshare.index_users_on_last_name;
 DROP INDEX IF EXISTS rideshare.index_users_on_email;
 DROP INDEX IF EXISTS rideshare.index_trips_on_trip_request_id;
@@ -233,8 +232,7 @@ CREATE TABLE rideshare.users (
     updated_at timestamp(6) without time zone NOT NULL,
     password_digest character varying,
     trips_count integer,
-    drivers_license_number character varying(100),
-    searchable_full_name tsvector GENERATED ALWAYS AS ((setweight(to_tsvector('english'::regconfig, (COALESCE(first_name, ''::character varying))::text), 'A'::"char") || setweight(to_tsvector('english'::regconfig, (COALESCE(last_name, ''::character varying))::text), 'B'::"char"))) STORED
+    drivers_license_number character varying(100)
 );
 
 
@@ -745,13 +743,6 @@ CREATE INDEX index_users_on_last_name ON rideshare.users USING btree (last_name)
 
 
 --
--- Name: index_users_on_searchable_full_name; Type: INDEX; Schema: rideshare; Owner: -
---
-
-CREATE INDEX index_users_on_searchable_full_name ON rideshare.users USING gin (searchable_full_name);
-
-
---
 -- Name: index_vehicle_reservations_on_vehicle_id; Type: INDEX; Schema: rideshare; Owner: -
 --
 
@@ -836,6 +827,7 @@ ALTER TABLE ONLY rideshare.trip_requests
 SET search_path TO rideshare;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20231208050516'),
 ('20231018153712'),
 ('20231018153441'),
 ('20230925150831'),

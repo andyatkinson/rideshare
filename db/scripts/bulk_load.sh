@@ -40,5 +40,5 @@ fi
 echo "Creating 10_000_000 rideshare.users rows, raising statement_timeout to 600000 (10 minutes)..."
 psql $DATABASE_URL -c "SET statement_timeout = 600000; $query";
 
-echo "Performing VACUUM (ANALYZE, VERBOSE) on rideshare.users"
-psql $DATABASE_URL -c "VACUUM (ANALYZE, VERBOSE) rideshare.users";
+echo "ANALYZE rideshare.users"
+psql $DATABASE_URL -c "ANALYZE rideshare.users";
