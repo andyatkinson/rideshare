@@ -63,3 +63,28 @@ Tear down docker:
 ```sh
 sh teardown_docker.sh
 ```
+
+## Slow Clients
+
+Replace `config/database.yml` (or just the "slow clients" section)
+
+```
+cp config/database-slow-clients.sample.yml config/database.yml
+```
+
+With that in place, create a model:
+
+```ruby
+class SlowClientModel < ApplicationRecord
+  self.establish_connection :slow_clients
+end
+```
+
+Run query code that takes 5 seconds, and verify that it's canceled in the normal configuration.
+
+The "slow client" configuration allows it since it has a higher statement timeout configured.
+
+```rb
+Trip.connection.execute("SELECT PG_SLEEP(5)")
+SlowClientModel.connection.execute("SELECT PG_SLEEP(5)").first
+```
