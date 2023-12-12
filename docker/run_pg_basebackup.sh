@@ -13,7 +13,7 @@ docker exec --user postgres -it db02 /bin/bash
 # - db01 and db02 are running
 #
 # ##################################
-rm -rf /var/lib/postgresql/data/*
+rm -rf /var/lib/postgresql/data/* && \
 
 pg_basebackup --host db01 \
   --username replication_user \
