@@ -112,12 +112,18 @@ If the tables were created successfully in the `rideshare` schema, you're good t
 
 # Development Guides and Documentation
 
+## Troubleshooting
+
+The Rideshare repository has many `README.md` files within subdirectories. Run `find . -name 'README.md'` to list them.
+
 - For expanded installation and troubleshooting, navigate to the [Development Guides](https://github.com/andyatkinson/development_guides) go into greater depth for preparing your development machine.
-- For Guides and Tasks in this repo, check out: [Guides](GUIDES.md)
-- For PostgreSQL guidance, check out: [postgresql/README.md](postgresql/README.md)
-- For database scripts, check out: [db/scripts/README.md](db/scripts/README.md)
+- For PostgreSQL things: [postgresql/README.md](postgresql/README.md)
+- For Docker things: [docker/README.md](docker/README.md)
+- For DB things: [db/README.md](db/README.md)
+- For database scripts: [db/scripts/README.md](db/scripts/README.md)
+- For DB scrubbing: [db/scrubbing/README.md](db/scrubbing/README.md)
 - For test environment details in Rideshare, check out: [TESTING.md](TESTING.md)
-- Check out [db/README.md](db/README.md)
+- For Guides and Tasks in this repo, check out: [Guides](GUIDES.md)
 
 # UI
 
