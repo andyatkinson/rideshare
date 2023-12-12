@@ -15,8 +15,6 @@ The connection string connects to the Rideshare database, using the `owner` user
 [^prin]: <https://en.wikipedia.org/wiki/Principle_of_least_privilege>
 [^gotocon]: <https://tightlycoupled.io/my-goto-postgres-configuration-for-web-services/>
 
-
-
 ## Configuring Host Based Authentication (HBA)
 
 You may want to configure *Host Based Authentication* (`HBA`)[^pghba].
@@ -88,3 +86,40 @@ The "slow client" configuration allows it since it has a higher statement timeou
 Trip.connection.execute("SELECT PG_SLEEP(5)")
 SlowClientModel.connection.execute("SELECT PG_SLEEP(5)").first
 ```
+
+## pg_cron
+
+[Scheduling maintenance with the PostgreSQL pg_cron extension](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/PostgreSQL_pg_cron.html)
+
+- The extension is created using the postgres superuser
+- The superuser grants usage privileges to the owner role, for the cron schema
+- Now the owner user can schedule their own jobs, for objects they own
+
+```sql
+psql -U postgres -d rideshare_development;
+
+CREATE EXTENSION pg_cron;
+
+GRANT USAGE ON SCHEMA cron TO owner;
+```
+
+Run a job:
+```sql
+SELECT cron.schedule(
+  'rideshare trips manual vacuum',
+  '10 * * * *',
+  'VACUUM (ANALYZE) rideshare.trips'
+);
+```
+
+View the jobs:
+```sql
+SELECT * FROM cron.job;
+```
+
+View job runs:
+```sql
+SELECT * FROM cron.job_run_details;
+```
+
+![Screenshot of PgHero Scheduled Jobs](https://i.imgur.com/rxRf7Qn.png)
