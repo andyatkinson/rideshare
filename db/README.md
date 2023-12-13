@@ -36,12 +36,13 @@ Run `echo $PGDATA` to see the value. How do you set it if it's empty? Run the fo
 
 ```sh
 # Look at the value
-psql $DATABASE_URL -c 'SHOW data_directory'
+psql -U postgres -c 'SHOW data_directory'
 
 # Assign the value to PGDATA
-export PGDATA="$(psql $DATABASE_URL \
+export PGDATA="$(psql -U postgres \
   -c 'SHOW data_directory' \
   --tuples-only | sed 's/^[ \t]*//')"
+echo "Set PGDATA: $PGDATA"
 ```
 
 With `PGDATA` set, run `pg_ctl reload` again. Once PostgreSQL config reloads, you're all set.
@@ -123,3 +124,12 @@ SELECT * FROM cron.job_run_details;
 ```
 
 ![Screenshot of PgHero Scheduled Jobs](https://i.imgur.com/rxRf7Qn.png)
+
+## active-record-doctor
+
+```sh
+bundle exec rake active_record_doctor:
+```
+
+
+## database_consistency

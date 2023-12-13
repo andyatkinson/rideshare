@@ -67,12 +67,14 @@ namespace :data_generators do
       address: "New York, NY",
     ).first_or_create do |loc|
       loc.position = "(40.7143528,-74.0059731)"
+      loc.state = "NY"
     end
 
     bos = Location.where(
       address: "Boston, MA",
     ).first_or_create do |loc|
       loc.position = "(42.361145,-71.057083)"
+      loc.state = "MA"
     end
 
     puts "creating Trip Requests and Trips"
