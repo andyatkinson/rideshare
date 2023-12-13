@@ -1,5 +1,7 @@
 class Vehicle < ApplicationRecord
-  validates :name, presence: true
+  validates :name,
+    presence: true,
+    uniqueness: true
 
   attr_accessor :status
 

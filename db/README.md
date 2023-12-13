@@ -127,9 +127,17 @@ SELECT * FROM cron.job_run_details;
 
 ## active-record-doctor
 
+Run the tool from your terminal:
+
 ```sh
 bundle exec rake active_record_doctor:
 ```
 
 
 ## database_consistency
+
+Run the tool from your terminal:
+
+```sh
+database_consistency
+```
