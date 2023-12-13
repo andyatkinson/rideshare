@@ -269,8 +269,9 @@ CREATE TABLE rideshare.locations (
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
     city character varying,
-    state character(2),
-    "position" point NOT NULL
+    state character(2) NOT NULL,
+    "position" point NOT NULL,
+    CONSTRAINT state_length_check CHECK ((length(state) = 2))
 );
 
 
@@ -827,6 +828,7 @@ ALTER TABLE ONLY rideshare.trip_requests
 SET search_path TO rideshare;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20231213045957'),
 ('20231208050516'),
 ('20231018153712'),
 ('20231018153441'),
