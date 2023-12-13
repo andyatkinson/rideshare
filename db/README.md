@@ -141,3 +141,12 @@ Run the tool from your terminal:
 ```sh
 database_consistency
 ```
+
+## rails-pg-extras
+
+Specify a custom schema for table_cache_hit
+
+```sh
+bin/rails runner \
+  'RailsPgExtras.table_cache_hit(args: { schema: "rideshare" })'
+```
