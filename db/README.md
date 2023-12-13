@@ -141,3 +141,8 @@ Run the tool from your terminal:
 ```sh
 database_consistency
 ```
+
+
+## postgresql-hll and active_hll
+
+Instructions TBD
