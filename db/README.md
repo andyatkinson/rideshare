@@ -141,3 +141,13 @@ Run the tool from your terminal:
 ```sh
 database_consistency
 ```
+
+## Fake data
+
+```sh
+bin/rails data_generators:generate_all
+
+bin/rails data_generators:drivers
+
+bin/rails data_generators:trips_and_requests
+```
