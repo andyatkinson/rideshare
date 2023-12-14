@@ -24,3 +24,9 @@ Database comments can be used to record sensitive fields
 ```sh
 sh db/list_table_comments.sh
 ```
+
+## Batching
+
+Review the batched UPDATE example procedure:
+
+[scrub_batched_direct_updates.sql](scrub_batched_direct_updates.sql)
