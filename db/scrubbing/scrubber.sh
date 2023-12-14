@@ -1,6 +1,12 @@
 #!/bin/bash
 
 export SOURCE_DB="postgres://owner:@localhost:5432/rideshare_development"
+echo "STARTING scrub process..."
+echo "5 rows BEFORE scrubbing:"
+psql $SOURCE_DB -c "SELECT * FROM users ORDER BY id ASC LIMIT 5"
+
+# Set a seed value
+psql $SOURCE_DB -c "SELECT SETSEED(0.5);"
 
 echo "Dump views DDL"
 psql $SOURCE_DB -f scrubbing/dump_views_ddl.sql \
@@ -70,3 +76,7 @@ echo "------------------"
 echo "Assign sequence for target table"
 psql $SOURCE_DB -f scrubbing/assign_sequence.sql
 echo "------------------"
+
+echo "Success!"
+echo "View 10 rows from user:"
+psql $SOURCE_DB -c "SELECT * FROM users ORDER BY id ASC LIMIT 5"
