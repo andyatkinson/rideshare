@@ -106,7 +106,7 @@ GEM
     benchmark-ips (2.13.0)
     benchmark-memory (0.2.0)
       memory_profiler (~> 1)
-    bigdecimal (3.1.4)
+    bigdecimal (3.1.5)
     builder (3.2.4)
     choice (0.2.0)
     chronic (0.10.2)
@@ -151,7 +151,7 @@ GEM
       actionpack (>= 6.0.0)
       activesupport (>= 6.0.0)
       railties (>= 6.0.0)
-    io-console (0.6.0)
+    io-console (0.7.0)
     irb (1.10.1)
       rdoc
       reline (>= 0.3.8)
