@@ -133,7 +133,6 @@ Run the tool from your terminal:
 bundle exec rake active_record_doctor:
 ```
 
-
 ## database_consistency
 
 Run the tool from your terminal:
@@ -149,4 +148,14 @@ Specify a custom schema for table_cache_hit
 ```sh
 bin/rails runner \
   'RailsPgExtras.table_cache_hit(args: { schema: "rideshare" })'
+```
+
+## Fake data
+
+```sh
+bin/rails data_generators:generate_all
+
+bin/rails data_generators:drivers
+
+bin/rails data_generators:trips_and_requests
 ```
