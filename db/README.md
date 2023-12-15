@@ -162,6 +162,9 @@ indexes that are in databases within the specified schema (rideshare) are examin
 ```sh
 bin/rails pg_extras:unused_indexes
 ```
+```sh
+bin/rails pg_extras:diagnose
+```
 
 
 ## Fake data
