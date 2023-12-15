@@ -236,9 +236,9 @@ GEM
     rails-html-sanitizer (1.6.0)
       loofah (~> 2.21)
       nokogiri (~> 1.14)
-    rails-pg-extras (5.3.0)
+    rails-pg-extras (5.3.1)
       rails
-      ruby-pg-extras (= 5.3.0)
+      ruby-pg-extras (= 5.3.1)
     rails_best_practices (1.23.2)
       activesupport
       code_analyzer (~> 0.5.5)
@@ -264,7 +264,7 @@ GEM
     rexml (3.2.6)
     ruby-graphviz (1.2.5)
       rexml
-    ruby-pg-extras (5.3.0)
+    ruby-pg-extras (5.3.1)
       pg
       terminal-table
     ruby-progressbar (1.13.0)
