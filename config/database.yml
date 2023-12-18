@@ -24,9 +24,9 @@ development:
   database: rideshare_development
   variables:
     # https://www.postgresql.org/docs/current/runtime-config-client.html
-    statement_timeout: 5000 # seconds, set at client level
+    statement_timeout: 20000 # (in seconds, consider lowering to 5s for OLTP)
     idle_in_transaction_session_timeout: 300000 # milliseconds
-    # PostgreSQL params:
+    # Consider setting all these params:
     # idle_timeout
     # lock_timeout
     # idle_session_timeout
