@@ -176,3 +176,17 @@ bin/rails data_generators:drivers
 
 bin/rails data_generators:trips_and_requests
 ```
+
+## PgBouncer Prepared Statements
+
+- Run `brew services` and confirm PgBouncer is running on port 6432
+- Set `DATABASE_URL` to be port 6432
+- Disable Query Logs in `config/application.rb` (currently incompatible)
+- Restart PgBouncer to clear out the prepared statements
+
+
+Run the following script to observe how prepared statements are populated:
+
+```sh
+sh pgbouncer_prepared_statements_check.sh
+```
