@@ -35,7 +35,6 @@ ALTER TABLE IF EXISTS ONLY rideshare.users DROP CONSTRAINT IF EXISTS users_pkey;
 ALTER TABLE IF EXISTS ONLY rideshare.trips DROP CONSTRAINT IF EXISTS trips_pkey;
 ALTER TABLE IF EXISTS ONLY rideshare.trip_requests DROP CONSTRAINT IF EXISTS trip_requests_pkey;
 ALTER TABLE IF EXISTS ONLY rideshare.trip_positions DROP CONSTRAINT IF EXISTS trip_positions_pkey;
-ALTER TABLE IF EXISTS ONLY rideshare.trip_positions_intermediate_default DROP CONSTRAINT IF EXISTS trip_positions_intermediate_default_pkey;
 ALTER TABLE IF EXISTS ONLY rideshare.schema_migrations DROP CONSTRAINT IF EXISTS schema_migrations_pkey;
 ALTER TABLE IF EXISTS ONLY rideshare.vehicle_reservations DROP CONSTRAINT IF EXISTS non_overlapping_vehicle_registration;
 ALTER TABLE IF EXISTS ONLY rideshare.locations DROP CONSTRAINT IF EXISTS locations_pkey;
@@ -56,8 +55,6 @@ DROP SEQUENCE IF EXISTS rideshare.users_id_seq;
 DROP SEQUENCE IF EXISTS rideshare.trips_id_seq;
 DROP SEQUENCE IF EXISTS rideshare.trip_requests_id_seq;
 DROP TABLE IF EXISTS rideshare.trip_requests;
-DROP TABLE IF EXISTS rideshare.trip_positions_intermediate_default;
-DROP TABLE IF EXISTS rideshare.trip_positions_intermediate;
 DROP SEQUENCE IF EXISTS rideshare.trip_positions_id_seq;
 DROP TABLE IF EXISTS rideshare.trip_positions;
 DROP VIEW IF EXISTS rideshare.search_results;
@@ -350,40 +347,6 @@ ALTER SEQUENCE rideshare.trip_positions_id_seq OWNED BY rideshare.trip_positions
 
 
 --
--- Name: trip_positions_intermediate; Type: TABLE; Schema: rideshare; Owner: -
---
-
-CREATE TABLE rideshare.trip_positions_intermediate (
-    id bigint DEFAULT nextval('rideshare.trip_positions_id_seq'::regclass) NOT NULL,
-    "position" point,
-    trip_id bigint NOT NULL,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
-)
-PARTITION BY RANGE (created_at);
-
-
---
--- Name: TABLE trip_positions_intermediate; Type: COMMENT; Schema: rideshare; Owner: -
---
-
-COMMENT ON TABLE rideshare.trip_positions_intermediate IS 'column:created_at,period:month,cast:date,version:3';
-
-
---
--- Name: trip_positions_intermediate_default; Type: TABLE; Schema: rideshare; Owner: -
---
-
-CREATE TABLE rideshare.trip_positions_intermediate_default (
-    id bigint DEFAULT nextval('rideshare.trip_positions_id_seq'::regclass) NOT NULL,
-    "position" point,
-    trip_id bigint NOT NULL,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
-);
-
-
---
 -- Name: trip_requests; Type: TABLE; Schema: rideshare; Owner: -
 --
 
@@ -522,13 +485,6 @@ ALTER SEQUENCE rideshare.vehicles_id_seq OWNED BY rideshare.vehicles.id;
 
 
 --
--- Name: trip_positions_intermediate_default; Type: TABLE ATTACH; Schema: rideshare; Owner: -
---
-
-ALTER TABLE ONLY rideshare.trip_positions_intermediate ATTACH PARTITION rideshare.trip_positions_intermediate_default DEFAULT;
-
-
---
 -- Name: locations id; Type: DEFAULT; Schema: rideshare; Owner: -
 --
 
@@ -615,14 +571,6 @@ ALTER TABLE ONLY rideshare.vehicle_reservations
 
 ALTER TABLE ONLY rideshare.schema_migrations
     ADD CONSTRAINT schema_migrations_pkey PRIMARY KEY (version);
-
-
---
--- Name: trip_positions_intermediate_default trip_positions_intermediate_default_pkey; Type: CONSTRAINT; Schema: rideshare; Owner: -
---
-
-ALTER TABLE ONLY rideshare.trip_positions_intermediate_default
-    ADD CONSTRAINT trip_positions_intermediate_default_pkey PRIMARY KEY (id);
 
 
 --
@@ -828,6 +776,7 @@ ALTER TABLE ONLY rideshare.trip_requests
 SET search_path TO rideshare;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20231218215836'),
 ('20231213045957'),
 ('20231208050516'),
 ('20231018153712'),
