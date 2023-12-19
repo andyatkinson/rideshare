@@ -150,6 +150,23 @@ bin/rails runner \
   'RailsPgExtras.table_cache_hit(args: { schema: "rideshare" })'
 ```
 
+Or for version >= 5.3.1, set a schema using an environment variable:
+
+```sh
+export PG_EXTRAS_SCHEMA=rideshare
+```
+
+For example, now we can search for unused indexes, and make sure that
+indexes that are in databases within the specified schema (rideshare) are examined
+
+```sh
+bin/rails pg_extras:unused_indexes
+```
+```sh
+bin/rails pg_extras:diagnose
+```
+
+
 ## Fake data
 
 ```sh
