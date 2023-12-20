@@ -36,12 +36,21 @@ bin/rails db:reset
 bin/rails data_generators:generate_all
 ```
 
-## Simulate Activity
+## Simulate App Activity
 
+Start up the server in one terminal:
 ```sh
 bin/rails server
+```
 
+In another terminal, run the script:
+```sh
 bin/rails simulate:app_activity
+```
+
+Or run it with a iteration count, for example 2 or more:
+```sh
+bin/rails simulate:app_activity[2]
 ```
 
 ## Local Circle CI
