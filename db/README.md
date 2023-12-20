@@ -190,3 +190,23 @@ Run the following script to observe how prepared statements are populated:
 ```sh
 sh pgbouncer_prepared_statements_check.sh
 ```
+
+## pspg pager
+
+This is really useful for viewing `pg_stat_statements` via psql which has a lot of data horizontally
+
+Use Vim style navigation to move horizontally
+
+Install:
+
+```sh
+brew install pspg
+```
+
+Add the following to `~/.psqlrc`
+
+```sh
+\setenv PAGER pspg
+\pset border 2
+\pset linestyle unicode
+```
