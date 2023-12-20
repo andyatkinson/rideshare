@@ -166,6 +166,12 @@ bin/rails pg_extras:unused_indexes
 bin/rails pg_extras:diagnose
 ```
 
+## rails_best_practices
+
+```sh
+bin/rails_best_practices .
+```
+
 
 ## Fake data
 
