@@ -133,7 +133,6 @@ Run the tool from your terminal:
 bundle exec rake active_record_doctor:
 ```
 
-
 ## database_consistency
 
 Run the tool from your terminal:
@@ -146,3 +145,59 @@ database_consistency
 ## postgresql-hll and active_hll
 
 Instructions TBD
+
+## rails-pg-extras
+
+Specify a custom schema for table_cache_hit
+
+```sh
+bin/rails runner \
+  'RailsPgExtras.table_cache_hit(args: { schema: "rideshare" })'
+```
+
+Or for version >= 5.3.1, set a schema using an environment variable:
+
+```sh
+export PG_EXTRAS_SCHEMA=rideshare
+```
+
+For example, now we can search for unused indexes, and make sure that
+indexes that are in databases within the specified schema (rideshare) are examined
+
+```sh
+bin/rails pg_extras:unused_indexes
+```
+```sh
+bin/rails pg_extras:diagnose
+```
+
+## rails_best_practices
+
+```sh
+bin/rails_best_practices .
+```
+
+
+## Fake data
+
+```sh
+bin/rails data_generators:generate_all
+
+bin/rails data_generators:drivers
+
+bin/rails data_generators:trips_and_requests
+```
+
+## PgBouncer Prepared Statements
+
+- Run `brew services` and confirm PgBouncer is running on port 6432
+- Set `DATABASE_URL` to be port 6432
+- Disable Query Logs in `config/application.rb` (currently incompatible)
+- Restart PgBouncer to clear out the prepared statements
+
+
+Run the following script to observe how prepared statements are populated:
+
+```sh
+sh pgbouncer_prepared_statements_check.sh
+```
