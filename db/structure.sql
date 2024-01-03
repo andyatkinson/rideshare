@@ -776,6 +776,7 @@ ALTER TABLE ONLY rideshare.trip_requests
 SET search_path TO rideshare;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20231220043547'),
 ('20231218215836'),
 ('20231213045957'),
 ('20231208050516'),
