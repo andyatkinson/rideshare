@@ -13,13 +13,6 @@ GIT
       pg (>= 1)
       thor
 
-GIT
-  remote: https://github.com/fatkodima/fast_count.git
-  revision: fd37a9f950687b45ad9f9bca5870846526e88da6
-  specs:
-    fast_count (0.2.0)
-      activerecord (>= 6.0)
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -134,6 +127,8 @@ GEM
       faraday-net_http (>= 2.0, < 3.1)
       ruby2_keywords (>= 0.0.4)
     faraday-net_http (3.0.2)
+    fast_count (0.2.0)
+      activerecord (>= 6.0)
     fast_jsonapi (1.5)
       activesupport (>= 4.2)
     fx (0.8.0)
@@ -316,7 +311,7 @@ DEPENDENCIES
   dotenv-rails
   faker
   faraday
-  fast_count!
+  fast_count
   fast_jsonapi (~> 1.5)
   fx
   geocoder (~> 1.8)

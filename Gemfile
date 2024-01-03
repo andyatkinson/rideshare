@@ -20,7 +20,7 @@ gem 'importmap-rails', '~> 1.2'
 # Forks
 gem 'pghero', git: 'https://github.com/andyatkinson/pghero.git'
 gem 'pgslice', git: 'https://github.com/andyatkinson/pgslice.git'
-gem 'fast_count', git: 'https://github.com/fatkodima/fast_count.git'
+gem 'fast_count'
 
 # Keep these updated
 gem 'strong_migrations' # Use safe Migration patterns
