@@ -9,3 +9,5 @@ RESET ROLE;
 ALTER ROLE owner SET search_path TO rideshare;
 
 SET search_path TO rideshare;
+
+CREATE EXTENSION pg_stat_statements WITH SCHEMA rideshare;
