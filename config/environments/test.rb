@@ -3,8 +3,7 @@
 # your test database is "scratch space" for the test suite and is wiped
 # and recreated between test runs. Don't rely on the data there!
 
-Rails.application.configure do
-  # Settings specified here will take precedence over those in config/application.rb.
+Rails.application.configure do # Settings specified here will take precedence over those in config/application.rb.
   config.cache_classes = false
 
   # Do not eager load code on boot. This avoids loading your whole application
@@ -44,4 +43,18 @@ Rails.application.configure do
 
   # Raises error for missing translations.
   # config.action_view.raise_on_missing_translations = true
+  #
+  #
+  # NOTE: For the test database, we don't want to dump after migrating,
+  # especially since the test database is using UNLOGGED tables
+  # which will modify the content of db/structure.sql, adding that
+  # keyword to the dump output
+  config.active_record.dump_schema_after_migration = false
+end
+
+# Rails Guides:
+# https://guides.rubyonrails.org/configuring.html\
+# activerecord-connectionadapters-postgresqladapter-create-unlogged-tables
+ActiveSupport.on_load(:active_record_postgresqladapter) do
+  self.create_unlogged_tables = true
 end
