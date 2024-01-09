@@ -166,14 +166,14 @@ GEM
     mini_mime (1.1.5)
     minitest (5.20.0)
     mutex_m (0.2.0)
-    net-imap (0.4.9)
+    net-imap (0.4.9.1)
       date
       net-protocol
     net-pop (0.1.2)
       net-protocol
     net-protocol (0.2.2)
       timeout
-    net-smtp (0.4.0)
+    net-smtp (0.4.0.1)
       net-protocol
     nio4r (2.7.0)
     nokogiri (1.16.0-aarch64-linux)
@@ -194,7 +194,7 @@ GEM
       method_source (~> 1.0)
     psych (5.1.2)
       stringio
-    puma (6.4.1)
+    puma (6.4.2)
       nio4r (~> 2.0)
     racc (1.7.3)
     rack (3.0.8)
@@ -253,7 +253,7 @@ GEM
     rake (13.1.0)
     rdoc (6.6.2)
       psych (>= 4.0.0)
-    reline (0.4.1)
+    reline (0.4.2)
       io-console (~> 0.5)
     require_all (3.0.0)
     rexml (3.2.6)
@@ -276,7 +276,7 @@ GEM
       activesupport (>= 5.2)
       sprockets (>= 3.0.0)
     stringio (3.1.0)
-    strong_migrations (1.6.4)
+    strong_migrations (1.7.0)
       activerecord (>= 5.2)
     terminal-table (3.0.2)
       unicode-display_width (>= 1.1.1, < 3)
