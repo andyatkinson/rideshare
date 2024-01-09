@@ -221,12 +221,21 @@ namespace :data_generators do
     puts "Created #{TripPosition.count} records."
   end
 
+  desc "Run ANALYZE on all involved tables"
+  task analyze_tables: :environment do |t, args|
+    %w( users trips trip_requests trip_positions
+        locations vehicles vehicle_reservations ).each do |table_name|
+      ActiveRecord::Base.connection.execute("ANALYZE #{table_name}")
+    end
+  end
+
   desc "Generate All Data"
   task generate_all: :environment do |t, args|
     Rake::Task["data_generators:drivers_and_riders"].invoke
     Rake::Task["data_generators:trips_and_requests"].invoke
     Rake::Task["data_generators:vehicles_and_reservations"].invoke
     Rake::Task["data_generators:generate_trip_positions"].invoke
+    Rake::Task["data_generators:analyze_tables"].invoke
   end
 end
 
