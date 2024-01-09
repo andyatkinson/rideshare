@@ -1,22 +1,32 @@
-#!/bin/bash
+# Connect to db02 as "postgres"
+# replication_user - authenticates from db02 host
+docker exec --user postgres -it db02 /bin/bash
+
+# ############# WARNING ############
 #
-# --write-recovery-conf
-# will create a file in PG_DATA standby.signal
-# and place connection info in
-# postgresql.auto.conf. Restarting
-# it starts in recovery mode
+# Copy the "rm" and "pg_basebackup" commands
+# to clipboard at once, so they can be pasted together
 #
-# Expects $DB_PASSWORD to be set
+# Dependencies:
+# - "rideshare_slot" exists
+# - replication_user exists, with password supplied from ~/.pgpass
+# - db01 and db02 are running
 #
-# Use a unique/new directory for --pgdata
-#
-docker exec -it db02 \
-  pg_basebackup \
-  --host db01 \
-  --pgdata $PGDATA \
-  --username=replication_user \
-  --slot rideshare_slot \
+# ##################################
+rm -rf /var/lib/postgresql/data/* && \
+
+pg_basebackup --host db01 \
+  --username replication_user \
+  --pgdata /var/lib/postgresql/data \
   --verbose \
   --progress \
   --wal-method stream \
-  --write-recovery-conf
+  --write-recovery-conf \
+  --slot=rideshare_slot
+
+# Restart container
+# (or `docker start` if stopped and needing to connect)
+docker restart db02
+
+# Review live logs
+docker logs -f db02

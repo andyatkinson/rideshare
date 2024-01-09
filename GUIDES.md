@@ -36,12 +36,21 @@ bin/rails db:reset
 bin/rails data_generators:generate_all
 ```
 
-## Simulate Activity
+## Simulate App Activity
 
+Start up the server in one terminal:
 ```sh
 bin/rails server
+```
 
+In another terminal, run the script:
+```sh
 bin/rails simulate:app_activity
+```
+
+Or run it with a iteration count, for example 2 or more:
+```sh
+bin/rails simulate:app_activity[2]
 ```
 
 ## Local Circle CI
@@ -74,6 +83,13 @@ sh scrubbing/scrubber.sh
 
 ## Check for sensitive fields
 
-Basic search of common field names, against flat list of columns.
+Basic search of common field names, against a flat list of columns.
 
 See Bulk Loading in [db/scripts/README.md](db/scripts/README.md)
+
+## PgBouncer Prepared Statements
+
+* Configure `pool_mode` to be `statement` in the PgBouncer config file
+* Disable Query Logs (unfortunately) (`config/application.rb`)
+* Make sure Prepared Statements aren't disabled in `config/database.yml`
+* Connect through port 6432 and confirm prepared statements work correctly

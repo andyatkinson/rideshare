@@ -1,8 +1,8 @@
 GIT
   remote: https://github.com/andyatkinson/pghero.git
-  revision: cec9cf9cd640383b91e3aba4a39010269bb1e2a8
+  revision: 8c42de4a8bfa873a6db9c87857a225513277c005
   specs:
-    pghero (3.3.3)
+    pghero (3.4.0)
       activerecord (>= 6)
 
 GIT
@@ -13,84 +13,78 @@ GIT
       pg (>= 1)
       thor
 
-GIT
-  remote: https://github.com/fatkodima/fast_count.git
-  revision: fd37a9f950687b45ad9f9bca5870846526e88da6
-  specs:
-    fast_count (0.2.0)
-      activerecord (>= 6.0)
-
 GEM
   remote: https://rubygems.org/
   specs:
-    actioncable (7.1.1)
-      actionpack (= 7.1.1)
-      activesupport (= 7.1.1)
+    actioncable (7.1.2)
+      actionpack (= 7.1.2)
+      activesupport (= 7.1.2)
       nio4r (~> 2.0)
       websocket-driver (>= 0.6.1)
       zeitwerk (~> 2.6)
-    actionmailbox (7.1.1)
-      actionpack (= 7.1.1)
-      activejob (= 7.1.1)
-      activerecord (= 7.1.1)
-      activestorage (= 7.1.1)
-      activesupport (= 7.1.1)
+    actionmailbox (7.1.2)
+      actionpack (= 7.1.2)
+      activejob (= 7.1.2)
+      activerecord (= 7.1.2)
+      activestorage (= 7.1.2)
+      activesupport (= 7.1.2)
       mail (>= 2.7.1)
       net-imap
       net-pop
       net-smtp
-    actionmailer (7.1.1)
-      actionpack (= 7.1.1)
-      actionview (= 7.1.1)
-      activejob (= 7.1.1)
-      activesupport (= 7.1.1)
+    actionmailer (7.1.2)
+      actionpack (= 7.1.2)
+      actionview (= 7.1.2)
+      activejob (= 7.1.2)
+      activesupport (= 7.1.2)
       mail (~> 2.5, >= 2.5.4)
       net-imap
       net-pop
       net-smtp
       rails-dom-testing (~> 2.2)
-    actionpack (7.1.1)
-      actionview (= 7.1.1)
-      activesupport (= 7.1.1)
+    actionpack (7.1.2)
+      actionview (= 7.1.2)
+      activesupport (= 7.1.2)
       nokogiri (>= 1.8.5)
+      racc
       rack (>= 2.2.4)
       rack-session (>= 1.0.1)
       rack-test (>= 0.6.3)
       rails-dom-testing (~> 2.2)
       rails-html-sanitizer (~> 1.6)
-    actiontext (7.1.1)
-      actionpack (= 7.1.1)
-      activerecord (= 7.1.1)
-      activestorage (= 7.1.1)
-      activesupport (= 7.1.1)
+    actiontext (7.1.2)
+      actionpack (= 7.1.2)
+      activerecord (= 7.1.2)
+      activestorage (= 7.1.2)
+      activesupport (= 7.1.2)
       globalid (>= 0.6.0)
       nokogiri (>= 1.8.5)
-    actionview (7.1.1)
-      activesupport (= 7.1.1)
+    actionview (7.1.2)
+      activesupport (= 7.1.2)
       builder (~> 3.1)
       erubi (~> 1.11)
       rails-dom-testing (~> 2.2)
       rails-html-sanitizer (~> 1.6)
-    active_record_doctor (1.12.0)
+    active_record_doctor (1.14.0)
       activerecord (>= 4.2.0)
-    activejob (7.1.1)
-      activesupport (= 7.1.1)
+    activejob (7.1.2)
+      activesupport (= 7.1.2)
       globalid (>= 0.3.6)
-    activemodel (7.1.1)
-      activesupport (= 7.1.1)
-    activerecord (7.1.1)
-      activemodel (= 7.1.1)
-      activesupport (= 7.1.1)
+    activemodel (7.1.2)
+      activesupport (= 7.1.2)
+    activerecord (7.1.2)
+      activemodel (= 7.1.2)
+      activesupport (= 7.1.2)
       timeout (>= 0.4.0)
-    activerecord-import (1.5.0)
+    activerecord-import (1.5.1)
       activerecord (>= 4.2)
-    activestorage (7.1.1)
-      actionpack (= 7.1.1)
-      activejob (= 7.1.1)
-      activerecord (= 7.1.1)
-      activesupport (= 7.1.1)
+    activestorage (7.1.2)
+      actionpack (= 7.1.2)
+      activejob (= 7.1.2)
+      activerecord (= 7.1.2)
+      activesupport (= 7.1.2)
       marcel (~> 1.0)
-    activesupport (7.1.1)
+    activesupport (7.1.2)
       base64
       bigdecimal
       concurrent-ruby (~> 1.0, >= 1.0.2)
@@ -100,12 +94,12 @@ GEM
       minitest (>= 5.1)
       mutex_m
       tzinfo (~> 2.0)
-    base64 (0.1.1)
-    bcrypt (3.1.19)
-    benchmark-ips (2.12.0)
+    base64 (0.2.0)
+    bcrypt (3.1.20)
+    benchmark-ips (2.13.0)
     benchmark-memory (0.2.0)
       memory_profiler (~> 1)
-    bigdecimal (3.1.4)
+    bigdecimal (3.1.5)
     builder (3.2.4)
     choice (0.2.0)
     chronic (0.10.2)
@@ -115,20 +109,26 @@ GEM
     concurrent-ruby (1.2.2)
     connection_pool (2.4.1)
     crass (1.0.6)
-    database_consistency (1.7.21)
+    database_consistency (1.7.23)
       activerecord (>= 3.2)
-    date (3.3.3)
-    drb (2.1.1)
+    date (3.3.4)
+    dotenv (2.8.1)
+    dotenv-rails (2.8.1)
+      dotenv (= 2.8.1)
+      railties (>= 3.2)
+    drb (2.2.0)
       ruby2_keywords
     erubi (1.12.0)
     erubis (2.7.0)
-    faker (3.2.1)
+    faker (3.2.2)
       i18n (>= 1.8.11, < 2)
-    faraday (2.7.11)
+    faraday (2.7.12)
       base64
       faraday-net_http (>= 2.0, < 3.1)
       ruby2_keywords (>= 0.0.4)
     faraday-net_http (3.0.2)
+    fast_count (0.2.0)
+      activerecord (>= 6.0)
     fast_jsonapi (1.5)
       activesupport (>= 4.2)
     fx (0.8.0)
@@ -137,21 +137,22 @@ GEM
     geocoder (1.8.2)
     globalid (1.2.1)
       activesupport (>= 6.1)
-    google-protobuf (3.24.4-aarch64-linux)
-    google-protobuf (3.24.4-x86_64-darwin)
-    google-protobuf (3.24.4-x86_64-linux)
+    google-protobuf (3.25.1-aarch64-linux)
+    google-protobuf (3.25.1-x86_64-darwin)
+    google-protobuf (3.25.1-x86_64-linux)
     i18n (1.14.1)
       concurrent-ruby (~> 1.0)
-    importmap-rails (1.2.1)
+    importmap-rails (1.2.3)
       actionpack (>= 6.0.0)
+      activesupport (>= 6.0.0)
       railties (>= 6.0.0)
-    io-console (0.6.0)
-    irb (1.8.3)
+    io-console (0.7.1)
+    irb (1.10.1)
       rdoc
       reline (>= 0.3.8)
-    json (2.6.3)
+    json (2.7.1)
     jwt (2.7.1)
-    loofah (2.21.4)
+    loofah (2.22.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.12.0)
     mail (2.8.1)
@@ -164,22 +165,22 @@ GEM
     method_source (1.0.0)
     mini_mime (1.1.5)
     minitest (5.20.0)
-    mutex_m (0.1.2)
-    net-imap (0.4.2)
+    mutex_m (0.2.0)
+    net-imap (0.4.8)
       date
       net-protocol
     net-pop (0.1.2)
       net-protocol
-    net-protocol (0.2.1)
+    net-protocol (0.2.2)
       timeout
     net-smtp (0.4.0)
       net-protocol
-    nio4r (2.5.9)
-    nokogiri (1.15.4-aarch64-linux)
+    nio4r (2.7.0)
+    nokogiri (1.15.5-aarch64-linux)
       racc (~> 1.4)
-    nokogiri (1.15.4-x86_64-darwin)
+    nokogiri (1.15.5-x86_64-darwin)
       racc (~> 1.4)
-    nokogiri (1.15.4-x86_64-linux)
+    nokogiri (1.15.5-x86_64-linux)
       racc (~> 1.4)
     pg (1.5.4)
     pg_query (4.2.3)
@@ -187,15 +188,15 @@ GEM
     pg_search (2.3.6)
       activerecord (>= 5.2)
       activesupport (>= 5.2)
-    prosopite (1.4.1)
+    prosopite (1.4.2)
     pry (0.14.2)
       coderay (~> 1.1)
       method_source (~> 1.0)
     psych (5.1.1.1)
       stringio
-    puma (6.4.0)
+    puma (6.4.2)
       nio4r (~> 2.0)
-    racc (1.7.1)
+    racc (1.7.3)
     rack (3.0.8)
     rack-session (2.0.0)
       rack (>= 3.0.0)
@@ -204,20 +205,20 @@ GEM
     rackup (2.1.0)
       rack (>= 3)
       webrick (~> 1.8)
-    rails (7.1.1)
-      actioncable (= 7.1.1)
-      actionmailbox (= 7.1.1)
-      actionmailer (= 7.1.1)
-      actionpack (= 7.1.1)
-      actiontext (= 7.1.1)
-      actionview (= 7.1.1)
-      activejob (= 7.1.1)
-      activemodel (= 7.1.1)
-      activerecord (= 7.1.1)
-      activestorage (= 7.1.1)
-      activesupport (= 7.1.1)
+    rails (7.1.2)
+      actioncable (= 7.1.2)
+      actionmailbox (= 7.1.2)
+      actionmailer (= 7.1.2)
+      actionpack (= 7.1.2)
+      actiontext (= 7.1.2)
+      actionview (= 7.1.2)
+      activejob (= 7.1.2)
+      activemodel (= 7.1.2)
+      activerecord (= 7.1.2)
+      activestorage (= 7.1.2)
+      activesupport (= 7.1.2)
       bundler (>= 1.15.0)
-      railties (= 7.1.1)
+      railties (= 7.1.2)
     rails-dom-testing (2.2.0)
       activesupport (>= 5.0.0)
       minitest
@@ -230,9 +231,9 @@ GEM
     rails-html-sanitizer (1.6.0)
       loofah (~> 2.21)
       nokogiri (~> 1.14)
-    rails-pg-extras (5.3.0)
+    rails-pg-extras (5.3.1)
       rails
-      ruby-pg-extras (= 5.3.0)
+      ruby-pg-extras (= 5.3.1)
     rails_best_practices (1.23.2)
       activesupport
       code_analyzer (~> 0.5.5)
@@ -241,24 +242,24 @@ GEM
       json
       require_all (~> 3.0)
       ruby-progressbar
-    railties (7.1.1)
-      actionpack (= 7.1.1)
-      activesupport (= 7.1.1)
+    railties (7.1.2)
+      actionpack (= 7.1.2)
+      activesupport (= 7.1.2)
       irb
       rackup (>= 1.0.0)
       rake (>= 12.2)
       thor (~> 1.0, >= 1.2.2)
       zeitwerk (~> 2.6)
-    rake (13.0.6)
-    rdoc (6.5.0)
+    rake (13.1.0)
+    rdoc (6.6.2)
       psych (>= 4.0.0)
-    reline (0.3.9)
+    reline (0.4.1)
       io-console (~> 0.5)
     require_all (3.0.0)
     rexml (3.2.6)
     ruby-graphviz (1.2.5)
       rexml
-    ruby-pg-extras (5.3.0)
+    ruby-pg-extras (5.3.1)
       pg
       terminal-table
     ruby-progressbar (1.13.0)
@@ -274,13 +275,13 @@ GEM
       actionpack (>= 5.2)
       activesupport (>= 5.2)
       sprockets (>= 3.0.0)
-    stringio (3.0.8)
+    stringio (3.1.0)
     strong_migrations (1.6.4)
       activerecord (>= 5.2)
     terminal-table (3.0.2)
       unicode-display_width (>= 1.1.1, < 3)
     thor (1.3.0)
-    timeout (0.4.0)
+    timeout (0.4.1)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     unicode-display_width (2.5.0)
@@ -297,40 +298,42 @@ PLATFORMS
   x86_64-darwin-20
   x86_64-darwin-21
   x86_64-darwin-22
+  x86_64-darwin-23
   x86_64-linux
 
 DEPENDENCIES
   active_record_doctor
-  activerecord-import
-  bcrypt
+  activerecord-import (~> 1.5)
+  bcrypt (~> 3.1)
   benchmark-ips
   benchmark-memory
   database_consistency
+  dotenv-rails
   faker
   faraday
-  fast_count!
-  fast_jsonapi
+  fast_count
+  fast_jsonapi (~> 1.5)
   fx
-  geocoder
-  importmap-rails
+  geocoder (~> 1.8)
+  importmap-rails (~> 1.2)
   json
-  jwt
-  pg
+  jwt (~> 2.7)
+  pg (~> 1.5)
   pg_query (~> 4.2)
-  pg_search
+  pg_search (~> 2.3)
   pghero!
   pgslice!
-  prosopite
+  prosopite (~> 1.4)
   pry
-  puma
-  rails (>= 7.1)
+  puma (~> 6.4)
+  rails (~> 7.1, >= 7.1)
   rails-erd
   rails-pg-extras
   rails_best_practices
   scenic
-  sprockets-rails
+  sprockets-rails (~> 3.4)
   strong_migrations
-  whenever
+  whenever (~> 1.0)
 
 BUNDLED WITH
    2.3.6

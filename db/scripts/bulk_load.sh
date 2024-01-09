@@ -1,9 +1,17 @@
 #!/bin/bash
-# inspiration: https://vnegrisolo.github.io/postgresql/generate-fake-data-using-sql
-
-# create large amounts of fake drivers and riders
+#
+# - Create `10_000_000` records, mix of Drivers and Riders, in `rideshare.users` using SQL
+# Inspiration: <https://vnegrisolo.github.io/postgresql/generate-fake-data-using-sql>
+#
 query="
-INSERT INTO rideshare.users(first_name, last_name, email, type, created_at, updated_at)
+INSERT INTO rideshare.users(
+  first_name,
+  last_name,
+  email,
+  type,
+  created_at,
+  updated_at
+)
 SELECT
   'fname' || seq,
   'lname' || seq,
@@ -23,7 +31,14 @@ SELECT
 FROM GENERATE_SERIES(1, 10_000_000) seq;
 "
 
-echo "Bulk loading 10_000_000 Drivers and Riders"
-echo "Raising the statement_timeout"
+if [ -z "$DATABASE_URL" ]; then
+    echo "Error: DATABASE_URL is not set."
+    echo "Run: export DATABASE_URL='postgres://owner:@localhost:5432/rideshare_development'"
+    exit 1
+fi
+
+echo "Creating 10_000_000 rideshare.users rows, raising statement_timeout to 600000 (10 minutes)..."
 psql $DATABASE_URL -c "SET statement_timeout = 600000; $query";
-psql $DATABASE_URL -c "ANALYZE (VERBOSE) rideshare.users";
+
+echo "ANALYZE rideshare.users"
+psql $DATABASE_URL -c "ANALYZE rideshare.users";

@@ -4,6 +4,9 @@ class Location < ApplicationRecord
     uniqueness: true # simple approach, assumes fully address, all parts
 
   validates :position, presence: true
+  validates :state,
+    presence: true,
+    length: { is: 2 }
 
   geocoded_by :address
 

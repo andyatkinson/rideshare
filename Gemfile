@@ -1,27 +1,31 @@
 source 'https://rubygems.org'
 
-gem 'rails', '>= 7.1'#, git: 'https://github.com/rails/rails.git'
-gem 'pg'
-gem 'puma'
-gem 'geocoder'
-gem 'strong_migrations'
-gem 'fast_jsonapi'
-gem 'jwt' # Json Web Token
-gem 'bcrypt' # Use ActiveModel has_secure_password
-gem 'pghero', git: 'https://github.com/andyatkinson/pghero.git'
-gem 'fx' # manage DB Functions
-gem 'scenic' # manage DB Views
-gem 'whenever', require: false # manage scheduled jobs
-gem 'prosopite' # identify N+1 queries
+gem 'rails', '>= 7.1', '~> 7.1'#, git: 'https://github.com/rails/rails.git'
+gem 'pg', '~> 1.5'
+gem 'puma', '~> 6.4'
+gem 'geocoder', '~> 1.8'
+gem 'fast_jsonapi', '~> 1.5'
+gem 'jwt', '~> 2.7'
+gem 'bcrypt', '~> 3.1' # Use ActiveModel has_secure_password
+gem 'whenever', '~> 1.0', require: false # manage scheduled jobs
+gem 'prosopite', '~> 1.4' # identify N+1 queries
 gem 'pg_query', '~> 4.2'
-gem 'pg_search'
-gem 'pgslice', git: 'https://github.com/andyatkinson/pgslice.git'
-gem 'fast_count', git: 'https://github.com/fatkodima/fast_count.git'
-gem 'activerecord-import'
+gem 'pg_search', '~> 2.3'
+gem 'activerecord-import', '~> 1.5'
 
 # assets gems default Rails 7 app
-gem 'sprockets-rails'
-gem 'importmap-rails'
+gem 'sprockets-rails', '~> 3.4'
+gem 'importmap-rails', '~> 1.2'
+
+# Forks
+gem 'pghero', git: 'https://github.com/andyatkinson/pghero.git'
+gem 'pgslice', git: 'https://github.com/andyatkinson/pgslice.git'
+gem 'fast_count'
+
+# Keep these updated
+gem 'strong_migrations' # Use safe Migration patterns
+gem 'fx' # manage DB functions, triggers
+gem 'scenic' # manage DB views, materialized views
 
 group :development, :test do
   gem 'faraday'
@@ -35,4 +39,5 @@ group :development, :test do
   gem 'active_record_doctor'
   gem 'rails-pg-extras'
   gem 'database_consistency'
+  gem 'dotenv-rails' # Manage .env
 end

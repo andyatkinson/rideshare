@@ -45,3 +45,9 @@ docker/pg_hba.backup.conf
 docker/postgresql.backup.conf
 docker/pg_hba.conf
 docker/postgresql.conf
+docker/replication_user.sql
+docker/.pgpass
+
+output.log
+
+.pgpass
