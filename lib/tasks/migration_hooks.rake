@@ -4,13 +4,9 @@
 
 namespace :migration_hooks do
   task set_role: :environment do
-    puts "Setting Role to environment=#{Rails.env} for Migrations"
     if Rails.env.development?
+      puts "Setting role for development"
       ActiveRecord::Base.connection.execute("SET ROLE owner")
-    else
-      # See: db/setup_test_database.sh
-      # - APP_TEST_USER
-      ActiveRecord::Base.connection.execute("SET ROLE rideshare_test")
     end
   end
 end
