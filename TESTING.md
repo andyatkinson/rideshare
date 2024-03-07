@@ -1,10 +1,8 @@
 # Test Environment Installation
 
-For development, you'll use some good practices in PostgreSQL like a custom app schema and app user, with reduced explicitly granted privileges.
+In the development database, you'll use good practices like a custom schema and user, with reduced privileges.
 
-For test environment, you'll keep it simpler.
-
-Use the `postgres` superuser and the `public` schema. The test configuration is also used for Circle CI.
+For the test environment database, we'll keep things simpler. The `postgres` superuser is used along with the `public` schema. This configuration is also used for Circle CI.
 
 From the Rideshare directory, run:
 
