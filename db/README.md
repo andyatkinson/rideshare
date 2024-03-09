@@ -196,3 +196,12 @@ Run the following script to observe how prepared statements are populated:
 ```sh
 sh pgbouncer_prepared_statements_check.sh
 ```
+
+## pgbench
+
+We can use pgbench and some pre-made SQL queries forming a transaction,
+to measure the transactions per second (TPS) that the server is capable of.
+
+```sh
+sh db/scripts/benchmark.sh
+```
