@@ -1,8 +1,6 @@
 #!/bin/bash
-#
-#
 
-echo "LOADING millions of records for trip_requests, trips..."
+echo "Loading millions of records for trip_requests, trips..."
 
 ########################
 #
@@ -20,8 +18,8 @@ INSERT INTO rideshare.trip_requests(
 )
 SELECT
   (SELECT id FROM users WHERE type = 'Rider' ORDER BY RANDOM() LIMIT 1),
-  1,
-  1,
+  (SELECT id FROM locations WHERE address = 'New York, NY'),
+  (SELECT id FROM locations WHERE address = 'Boston, MA'),
   NOW(),
   NOW()
 FROM GENERATE_SERIES(1, 1_000_000) seq;
@@ -33,10 +31,8 @@ if [ -z "$DATABASE_URL" ]; then
     exit 1
 fi
 
-echo "Raising statement_timeout to 600000 (10 minutes), running query..."
+echo "Raising statement_timeout to 600000 (10 minutes), running $query..."
 psql $DATABASE_URL -c "SET statement_timeout = 600000; $query";
-
-echo "ANALYZE table"
 psql $DATABASE_URL -c "ANALYZE (VERBOSE) rideshare.trip_requests";
 
 
@@ -50,7 +46,7 @@ psql $DATABASE_URL -c "ANALYZE (VERBOSE) rideshare.trip_requests";
 
 query="
 WITH last_90_days AS (
-  SELECT NOW() - ((RANDOM()*90)::INTEGER || 'day')::INTERVAL AS t
+  SELECT NOW() - ((RANDOM()*90)::INTEGER || 'day')::INTERVAL AS timestamp
 )
 INSERT INTO rideshare.trips(
   trip_request_id,
@@ -63,9 +59,9 @@ INSERT INTO rideshare.trips(
 SELECT
   (SELECT id FROM trip_requests ORDER BY RANDOM() LIMIT 1),
   (SELECT id FROM users WHERE type = 'Driver' ORDER BY RANDOM() LIMIT 1),
-  (SELECT t FROM last_90_days),
+  (SELECT timestamp FROM last_90_days),
   (SELECT (RANDOM()*5)::INTEGER),
-  (SELECT (t - INTERVAL '1 day') from last_90_days),
+  (SELECT (timestamp - INTERVAL '1 day') from last_90_days),
   NOW()
 FROM GENERATE_SERIES(1, 1_000_000) seq;
 "
@@ -76,5 +72,6 @@ if [ -z "$DATABASE_URL" ]; then
     exit 1
 fi
 
+echo "Raising statement_timeout to 600000 (10 minutes), running $query..."
 psql $DATABASE_URL -c "SET statement_timeout = 600000; $query";
 psql $DATABASE_URL -c "ANALYZE (VERBOSE) rideshare.trips";
