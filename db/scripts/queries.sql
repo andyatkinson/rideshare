@@ -5,6 +5,8 @@
 -- by a semicolon
 
 
+-- Drivers with average rating, trip count, presented as
+-- First name and Last name
 -- Consider adding: expression index
 SELECT
 CONCAT(d.first_name, ' ', d.last_name) AS driver_name,
