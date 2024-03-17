@@ -191,7 +191,7 @@ GEM
     nokogiri (1.16.3-x86_64-linux)
       racc (~> 1.4)
     pg (1.5.6)
-    pg_query (4.2.3)
+    pg_query (5.1.0)
       google-protobuf (>= 3.22.3)
     pg_search (2.3.6)
       activerecord (>= 5.2)
@@ -328,7 +328,7 @@ DEPENDENCIES
   json
   jwt (~> 2.7)
   pg (~> 1.5)
-  pg_query (~> 4.2)
+  pg_query (~> 5.1)
   pg_search (~> 2.3)
   pghero!
   pgslice!
