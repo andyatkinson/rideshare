@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# PURPOSE:
+# - Adds millions of trips and trip_requests records
+# for performance testing
+#
+# USAGE:
+# sh bulk_load_extended.sh
+#
 echo "Loading millions of records for trip_requests, trips..."
 
 ########################
