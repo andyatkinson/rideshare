@@ -9,7 +9,7 @@ gem 'jwt', '~> 2.7'
 gem 'bcrypt', '~> 3.1' # Use ActiveModel has_secure_password
 gem 'whenever', '~> 1.0', require: false # manage scheduled jobs
 gem 'prosopite', '~> 1.4' # identify N+1 queries
-gem 'pg_query', '~> 4.2'
+gem 'pg_query', '~> 5.1'
 gem 'pg_search', '~> 2.3'
 gem 'activerecord-import', '~> 1.5'
 
