@@ -1,4 +1,5 @@
--- Used by benchmark.sh
+-- Don't remove
+-- Used by ./benchmark.sh
 
 -- one "Transaction" counts as one run of this file
 -- but file can contain multiple SQL statements, terminated
