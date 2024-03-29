@@ -1,7 +1,11 @@
 #!/bin/bash
+
+# USAGE:
+# sh bulk_load.sh
 #
-# - Create `10_000_000` records, mix of Drivers and Riders, in `rideshare.users` using SQL
-# Inspiration: <https://vnegrisolo.github.io/postgresql/generate-fake-data-using-sql>
+# PURPOSE: Create 10_000_000 users table records for performance testing
+# - Mix of Drivers and Riders
+# Technique credit: <https://vnegrisolo.github.io/postgresql/generate-fake-data-using-sql>
 #
 query="
 INSERT INTO rideshare.users(
