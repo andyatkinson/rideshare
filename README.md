@@ -105,7 +105,7 @@ From within psql, run this:
 SELECT current_user;
 ```
 
-Cuser onfirm `owner` is displayed.
+Confirm user `owner` is displayed.
 
 ```sql
 owner@localhost:5432 rideshare_development# select current_user;
@@ -133,7 +133,6 @@ owner@localhost:5432 rideshare_development# \dn
 Run the *describe table* meta command next: `\dt`. Rideshare tables like `users`, `trips` and others should be listed.
 
 If no tables are listed, make sure you've run migrations, see below!
-
 </details>
 
 
