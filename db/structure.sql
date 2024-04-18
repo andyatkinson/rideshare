@@ -24,10 +24,11 @@ DROP INDEX IF EXISTS rideshare.index_users_on_email;
 DROP INDEX IF EXISTS rideshare.index_trips_on_trip_request_id;
 DROP INDEX IF EXISTS rideshare.index_trips_on_rating;
 DROP INDEX IF EXISTS rideshare.index_trips_on_driver_id;
+DROP INDEX IF EXISTS rideshare.index_trip_requests_on_start_location_id;
 DROP INDEX IF EXISTS rideshare.index_trip_requests_on_rider_id;
+DROP INDEX IF EXISTS rideshare.index_trip_requests_on_end_location_id;
 DROP INDEX IF EXISTS rideshare.index_locations_on_address;
 DROP INDEX IF EXISTS rideshare.index_fast_search_results_on_driver_id;
-DROP INDEX IF EXISTS rideshare.idx_trips_completed_at;
 ALTER TABLE IF EXISTS ONLY rideshare.vehicles DROP CONSTRAINT IF EXISTS vehicles_pkey;
 ALTER TABLE IF EXISTS ONLY rideshare.vehicle_reservations DROP CONSTRAINT IF EXISTS vehicle_reservations_pkey;
 ALTER TABLE IF EXISTS ONLY rideshare.users DROP CONSTRAINT IF EXISTS users_pkey;
@@ -211,8 +212,7 @@ CREATE TABLE rideshare.trips (
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
     CONSTRAINT rating_check CHECK (((rating >= 1) AND (rating <= 5)))
-)
-WITH (autovacuum_vacuum_scale_factor='0.01');
+);
 
 
 --
@@ -229,10 +229,8 @@ CREATE TABLE rideshare.users (
     updated_at timestamp(6) without time zone NOT NULL,
     password_digest character varying,
     trips_count integer,
-    drivers_license_number character varying(100),
-    name_code character varying(25) DEFAULT NULL::character varying
-)
-WITH (autovacuum_enabled='false');
+    drivers_license_number character varying(100)
+);
 
 
 --
@@ -624,13 +622,6 @@ ALTER TABLE ONLY rideshare.vehicles
 
 
 --
--- Name: idx_trips_completed_at; Type: INDEX; Schema: rideshare; Owner: -
---
-
-CREATE INDEX idx_trips_completed_at ON rideshare.trips USING btree (completed_at);
-
-
---
 -- Name: index_fast_search_results_on_driver_id; Type: INDEX; Schema: rideshare; Owner: -
 --
 
@@ -645,10 +636,24 @@ CREATE UNIQUE INDEX index_locations_on_address ON rideshare.locations USING btre
 
 
 --
+-- Name: index_trip_requests_on_end_location_id; Type: INDEX; Schema: rideshare; Owner: -
+--
+
+CREATE INDEX index_trip_requests_on_end_location_id ON rideshare.trip_requests USING btree (end_location_id);
+
+
+--
 -- Name: index_trip_requests_on_rider_id; Type: INDEX; Schema: rideshare; Owner: -
 --
 
 CREATE INDEX index_trip_requests_on_rider_id ON rideshare.trip_requests USING btree (rider_id);
+
+
+--
+-- Name: index_trip_requests_on_start_location_id; Type: INDEX; Schema: rideshare; Owner: -
+--
+
+CREATE INDEX index_trip_requests_on_start_location_id ON rideshare.trip_requests USING btree (start_location_id);
 
 
 --
@@ -771,7 +776,6 @@ ALTER TABLE ONLY rideshare.trip_requests
 SET search_path TO rideshare;
 
 INSERT INTO "schema_migrations" (version) VALUES
-('20240312173122'),
 ('20231220043547'),
 ('20231218215836'),
 ('20231213045957'),
