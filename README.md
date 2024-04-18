@@ -27,10 +27,9 @@ PostgreSQL 16 or greater is required. Installation may be via Homebrew, although
 ### PostgresApp
 - Once installed, from the Menu Bar app, choose "Open Postgres" then click the "+" icon to create a new PostgreSQL 16 server
 
-PostgreSQL configuration is based on: [My GOTO Postgres Configuration for Web Services](https://tightlycoupled.io/my-goto-postgres-configuration-for-web-services/)
 
 ## Ruby
-Run `cat .ruby-version` from the Rideshare directory to find the version of Ruby that's needed.
+Run `cat .ruby-version` from the Rideshare directory to find the needed version of Ruby.
 
 For example, if `3.2.2` is listed, run:
 
@@ -45,7 +44,7 @@ Run `rbenv versions` to confirm the correct version is active. The current versi
 * 3.2.2 (set by /Users/andy/Projects/rideshare/.ruby-version)
 ```
 
-Running into trouble? Review *Learn how to load rbenv in your shell* using [`rbenv init`](https://github.com/rbenv/rbenv).
+Running into rbenv trouble? Review *Learn how to load rbenv in your shell* using [`rbenv init`](https://github.com/rbenv/rbenv).
 
 ## Bundler and Gems
 Bundler is included when you install Ruby using Rbenv. You're ready to install the Ruby gems for Rideshare.
@@ -94,7 +93,12 @@ Confirm that's a non-empty value by running `echo $DATABASE_URL`.
 
 Once `DATABASE_URL` is set, we'll use it as an argument to `psql` to connect to the database. Run `psql $DATABASE_URL` to do that.
 
-Once connected, let's do some more checks. From within psql, run this:
+Once connected, you're good to go. If you'd like to do more checks, expand the checks and run through them below.
+
+<details open>
+<summary>Installation Checks</summary>
+
+From within psql, run this:
 
 ```sql
 SELECT current_user;
@@ -128,6 +132,9 @@ owner@localhost:5432 rideshare_development# \dn
 Run the *describe table* meta command next: `\dt`. Rideshare tables like `users`, `trips` and others should be listed.
 
 If no tables are listed, make sure you've run migrations, see below!
+
+</details>
+
 
 ## Run Migrations
 Run migrations the standard way:
