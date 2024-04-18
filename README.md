@@ -96,6 +96,7 @@ Once `DATABASE_URL` is set, we'll use it as an argument to `psql` to connect to 
 Once connected, you're good to go. If you'd like to do more checks, expand the checks and run through them below.
 
 <details open>
+
 <summary>Installation Checks</summary>
 
 From within psql, run this:
