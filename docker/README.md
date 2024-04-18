@@ -20,7 +20,6 @@ docker restart db01
 ```
 
 ## Standby process
-
 1. Create replication slot
 1. Create `pg_hba.conf` entries for replication_user. Use the IP address from db02 and db03 /32 version (IPv4)
 1. Make sure there is a `standby.signal` file
@@ -28,7 +27,6 @@ docker restart db01
 
 
 ## Docker permissions
-
 - Run `chown` and `chmod` on the `.pgpass` file
 - Use the `postgres` user
 

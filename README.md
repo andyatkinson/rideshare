@@ -149,10 +149,10 @@ If migrations ran successfully, you're good to go!
 The Rideshare repository has many `README.md` files within subdirectories. Run `find . -name 'README.md'` to see them all.
 
 - For expanded installation and troubleshooting, visit: [Development Guides](https://github.com/andyatkinson/development_guides)
-- For PostgreSQL things: [postgresql/README.md](postgresql/README.md)
-- For Docker things: [docker/README.md](docker/README.md)
 - For DB things: [db/README.md](db/README.md)
 - For database scripts: [db/scripts/README.md](db/scripts/README.md)
+- For PostgreSQL things: [postgresql/README.md](postgresql/README.md)
+- For Docker things: [docker/README.md](docker/README.md)
 - For DB scrubbing: [db/scrubbing/README.md](db/scrubbing/README.md)
 - For test environment details in Rideshare, check out: [TESTING.md](TESTING.md)
 - For Guides and Tasks in this repo, check out: [Guides](GUIDES.md)

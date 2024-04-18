@@ -1,6 +1,9 @@
 # Database Setup
 
 ## Fake data
+Fake data generated from Ruby, using the Faker gem, may be generated using the following commands.
+
+This will generate around 20K user records which is useful for most tests. More data will be needed for performance testing.
 ```sh
 bin/rails data_generators:generate_all
 
@@ -8,6 +11,8 @@ bin/rails data_generators:drivers
 
 bin/rails data_generators:trips_and_requests
 ```
+
+For more data, see SQL scripts in: [db/scripts/README.md](db/scripts/README.md)
 
 ## Security Goals
 The *Principle of least privilege*[^prin] is followed by creating explicit `GRANT` commands for the `owner`, `app`, and `app_readonly` users.
