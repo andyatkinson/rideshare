@@ -1,4 +1,11 @@
 GIT
+  remote: git@github.com:lfittl/activerecord-clean-db-structure.git
+  revision: ed6959ee644787cdf243b77eb61eed3775f394c9
+  specs:
+    activerecord-clean-db-structure (0.4.0)
+      activerecord (>= 4.2)
+
+GIT
   remote: https://github.com/andyatkinson/pghero.git
   revision: 49336df1ca79c3185a1d6b3c0fb87007ef09c7df
   specs:
@@ -312,6 +319,7 @@ PLATFORMS
 
 DEPENDENCIES
   active_record_doctor
+  activerecord-clean-db-structure!
   activerecord-import (~> 1.5)
   bcrypt (~> 3.1)
   benchmark-ips
