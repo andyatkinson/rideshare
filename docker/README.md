@@ -1,5 +1,22 @@
 # Docker
 
+Docker is used to run PostgreSQL instances within a container, using a Docker network, and with different host names.
+
+For example "db01" is the primary host, and "db02" is a secondary host. These commands are intended in general to run as shell scripts, from this directory.
+
+```sh
+sh docker/run_db_db01_primary.sh
+
+sh docker/run_db_db02_replica.sh
+
+docker ps
+```
+
+## Disable Docker Messages
+```sh
+export DOCKER_CLI_HINTS=false
+```
+
 ## Restarting container
 ```sh
 pg_ctl: cannot be run as root
