@@ -2,7 +2,9 @@
 
 In the development database, you'll use good practices like a custom schema and user, with reduced privileges.
 
-For the test environment database, we'll keep things simpler. The `postgres` superuser is used along with the `public` schema. This configuration is also used for Circle CI.
+For the test database, we'll keep things simpler. The `postgres` superuser is used along with the `public` schema.
+
+This configuration is also used for Circle CI.
 
 From the Rideshare directory, run:
 

@@ -1,23 +1,17 @@
 # PostgreSQL
 
-Remove `sample` from the file name
+## `postgresql.conf`
+Review the sample file in this directory. Remove `sample` from the file name
 
-### `postgresql.conf`
-
+## `pg_hba.conf`
 * Remove `sample` from filename
 
-### `pg_hba.conf`
-
-* Remove `sample` from filename
-
-### `.pg_service.conf`
-
+## `.pg_service.conf`
 * Remove `sample`
 * Copy to `~/.pg_service.conf`
 * Edit the service info with your config
 
-### `~/.pgpass`
-
+## `~/.pgpass`
 * Remove `sample` from the sample file
 * Copy file content to `~/.pgpass` (scripts will populate it as well)
 * Edit the file with your specific credentials
@@ -34,13 +28,11 @@ On PostgreSQL docker containers, that's `/var/lib/postgresql/`
 
 For user and group on PostgreSQL docker containers, the user is `postgres` and the group is `root`
 
-### `.psqlrc`
-
+## `.psqlrc`
 * Remove `sample`
 * Copy to `~/.psqlrc`
 
-### PgBouncer
-
+## PgBouncer
 > The mode that results in a more sane balance of improved concurrency and retained critical database features is transaction mode.
 From: [PgBouncer is useful, important, and fraught with peril](https://jpcamara.com/2023/04/12/pgbouncer-is-useful.html)
 
