@@ -1,5 +1,18 @@
 #!/bin/bash
 
+# We've assumed this was copied locally from the db01 container
+conf_file="postgresql.conf"
+if [ -e "$conf_file" ]; then
+    echo "File '$conf_file' exists...continuing"
+else
+    echo "File '$conf_file' does not exist. Run:"
+    echo
+    echo "docker cp db01:/var/lib/postgresql/data/$conf_file ."
+    echo
+    echo "Then try again."
+    exit 1
+fi
+
 trap 'echo "An error occurred with command: $BASH_COMMAND";' ERR
 
 docker stop db01 && docker rm db01

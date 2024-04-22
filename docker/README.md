@@ -12,6 +12,11 @@ sh docker/run_db_db02_replica.sh
 docker ps
 ```
 
+## Disable Docker Messages
+```sh
+export DOCKER_CLI_HINTS=false
+```
+
 ## Restarting container
 ```sh
 pg_ctl: cannot be run as root
