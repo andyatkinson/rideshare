@@ -37,6 +37,8 @@ Do that by editing your `pg_hba.conf` file. Changes in `pg_hba.conf` can be appl
 
 
 ## Reloading your PostgreSQL configuration
+Finding config file: `psql -U postgres -c 'SHOW config_file'`
+
 To reload your configuration, run: `pg_ctl reload` in your terminal. If you run into the following message, read on for more information.
 
 ```sh
