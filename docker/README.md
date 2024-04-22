@@ -1,12 +1,12 @@
-## Docker
+# Docker
 
-### Restarting container
+## Restarting container
 ```sh
 pg_ctl: cannot be run as root
 ```
 docker restart <container>
 
-### Replacing `pg_hba.conf` content
+## Replacing `pg_hba.conf` content
 ```sh
 docker cp db01:/var/lib/postgresql/data/pg_hba.conf .
 cp pg_hba.conf pg_hba.backup.conf
@@ -19,17 +19,14 @@ docker cp pg_hba.conf db01:/var/lib/postgresql/data/.
 docker restart db01
 ```
 
-
-### Standby process
-
+## Standby process
 1. Create replication slot
 1. Create `pg_hba.conf` entries for replication_user. Use the IP address from db02 and db03 /32 version (IPv4)
 1. Make sure there is a `standby.signal` file
 1. Restart it (should restart in recovery mode)
 
 
-### Docker permissions
-
+## Docker permissions
 - Run `chown` and `chmod` on the `.pgpass` file
 - Use the `postgres` user
 
