@@ -82,3 +82,11 @@ fi
 echo "Raising statement_timeout to 600000 (10 minutes), running $query..."
 psql $DATABASE_URL -c "SET statement_timeout = 600000; $query";
 psql $DATABASE_URL -c "ANALYZE (VERBOSE) rideshare.trips";
+
+echo "Estimated counts:"
+query="SELECT
+relname AS tablename,
+reltuples::numeric AS estimated_count
+FROM pg_class WHERE relname IN ('trips', 'trip_requests');
+"
+psql $DATABASE_URL -c "$query"
