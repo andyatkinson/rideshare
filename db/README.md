@@ -22,11 +22,13 @@ bin/rails data_generators:trips_and_requests
 For more data, see SQL scripts in: [db/scripts/README.md](db/scripts/README.md)
 
 ```sh
- sh db/scripts/bulk_load.sh
+sh db/scripts/bulk_load.sh
+sh db/scripts/bulk_load_extended.sh
 ```
 
 ## Data Loads Video Demo
 To see a demonstration of both methods:
+
 
 <div>
 <a href="https://www.loom.com/share/6a1419efae7b4c3aac51e7d95726baf0">
