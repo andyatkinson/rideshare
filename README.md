@@ -163,6 +163,10 @@ See `lib/tasks/migration_hooks.rake` for more details.
 
 If migrations ran successfully, you're good to go!
 
+## Data Loads
+To load some sample data, check out: [db/README.md](db/README.md)
+
+
 # Development Guides and Documentation
 
 ## Troubleshooting
