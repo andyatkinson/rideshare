@@ -1,7 +1,7 @@
 [![CircleCI](https://circleci.com/gh/andyatkinson/rideshare.svg?style=svg)](https://circleci.com/gh/andyatkinson/rideshare)
 
 # 📚 High Performance PostgreSQL for Rails
-Rideshare is the Rails application for the book ["High Performance PostgreSQL for Rails"](https://pragprog.com/titles/aapsql/high-performance-postgresql-for-rails), published by Pragmatic Programmers in 2024.
+Rideshare is the Rails application supporting the book "High Performance PostgreSQL for Rails" <pragprog.com/titles/aapsql>, published by Pragmatic Programmers in 2024. 
 
 # Installation
 Prepare your development machine.
