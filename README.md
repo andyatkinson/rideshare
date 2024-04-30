@@ -64,10 +64,10 @@ The script is called [`db/setup.sh`](db/setup.sh). Don't run it yet. The video b
 
 <div>
 <a href="https://www.loom.com/share/fc919520089c4e0abb2c0a02b68bbd91">
-  <p>🎥 Rideshare DB setup. Common issues running db/setup.sh - Watch Video</p>
+  <p>🎥 Rideshare DB setup. Common issues running db/setup.sh</p>
 </a>
 <a href="https://www.loom.com/share/fc919520089c4e0abb2c0a02b68bbd91">
-  <img style="max-width:300px;" src="https://cdn.loom.com/sessions/thumbnails/fc919520089c4e0abb2c0a02b68bbd91-1714501209110-with-play.gif">
+  <img style="max-width:300px;" src="https://cdn.loom.com/sessions/thumbnails/fc919520089c4e0abb2c0a02b68bbd91-with-play.gif">
 </a>
 </div>
 
