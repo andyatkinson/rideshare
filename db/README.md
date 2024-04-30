@@ -21,6 +21,21 @@ bin/rails data_generators:trips_and_requests
 
 For more data, see SQL scripts in: [db/scripts/README.md](db/scripts/README.md)
 
+```sh
+ sh db/scripts/bulk_load.sh
+```
+
+To see a demonstration of both methods:
+
+<div>
+<a href="https://www.loom.com/share/6a1419efae7b4c3aac51e7d95726baf0">
+  <p>🎥 Rideshare - Loading data using a Rake task and Shell Script - Watch Video</p>
+</a>
+<a href="https://www.loom.com/share/6a1419efae7b4c3aac51e7d95726baf0">
+  <img style="max-width:300px;" src="https://cdn.loom.com/sessions/thumbnails/6a1419efae7b4c3aac51e7d95726baf0-with-play.gif">
+</a>
+</div>
+
 ## Security Goals
 The *Principle of least privilege*[^prin] is followed by creating explicit `GRANT` commands for the `owner`, `app`, and `app_readonly` users.
 
