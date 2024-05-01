@@ -16,7 +16,7 @@ development:
     url: <%= ENV['DATABASE_URL_REPLICA'] %>
     schema_search_path: rideshare
     replica: true
-    database_tasks: true
+    database_tasks: true #default:true, false=physical https://guides.rubyonrails.org/active_record_multiple_databases.html#connecting-to-databases-without-managing-schema-and-migrations
 
 test:
   <<: *default
