@@ -6,16 +6,14 @@ Rideshare is the Rails application supporting the book "High Performance Postgre
 # Installation
 Prepare your development machine.
 
-
 <details>
 <summary>🎥 Installation - Rideshare on a Mac, Ruby, PostgreSQL, Gems</summary>
 <div>
-<a href="https://www.loom.com/share/fc919520089c4e0abb2c0a02b68bbd91">
-  <img style="max-width:300px;" src="https://cdn.loom.com/sessions/thumbnails/fc919520089c4e0abb2c0a02b68bbd91-with-play.gif">
-</a>
+  <a href="https://www.loom.com/share/8bfc4e79758a42d39cead8f6637aa314">
+    <img style="max-width:300px;" src="https://cdn.loom.com/sessions/thumbnails/8bfc4e79758a42d39cead8f6637aa314-1714771702452-with-play.gif">
+  </a>
 </div>
 </details>
-
 
 ## Homebrew Packages
 First, install [Homebrew](https://brew.sh).
@@ -73,14 +71,13 @@ bundle install
 
 The script is called [`db/setup.sh`](db/setup.sh). Don't run it yet. The video below shows common issues for this section.
 
-<div>
-<a href="https://www.loom.com/share/fc919520089c4e0abb2c0a02b68bbd91">
-  <p>🎥 Rideshare DB setup. Common issues running db/setup.sh</p>
-</a>
+<details>
+<summary>🎥 Rideshare DB setup. Common issues running db/setup.sh</summary>
 <a href="https://www.loom.com/share/fc919520089c4e0abb2c0a02b68bbd91">
   <img style="max-width:300px;" src="https://cdn.loom.com/sessions/thumbnails/fc919520089c4e0abb2c0a02b68bbd91-with-play.gif">
 </a>
 </div>
+</details>
 
 Before you run it, let's set some environment variables. Open the file `db/setup.sh` and read the comments at the top for more info about these env vars:
 
