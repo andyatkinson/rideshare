@@ -30,15 +30,15 @@ sh db/scripts/bulk_load_extended.sh
 To see a demonstration of both methods:
 
 
+<details>
+<summary>🎥 Rideshare - Loading data using a Rake task and Shell Script</summary>
 <div>
-<a href="https://www.loom.com/share/6a1419efae7b4c3aac51e7d95726baf0">
-  <p>🎥 Rideshare - Loading data using a Rake task and Shell Script </p>
-</a>
-<a href="https://www.loom.com/share/6a1419efae7b4c3aac51e7d95726baf0">
-  <img style="max-width:300px;" src="https://cdn.loom.com/sessions/thumbnails/6a1419efae7b4c3aac51e7d95726baf0-1714505177620-with-play.gif">
-</a>
+<div>
+  <a href="https://www.loom.com/share/6a1419efae7b4c3aac51e7d95726baf0">
+    <img style="max-width:300px;" src="https://cdn.loom.com/sessions/thumbnails/6a1419efae7b4c3aac51e7d95726baf0-1714505177620-with-play.gif">
+  </a>
 </div>
-
+</details>
 
 ## Security Goals
 The *Principle of least privilege*[^prin] is followed by creating explicit `GRANT` commands for the `owner`, `app`, and `app_readonly` users.
