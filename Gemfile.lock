@@ -7,7 +7,7 @@ GIT
 
 GIT
   remote: https://github.com/andyatkinson/pgslice.git
-  revision: 72a7bc29f2f958aa9877eeb6cd5651ae9b90b8b6
+  revision: 9bf03343036a3a5d048588f1ab20bbbc8b227a0b
   specs:
     pgslice (0.6.1)
       pg (>= 1)
@@ -109,12 +109,13 @@ GEM
     concurrent-ruby (1.2.3)
     connection_pool (2.4.1)
     crass (1.0.6)
+    csv (3.3.0)
     database_consistency (1.7.23)
       activerecord (>= 3.2)
     date (3.3.4)
-    dotenv (3.1.0)
-    dotenv-rails (3.1.0)
-      dotenv (= 3.1.0)
+    dotenv (3.1.1)
+    dotenv-rails (3.1.1)
+      dotenv (= 3.1.1)
       railties (>= 6.1)
     drb (2.2.1)
     erubi (1.12.0)
@@ -132,7 +133,9 @@ GEM
     fx (0.8.0)
       activerecord (>= 6.0.0)
       railties (>= 6.0.0)
-    geocoder (1.8.2)
+    geocoder (1.8.3)
+      base64 (>= 0.1.0)
+      csv (>= 3.0.0)
     globalid (1.2.1)
       activesupport (>= 6.1)
     google-protobuf (4.26.1-aarch64-linux)
@@ -150,8 +153,8 @@ GEM
       activesupport (>= 6.0.0)
       railties (>= 6.0.0)
     io-console (0.7.2)
-    irb (1.12.0)
-      rdoc
+    irb (1.13.1)
+      rdoc (>= 4.0.0)
       reline (>= 0.4.2)
     json (2.7.2)
     jwt (2.8.1)
@@ -261,7 +264,7 @@ GEM
     rake (13.2.1)
     rdoc (6.6.3.1)
       psych (>= 4.0.0)
-    reline (0.5.2)
+    reline (0.5.5)
       io-console (~> 0.5)
     require_all (3.0.0)
     rexml (3.2.6)
