@@ -4,11 +4,11 @@ In this section, we'll begin to work with multiple PostgreSQL instances.
 
 Remember this hierarchy:
 ```
-________________________________________________________
+__________________________________________________________________
 |
 |--Instance (the server) (localhost, db01, db02, etc.)
 |
-|----Cluster (all databases, inc. rideshare_development)
+|----Cluster (*all databases*, e.g. postgres, rideshare_development)
 |
 |------Database (postgres, rideshare_development)
 |
@@ -22,9 +22,10 @@ We'll run these using Docker. Start up Docker.
 ## Part 1: Docker PostgreSQL Containers
 - Boot up Docker. There may be zero containers running. (`docker ps`)
 - Docker containers are in `docker` directory. Read README: <https://github.com/andyatkinson/rideshare/blob/main/docker/README.md>
-- Run the shell script to start up the `db01` container
-- Run the shell script to start up the `db02` container
-- Run `docker ps`
+- Create a docker network (`rideshare-net`) the containers can use
+- Run the script to start the `db01` container
+- Run the script to start the `db02` container
+- Verify they're running with `docker ps`
 
 ```sh
 # Clean-up from past runs:
@@ -34,6 +35,8 @@ rm -rf postgres-docker/
 
 # Starting point:
 cd rideshare
+docker network create rideshare-net
+docker network ls
 sh docker/run_db_db01_primary.sh
 sh docker/run_db_db02_replica.sh
 ```
@@ -45,7 +48,6 @@ Let's configure them.
 
 ```sh
 docker ps
-docker network ls
 ```
 
 - We're running two instances of Postgres in containers, simulating two different hosts
