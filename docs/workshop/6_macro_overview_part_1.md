@@ -6,13 +6,11 @@ To make broad improvements, we can apply the same concepts across all our querie
 - Tactic #1: Find all the slow queries, and focus on high impact ones
 - Tactic #2: For read-only queries, i.e. the `SELECT` queries but not `INSERT`, `UPDATE`, and `DELETE`, distribute them to a second read-only PostgreSQL instance (a.k.a. replica, follower, secondary)
 
-
 To do that, we will explore:
 - The `pg_stat_statements` extension
 - Read and Write Splitting with Active Record
 
 Let's improve our DBA skills!
-
 
 ## Section 1: Configure `pg_stat_statements`
 While being an extension, it's officially supported by PostgreSQL and distributed with it, but is not enabled by default.
