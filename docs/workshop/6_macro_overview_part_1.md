@@ -31,7 +31,7 @@ pg_ctl restart --pgdata "/Users/andy/Library/Application Support/Postgres/var-16
 # Connect as superuser, e.g. "postgres"
 psql -U postgres -d rideshare_development
 
-# Enable the extension
+# Enable the extension (run `CREATE EXTENSION`)
 postgres@[local]:5432 rideshare_development# \dx
                  List of installed extensions
   Name   | Version |   Schema   |         Description
@@ -84,33 +84,35 @@ JOIN mydb ON dbid = mydb.mydbid
 JOIN me ON userid = me.myuserid;
 ```
 
-Let's populate some data. Run our original below to do that.
+Let's populate some query statistics rows. Run our earlier slow query, to act as slow query data:
 
 ```sql
 SELECT * FROM users WHERE first_name = 'Alphonso';
 ```
 
-Review [`andyatkinson/pg_scripts`](https://github.com/andyatkinson/pg_scripts) for PGSS queries like top 10 worst performers.
+We can get a query from [`andyatkinson/pg_scripts`](https://github.com/andyatkinson/pg_scripts) for PGSS,
+adapting the 10 worst performers, to get the single worst one.
 
+Run this:
 ```sql
 SELECT
-    query,
-    total_exec_time,
+    queryid,
+    query as normalized_query,
     mean_exec_time AS avg_ms,
     calls,
-    rows
+    (rows / calls) AS avg_rows
 FROM
     pg_stat_statements
 ORDER BY
-    2 DESC
-LIMIT 3;
+    3 DESC
+LIMIT 1;
 ```
 
 Notes:
-- Adding `EXPLAIN` or w/ params creates a new query in PGSS
-- Re-run the query a few times and analyze the number for calls and rows, watch it grow
+- Get a generic plan on 16+ with `EXPLAIN (GENERIC_PLAN) SELECT * FROM users WHERE first_name = $1;`
+- Re-run the query a few times and observe the growth of "calls"
 
-We can now identify our slowest queries and begin optimizing them.
+We can now identify our slowest queries and apply our micro optimization tactics to them.
 
 ## What's Next?
 Visit [7 - Macro Query Optimization Part 2](/docs/workshop/7_macro_overview_part_2.md) to continue.
