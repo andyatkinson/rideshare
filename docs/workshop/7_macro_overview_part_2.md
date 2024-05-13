@@ -34,10 +34,9 @@ rm postgresql.conf
 rm -rf postgres-docker/
 
 # Starting point:
-cd rideshare
 docker network create rideshare-net
-sh docker/run_db_db01_primary.sh
-sh docker/run_db_db02_replica.sh
+sh run_db_db01_primary.sh
+sh run_db_db02_replica.sh
 ```
 
 Let's configure them.
@@ -69,7 +68,7 @@ sh reset_docker_instances.sh
 
 Follow the commands to copy down `postgresql.conf`.
 
-Edit the settings `wal_level = logical` and `archive_mode = on` and save the changes. The script copies postgresql.conf to db01.
+Edit the settings `wal_level = logical` and save the changes. The script copies postgresql.conf to db01.
 
 Run the command again to do that:
 
@@ -90,7 +89,7 @@ Check logs on db02:
 docker logs -f db02
 ```
 
-Make sure system identifier is the same:
+Initially system identifier won't be the same:
 ```sh
 docker exec --user postgres -it db01 \
     psql -c "SELECT system_identifier FROM pg_control_system();"
@@ -99,27 +98,39 @@ docker exec --user postgres -it db02 \
     psql -c "SELECT system_identifier FROM pg_control_system();"
 ```
 
-Look for error:
-```
-FATAL:  database system identifier differs between the primary and standby
-```
+We'll need to turn the db02 instance into a physical copy of db01.
 
-We'll need to replace the data directory on db02.
+To do that, we'll replace the data directory on db02 with a copy of db01,
+where it will then be kept in sync.
 
 ## Part 3: Run `pg_basebackup`
 Now we have the two instances configured, and db02 can reach db01.
 
 We need to turn db02 into a read replica, by running `pg_basebackup` on it.
 
-To do that, open the file `run_pg_basebackup.sh` in the docker directory, but don't run it as a shell script.
+To do that, open the file `run_pg_basebackup.sh` in the docker directory, but don't run it as a script.
 
-This file is a reference to copy individual commands from.
+Instead, this file is a reference of individual commands. Copy and paste each one into db02.
+
+💻 Do that now!
 
 After running the main `pg_basebackup` command as demonstrated, a success message looks like this:
 
 ```sh
 pg_basebackup: base backup completed
 ```
+
+The container will exit. You'll want to start it again using `docker start db02`.
+
+<details>
+<summary>🎥 Rideshare - PostgreSQL physical replication with Docker containers</summary>
+<div>
+<a href="https://www.loom.com/share/6fb372b9f09d41b59692cf4de44441d8">
+  <img style="max-width:300px;" src="https://cdn.loom.com/sessions/thumbnails/6fb372b9f09d41b59692cf4de44441d8-with-play.gif">
+</a>
+</div>
+</details>
+
 
 If everything works, you'll have replication enabled between both instances with a `replication_user` user,
 and a replication slow.
@@ -137,7 +148,7 @@ pg_basebackup: renaming backup_manifest.tmp to backup_manifest
 pg_basebackup: base backup completed
 ```
 
-And on db02:
+And on db02, somethign like this:
 ```
 2024-05-01 02:07:18.636 UTC [30] LOG:  entering standby mode
 2024-05-01 02:07:18.641 UTC [30] LOG:  redo starts at 0/6000028
@@ -153,10 +164,11 @@ In the next section we'll continue with adding content, then layer on applicatio
 
 
 ## Appendix: Debugging and Troubleshooting
-Remove locally mapped data directory entirely and start over:
+Check for connectivity from db02 to db01:
 ```sh
-# Local volume for container data, remove this directory if starting over
-rm -rf docker-postgres
+docker exec --user postgres -it db02 bin/bash
+
+psql -U replication_user -h db01 -d postgres
 ```
 
 Check for replication slot:
@@ -166,10 +178,18 @@ docker exec -it db01 psql -U postgres
 select * from pg_replication_slots;
 ```
 
-Connection from db02 to db01:
-```sh
-postgres@db02:/$ psql -U replication_user -h db01 -d postgres
+If needed, remove the slot:
+```sql
+SELECT pg_drop_replication_slot('rideshare_slot');
 ```
+
+To start over fully, completely remove the locally mapped data directory:
+```sh
+# Local volume for container data, remove this directory if starting over
+rm -rf docker-postgres
+```
+
+Start over from the beginning.
 
 ## What's Next?
 Visit [8 - Active Record Multi-DB Part 1](/docs/workshop/8_active_record_multi-db_prep_part_1.md) to continue.
