@@ -12,6 +12,15 @@ To do that, we will explore:
 
 Let's improve our DBA skills!
 
+<details>
+<summary>🎥 Configuring and using pg_stat_statements data, creating generic query exec plans</summary>
+<div>
+  <a href="https://www.loom.com/share/25a2903db92c48c5ad42bc1c49d4a8ee">
+    <img style="max-width:300px;" src="https://cdn.loom.com/sessions/thumbnails/25a2903db92c48c5ad42bc1c49d4a8ee-1715978361702-with-play.gif">
+  </a>
+</div>
+</details>
+
 ## Section 1: Configure `pg_stat_statements`
 While being an extension, it's officially supported by PostgreSQL and distributed with it, but is not enabled by default.
 
