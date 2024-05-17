@@ -1,10 +1,10 @@
 # Scrubbing
 
-In this section, we're looking at how to scrub sensitive columns within data rows.
+In this section, we're looking at how to scrub sensitive columns within table rows.
 
-The examples assume you've started from a physical or logical copy of all rows for all tables. Only apply scrubbing for tables with sensitive data. For reference data tables that don't contain sensitive values, use the data as is.
+The example assumes you've started from a physical or logical copy of rows, for all tables. You'll apply scrubbing only to columns that contain sensitive data, tracking which ones they are using a simple and maintainable system.
 
-For an example to work with, we'll use the `rideshare.users` table, and consider fields within the table to be sensitive. You'll work with this table, then take the tactics you learn to your database. Since the scrubbing is all done with standard PostgreSQL procedural language and shell scripts, this solution is portable.
+For an example to work with, you'll use the `rideshare.users` table. You'll consider a couple of the fields within `rideshare.users` to be sensitive. Since the scrubbing is all done with standard PostgreSQL procedural language, shell scripts, and without extensions or Ruby gems, this solution is portable to anywhere PostgreSQL is running.
 
 The following scripts clone the table structure, without row data. The scripts fill in rows from
 the original table and perform scrubbing on the fly. You'll also learn a basic mechanism to track which columns are sensitive, allowing you to maintain that information over time using your normal Rails Migrations process.
