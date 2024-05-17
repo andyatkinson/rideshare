@@ -4,11 +4,11 @@ In this section, we'll begin to work with multiple PostgreSQL instances.
 
 Remember this hierarchy:
 ```
-________________________________________________________
+__________________________________________________________________
 |
 |--Instance (the server) (localhost, db01, db02, etc.)
 |
-|----Cluster (all databases, inc. rideshare_development)
+|----Cluster (*all databases*, e.g. postgres, rideshare_development)
 |
 |------Database (postgres, rideshare_development)
 |
@@ -22,9 +22,10 @@ We'll run these using Docker. Start up Docker.
 ## Part 1: Docker PostgreSQL Containers
 - Boot up Docker. There may be zero containers running. (`docker ps`)
 - Docker containers are in `docker` directory. Read README: <https://github.com/andyatkinson/rideshare/blob/main/docker/README.md>
-- Run the shell script to start up the `db01` container
-- Run the shell script to start up the `db02` container
-- Run `docker ps`
+- Create a docker network (`rideshare-net`) the containers can use
+- Run the script to start the `db01` container
+- Run the script to start the `db02` container
+- Verify they're running with `docker ps`
 
 ```sh
 # Clean-up from past runs:
@@ -33,34 +34,31 @@ rm postgresql.conf
 rm -rf postgres-docker/
 
 # Starting point:
-cd rideshare
-sh docker/run_db_db01_primary.sh
-sh docker/run_db_db02_replica.sh
+docker network create rideshare-net
+sh run_db_db01_primary.sh
+sh run_db_db02_replica.sh
 ```
 
 Let's configure them.
 
 ## Part 2: Enabling Physical Replication
-- `db01` and `db02` are now running. Review the network, host names, basics of connection to each instance.
-
-```sh
-docker ps
-docker network ls
-```
-
-- We're running two instances of Postgres in containers, simulating two different hosts
-- We’re enabling "physical replication" between them. The other replication type is "Logical" which we're not doing, but is covered in the book.
-
-Go to the `docker` directory and run `sh reset_docker_instances.sh`.
-
-If you're missing `postgresql.conf` you'll be prompted to create it.
-
-What the script does is copy it from `db01` to then edit it, and replace the original file.
-
 Prep: Remove annoying Docker messages:
 ```sh
 export DOCKER_CLI_HINTS=false
 ```
+
+- `db01` and `db02` are now running. Review the network, host names, basics of connection to each instance.
+
+```sh
+docker ps
+```
+
+- We're running two instances of Postgres in containers, simulating two different hosts
+
+Go to the `docker` directory and run `sh reset_docker_instances.sh`.
+
+If you're missing `postgresql.conf`, you'll be prompted to create it.
+
 
 ```sh
 cd docker
@@ -70,20 +68,20 @@ sh reset_docker_instances.sh
 
 Follow the commands to copy down `postgresql.conf`.
 
-Edit the file setting `wal_level = "logical"` and save your changes. The scripts will copy the file back.
+Edit the settings `wal_level = logical` and save the changes. The script copies postgresql.conf to db01.
 
-Run the command again:
+Run the command again to do that:
 
 ```sh
 sh reset_docker_instances.sh
 ```
 
 Let's walk through the highlights:
-- Replaced config file changes on db01
+- Replaced postgresql.conf config file on db01
 - Created replication slot on primary db01
-- Created user `replication_user` on db01 with a unique password, and permissions
-- Created `pg_hba.conf` on db01
-- Placed password in the `.pgpass` and copied to db01, to run commands as `replication_user`
+- Created `replication_user` user on db01 with a unique password and permissions
+- Created `pg_hba.conf` on db01 to allow access
+- Placed password in `.pgpass` and copied to db01 and db02 for `replication_user`
 - Restarted db01
 
 Check logs on db02:
@@ -91,27 +89,48 @@ Check logs on db02:
 docker logs -f db02
 ```
 
-Look for error:
-```
-FATAL:  database system identifier differs between the primary and standby
+Initially system identifier won't be the same:
+```sh
+docker exec --user postgres -it db01 \
+    psql -c "SELECT system_identifier FROM pg_control_system();"
+
+docker exec --user postgres -it db02 \
+    psql -c "SELECT system_identifier FROM pg_control_system();"
 ```
 
-We'll need to replace the data directory on db02.
+We'll need to turn the db02 instance into a physical copy of db01.
+
+To do that, we'll replace the data directory on db02 with a copy of db01,
+where it will then be kept in sync.
 
 ## Part 3: Run `pg_basebackup`
 Now we have the two instances configured, and db02 can reach db01.
 
 We need to turn db02 into a read replica, by running `pg_basebackup` on it.
 
-To do that, open the file `run_pg_basebackup.sh` in the docker directory, but don't run it as a shell script.
+To do that, open the file `run_pg_basebackup.sh` in the docker directory, but don't run it as a script.
 
-This file is a reference to copy individual commands from.
+Instead, this file is a reference of individual commands. Copy and paste each one into db02.
+
+💻 Do that now!
 
 After running the main `pg_basebackup` command as demonstrated, a success message looks like this:
 
 ```sh
 pg_basebackup: base backup completed
 ```
+
+The container will exit. You'll want to start it again using `docker start db02`.
+
+<details>
+<summary>🎥 Rideshare - PostgreSQL physical replication with Docker containers</summary>
+<div>
+<a href="https://www.loom.com/share/6fb372b9f09d41b59692cf4de44441d8">
+  <img style="max-width:300px;" src="https://cdn.loom.com/sessions/thumbnails/6fb372b9f09d41b59692cf4de44441d8-with-play.gif">
+</a>
+</div>
+</details>
+
 
 If everything works, you'll have replication enabled between both instances with a `replication_user` user,
 and a replication slow.
@@ -129,7 +148,7 @@ pg_basebackup: renaming backup_manifest.tmp to backup_manifest
 pg_basebackup: base backup completed
 ```
 
-And on db02:
+And on db02, somethign like this:
 ```
 2024-05-01 02:07:18.636 UTC [30] LOG:  entering standby mode
 2024-05-01 02:07:18.641 UTC [30] LOG:  redo starts at 0/6000028
@@ -138,7 +157,6 @@ And on db02:
 2024-05-01 02:07:18.648 UTC [31] LOG:  started streaming WAL from primary at 0/7000000 on timeline 1
 ```
 
-
 ## Conclusion
 That concludes the basics of setting up a replica instance.
 
@@ -146,29 +164,10 @@ In the next section we'll continue with adding content, then layer on applicatio
 
 
 ## Appendix: Debugging and Troubleshooting
-Remove locally mapped data directory entirely and start over:
+Check for connectivity from db02 to db01:
 ```sh
-# Local volume for container data, remove this directory if starting over
-rm -rf docker-postgres
-```
+docker exec --user postgres -it db02 bin/bash
 
-For a fatal error, we can recreate the standby:
-```sh
-FATAL:  database system identifier differs between the primary and standby
-
-docker stop db02 && docker rm db02
-cd docker
-sh run_db_db02_replica.sh
-sh pg_hba_reset.sh
-
-echo "Copy .pgpass, chown, chmod it for db02"
-# Copy .pgpass to db02 postgres home dir
-docker cp .pgpass db02:/var/lib/postgresql/.
-docker exec --user root -it db02 chown postgres:root /var/lib/postgresql/.pgpass
-docker exec --user root -it db02 chmod 0600 /var/lib/postgresql/.pgpass
-
-# Check for connectivity
-docker exec --user postgres -it db02 /bin/bash
 psql -U replication_user -h db01 -d postgres
 ```
 
@@ -179,10 +178,18 @@ docker exec -it db01 psql -U postgres
 select * from pg_replication_slots;
 ```
 
-Connection from db02 to db01:
-```sh
-postgres@db02:/$ psql -U replication_user -h db01 -d postgres
+If needed, remove the slot:
+```sql
+SELECT pg_drop_replication_slot('rideshare_slot');
 ```
+
+To start over fully, completely remove the locally mapped data directory:
+```sh
+# Local volume for container data, remove this directory if starting over
+rm -rf docker-postgres
+```
+
+Start over from the beginning.
 
 ## What's Next?
 Visit [8 - Active Record Multi-DB Part 1](/docs/workshop/8_active_record_multi-db_prep_part_1.md) to continue.
