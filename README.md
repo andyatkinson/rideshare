@@ -152,9 +152,7 @@ owner@localhost:5432 rideshare_development# \dn
  rideshare | owner
 ```
 
-Run the *describe table* meta command next: `\dt`. Rideshare tables like `users`, `trips` are listed.
-
-If no tables are listed, make sure you've run migrations, see below!
+Now that you've confirmed the `owner` user and the `rideshare` schema have been set up correctly, you can run the migrations to create Rideshare's tables.
 </details>
 
 
@@ -164,6 +162,8 @@ Run migrations the standard way:
 ```sh
 bin/rails db:migrate
 ```
+
+Run the *describe table* meta command next: `\dt`. Rideshare tables like `users`, `trips` are listed.
 
 Note that migrations are preceded by the command `SET role = owner`, so they're run with `owner` as the owner of database objects.
 
