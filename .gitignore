@@ -52,3 +52,5 @@ docker/.pgpass
 output.log
 
 .pgpass
+
+docs/posette/docker-pg-data-dir/
