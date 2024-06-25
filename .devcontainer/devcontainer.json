@@ -1,0 +1,30 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/ruby
+{
+  "name": "rideshare",
+  "dockerComposeFile": "compose.yaml",
+  "service": "app",
+  "workspaceFolder": "/app",
+  "onCreateCommand": "git config --global --add safe.directory /app",
+  // Configure tool-specific properties.
+  "containerEnv": {
+    "PGHOST": "postgres",
+    "PGUSER": "owner",
+    "PGPASSWORD": "postgres",
+    "PGDATABASE": "rideshare_development",
+    "RIDESHARE_DB_PASSWORD": "postgres",
+    "DB_URL": "postgres://postgres:postgres@postgres:5432/postgres"
+  },
+  "customizations": {
+    "codespaces": {
+      "openFiles": [
+        "README.md"
+      ]
+    },
+    "vscode": {
+      "extensions": [
+        "Shopify.ruby-lsp"
+      ]
+    }
+  }
+}
