@@ -51,15 +51,13 @@ devcontainer up --workspace-folder .
 devcontainer exec --workspace-folder . db/setup.sh
 ```
 
-### Run Rails in Dev Containers
+### Run Rails Commands in Dev Containers
 
 ```bash
-devcontainer exec --workspace-folder . bin/rails test
-devcontainer exec --workspace-folder . bin/rails server
+devcontainer exec --workspace-folder . bin/rails console
 # or
 $ devcontainer exec --workspace-folder . zsh
-/app $ bin/rails test
-/app $ bin/dev
+/app $ bin/rails console
 ```
 
 When finish work, exit the workspace and run `docker stop $(docker container ls -q)`.
