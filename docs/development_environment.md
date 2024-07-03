@@ -1,5 +1,7 @@
 # Development Environment
 
+This guide provides an alternative, community-submitted method for setting up and running the Rideshare application using Dev Containers. It is not the officially supported method described in the book "High Performance PostgreSQL for Rails."
+
 ## Get started with Docker
 
 [Docker](https://docs.docker.com/) provides a way to run applications securely isolated in a container,
