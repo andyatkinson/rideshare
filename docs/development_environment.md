@@ -46,6 +46,7 @@ brew install devcontainer
 ```bash
 devcontainer build --workspace-folder .
 devcontainer up --workspace-folder .
+devcontainer exec --workspace-folder . db/setup.sh
 ```
 
 ### Run Rails in Dev Containers

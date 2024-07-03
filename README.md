@@ -1,23 +1,10 @@
 [![CircleCI](https://circleci.com/gh/andyatkinson/rideshare.svg?style=svg)](https://circleci.com/gh/andyatkinson/rideshare)
 
 # 📚 High Performance PostgreSQL for Rails
-Rideshare is the Rails application supporting the book "High Performance PostgreSQL for Rails" <http://pragprog.com/titles/aapsql>, published by Pragmatic Programmers in 2024.
+Rideshare is the Rails application supporting the book "High Performance PostgreSQL for Rails" <http://pragprog.com/titles/aapsql>, published by Pragmatic Programmers in 2024. 
 
 # Installation
 Prepare your development machine.
-
-## Installation - Rideshare with DevContainers
-
-```bash
-devcontainer build --workspace-folder .
-devcontainer --workspace-folder . up
-devcontainer exec --workspace-folder . db/setup.sh
-devcontainer exec --workspace-folder . zsh
-```
-
-And continue with chapter [Run Migrations](#run-migrations).
-
-## Installation - Rideshare on a Mac, Ruby, PostgreSQL, Gems
 
 <details>
 <summary>🎥 Installation - Rideshare on a Mac, Ruby, PostgreSQL, Gems</summary>
