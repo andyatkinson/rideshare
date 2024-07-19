@@ -1,0 +1,11 @@
+production:
+  primary:
+    database: my_primary_database
+  primary_replica:
+    database: my_primary_database
+    replica: true
+  primary_company_one:
+    database: company_one_db
+  primary_company_one_replica:
+    database: company_one_db
+    replica: true
