@@ -50,8 +50,8 @@ if [ -z "$DATABASE_URL" ]; then
     exit 1
 fi
 
-echo "Creating batch of rideshare.users rows, raising statement_timeout to 600000 (10 minutes)..."
-psql $DATABASE_URL -c "SET statement_timeout = 600000; $query";
+echo "Creating batch of rideshare.users rows, raising statement_timeout to 30min"
+psql $DATABASE_URL -c "SET statement_timeout = '30min'; $query";
 
 echo "ANALYZE rideshare.users"
 psql $DATABASE_URL -c "ANALYZE rideshare.users";
