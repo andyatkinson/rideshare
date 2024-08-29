@@ -13,8 +13,7 @@ gem 'pg_query', '~> 5.1'
 gem 'pg_search', '~> 2.3'
 gem 'activerecord-import', '~> 1.5'
 
-# Gem has an unreleased fix https://github.com/lfittl/activerecord-clean-db-structure/pull/36
-gem 'activerecord-clean-db-structure', git: 'git@github.com:lfittl/activerecord-clean-db-structure.git'
+gem 'activerecord-clean-db-structure', '~> 0.4'
 
 # assets gems default Rails 7 app
 gem 'sprockets-rails', '~> 3.4'

@@ -1,11 +1,4 @@
 GIT
-  remote: git@github.com:lfittl/activerecord-clean-db-structure.git
-  revision: ed6959ee644787cdf243b77eb61eed3775f394c9
-  specs:
-    activerecord-clean-db-structure (0.4.0)
-      activerecord (>= 4.2)
-
-GIT
   remote: https://github.com/andyatkinson/pghero.git
   revision: 49336df1ca79c3185a1d6b3c0fb87007ef09c7df
   specs:
@@ -83,6 +76,8 @@ GEM
       activemodel (= 7.1.3.4)
       activesupport (= 7.1.3.4)
       timeout (>= 0.4.0)
+    activerecord-clean-db-structure (0.4.1)
+      activerecord (>= 4.2)
     activerecord-import (1.7.0)
       activerecord (>= 4.2)
     activestorage (7.1.3.4)
@@ -113,7 +108,7 @@ GEM
     code_analyzer (0.5.5)
       sexp_processor
     coderay (1.1.3)
-    concurrent-ruby (1.3.3)
+    concurrent-ruby (1.3.4)
     connection_pool (2.4.1)
     crass (1.0.6)
     csv (3.3.0)
@@ -184,7 +179,7 @@ GEM
     memory_profiler (1.0.2)
     method_source (1.1.0)
     mini_mime (1.1.5)
-    minitest (5.24.1)
+    minitest (5.25.1)
     mutex_m (0.2.0)
     net-http (0.4.1)
       uri
@@ -331,7 +326,7 @@ PLATFORMS
 
 DEPENDENCIES
   active_record_doctor
-  activerecord-clean-db-structure!
+  activerecord-clean-db-structure (~> 0.4)
   activerecord-import (~> 1.5)
   bcrypt (~> 3.1)
   benchmark-ips
