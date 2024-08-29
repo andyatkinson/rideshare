@@ -1,10 +1,19 @@
 [![CircleCI](https://circleci.com/gh/andyatkinson/rideshare.svg?style=svg)](https://circleci.com/gh/andyatkinson/rideshare)
 
 # 📚 High Performance PostgreSQL for Rails
-Rideshare is the Rails application for the book ["High Performance PostgreSQL for Rails"](https://pragprog.com/titles/aapsql/high-performance-postgresql-for-rails), published by Pragmatic Programmers in 2024.
+Rideshare is the Rails application supporting the book "High Performance PostgreSQL for Rails" <http://pragprog.com/titles/aapsql>, published by Pragmatic Programmers in 2024. 
 
 # Installation
 Prepare your development machine.
+
+<details>
+<summary>🎥 Installation - Rideshare on a Mac, Ruby, PostgreSQL, Gems</summary>
+<div>
+  <a href="https://www.loom.com/share/8bfc4e79758a42d39cead8f6637aa314">
+    <img style="max-width:300px;" src="https://cdn.loom.com/sessions/thumbnails/8bfc4e79758a42d39cead8f6637aa314-1714771702452-with-play.gif">
+  </a>
+</div>
+</details>
 
 ## Homebrew Packages
 First, install [Homebrew](https://brew.sh).
@@ -55,31 +64,44 @@ Run the following command from the Rideshare directory:
 bundle install
 ```
 
-## Rideshare development database
-Normally in Ruby on Rails applications, you'd run `bin/rails db:create` to create the dev and test databases. Rideshare uses a custom script.
+## Rideshare Development Database
+⚠️  This scripts expects PostgreSQL version 16. If you see syntax errors with underscore numbers like `10_000`, it's probably from using an older version that doesn't support that number style.
 
-The script is [`db/setup.sh`](db/setup.sh). Don't run it yet.
+⚠️   Normally in Ruby on Rails applications, you'd run `bin/rails db:create` to create the development and test databases. Don't do that here. Rideshare uses a custom script.
 
-Before you run it, make sure the following environment variables are set:
+The script is called [`db/setup.sh`](db/setup.sh). Don't run it yet. The video below shows common issues for this section.
+
+<details>
+<summary>🎥 Rideshare DB setup. Common issues running db/setup.sh</summary>
+<a href="https://www.loom.com/share/fc919520089c4e0abb2c0a02b68bbd91">
+  <img style="max-width:300px;" src="https://cdn.loom.com/sessions/thumbnails/fc919520089c4e0abb2c0a02b68bbd91-with-play.gif">
+</a>
+</div>
+</details>
+
+Before you run it, let's set some environment variables. Open the file `db/setup.sh` and read the comments at the top for more info about these env vars:
 
 - `RIDESHARE_DB_PASSWORD`
 - `DB_URL`
 
-You can do that by running `echo $RIDESHARE_DB_PASSWORD` (and for `DB_URL`) and making sure they have a value.
+⚠️  The script generates a password value using `openssl`, assuming it's installed and available.
 
-Review the [`db/setup.sh`](db/setup.sh) script header section for details on what the values for those environment variables should be.
+Once you've set values, before running the script, run `echo $RIDESHARE_DB_PASSWORD` (and `echo $DB_URL`) to make sure they're set.
 
-Once both are set, run the script using the command below. This method writes script output into the `output.log` file.
+Once both are set, you're ready to run the script.
+
+Let's capture the output of the script. Use the command below to do that. The script output goes into `output.log` file so we can more easily review it for errors.
 
 ```sh
 sh db/setup.sh 2>&1 | tee -a output.log
 ```
 
-Since you set `RIDESHARE_DB_PASSWORD` earlier, create or update `~/.pgpass` with the password.
+Since you set `RIDESHARE_DB_PASSWORD` earlier, create or update the special `~/.pgpass` file with the password you generated.
+This allows us to put the PostgreSQL user in the connection string, without needing to also supply the password.
 
-Refer to `postgresql/.pgpass.sample` for an example row, then copy the example into your own `~/.pgpass` file.
+Refer to `postgresql/.pgpass.sample` for an example, and copy the example into your own `~/.pgpass` file, replacing the password with your generated one.
 
-When you've updated `~/.pgpass`, it should have an entry like below. Replace the last segment (`2C6uw3LprgUMwSLQ` below) with the password you generated.
+When you've updated `~/.pgpass`, it should look like the line below. The last segment (`2C6uw3LprgUMwSLQ` below) is the password you generated.
 
 ```sh
 localhost:5432:rideshare_development:owner:2C6uw3LprgUMwSLQ
@@ -130,9 +152,7 @@ owner@localhost:5432 rideshare_development# \dn
  rideshare | owner
 ```
 
-Run the *describe table* meta command next: `\dt`. Rideshare tables like `users`, `trips` and others should be listed.
-
-If no tables are listed, make sure you've run migrations, see below!
+Now that you've confirmed the `owner` user and the `rideshare` schema have been set up correctly, you can run the migrations to create Rideshare's tables.
 </details>
 
 
@@ -143,16 +163,21 @@ Run migrations the standard way:
 bin/rails db:migrate
 ```
 
+Run the *describe table* meta command next: `\dt`. Rideshare tables like `users`, `trips` are listed.
+
 Note that migrations are preceded by the command `SET role = owner`, so they're run with `owner` as the owner of database objects.
 
 See `lib/tasks/migration_hooks.rake` for more details.
 
 If migrations ran successfully, you're good to go!
 
+## Data Loads
+To load some sample data, check out: [db/README.md](db/README.md)
+
+
 # Development Guides and Documentation
 
 ## Troubleshooting
-
 The Rideshare repository has many `README.md` files within subdirectories. Run `find . -name 'README.md'` to see them all.
 
 - For expanded installation and troubleshooting, visit: [Development Guides](https://github.com/andyatkinson/development_guides)
@@ -164,8 +189,7 @@ The Rideshare repository has many `README.md` files within subdirectories. Run `
 - For test environment details in Rideshare, check out: [TESTING.md](TESTING.md)
 - For Guides and Tasks in this repo, check out: [Guides](GUIDES.md)
 
-# UI
-
+# User Interfaces
 Although Rideshare is an *API-only* app, there are some UI elements.
 
 Rideshare runs [PgHero](https://github.com/ankane/pghero) which has a UI.

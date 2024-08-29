@@ -38,8 +38,8 @@ if [ -z "$DATABASE_URL" ]; then
     exit 1
 fi
 
-echo "Raising statement_timeout to 600000 (10 minutes), running $query..."
-psql $DATABASE_URL -c "SET statement_timeout = 600000; $query";
+echo "Raising statement_timeout to 30 minutes, running $query..."
+psql $DATABASE_URL -c "SET statement_timeout = '30min'; $query";
 psql $DATABASE_URL -c "ANALYZE (VERBOSE) rideshare.trip_requests";
 
 
@@ -70,7 +70,7 @@ SELECT
   (SELECT (RANDOM()*5)::INTEGER),
   (SELECT (timestamp - INTERVAL '1 day') from last_90_days),
   NOW()
-FROM GENERATE_SERIES(1, 1_000_000) seq;
+FROM GENERATE_SERIES(1, 10_000_000) seq;
 "
 
 if [ -z "$DATABASE_URL" ]; then
@@ -79,6 +79,14 @@ if [ -z "$DATABASE_URL" ]; then
     exit 1
 fi
 
-echo "Raising statement_timeout to 600000 (10 minutes), running $query..."
-psql $DATABASE_URL -c "SET statement_timeout = 600000; $query";
+echo "Raising statement_timeout to 30 minutes, running $query..."
+psql $DATABASE_URL -c "SET statement_timeout = '30min'; $query";
 psql $DATABASE_URL -c "ANALYZE (VERBOSE) rideshare.trips";
+
+echo "Estimated counts:"
+query="SELECT
+relname AS tablename,
+reltuples::numeric AS estimated_count
+FROM pg_class WHERE relname IN ('trips', 'trip_requests');
+"
+psql $DATABASE_URL -c "$query"

@@ -33,16 +33,28 @@ SELECT
   NOW(),
   NOW()
 FROM GENERATE_SERIES(1, 10_000_000) seq;
+
+-- To add additional batches of 10 million rows that
+-- with unique values, uncomment the following lines
+--FROM GENERATE_SERIES(10_000_001, 20_000_000) seq;
+--FROM GENERATE_SERIES(20_000_001, 30_000_000) seq;
+--FROM GENERATE_SERIES(30_000_001, 40_000_000) seq;
+--FROM GENERATE_SERIES(40_000_001, 50_000_000) seq;
 "
 
 if [ -z "$DATABASE_URL" ]; then
-    echo "Error: DATABASE_URL is not set."
-    echo "Run: export DATABASE_URL='postgres://owner:@localhost:5432/rideshare_development'"
+    echo "Error: DATABASE_URL is not set, which provides connection information for this script."
+    echo "To set it, run the following in your terminal:"
+    echo
+    echo "export DATABASE_URL='postgres://owner:@localhost:5432/rideshare_development'"
     exit 1
 fi
 
-echo "Creating 10_000_000 rideshare.users rows, raising statement_timeout to 600000 (10 minutes)..."
-psql $DATABASE_URL -c "SET statement_timeout = 600000; $query";
+echo "Creating batch of rideshare.users rows, raising statement_timeout to 30min"
+psql $DATABASE_URL -c "SET statement_timeout = '30min'; $query";
 
 echo "ANALYZE rideshare.users"
 psql $DATABASE_URL -c "ANALYZE rideshare.users";
+
+echo "Estimated count:"
+psql $DATABASE_URL -c "SELECT reltuples::numeric FROM pg_class WHERE relname IN ('users');"

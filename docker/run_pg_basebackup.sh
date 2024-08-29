@@ -24,9 +24,10 @@ pg_basebackup --host db01 \
   --write-recovery-conf \
   --slot=rideshare_slot
 
-# Restart container
-# (or `docker start` if stopped and needing to connect)
-docker restart db02
+# Container "stops" from removing the data directory
+# NOTE: Start it again, and it should use the same
+# replaced data directory
+docker start db02
 
 # Review live logs
 docker logs -f db02

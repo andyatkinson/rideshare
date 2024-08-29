@@ -1,5 +1,12 @@
 # Database Setup
 
+## PostgreSQL Version
+Make sure you're running PostgreSQL 16 or newer.
+
+We recommend Postgres.app, however Homebrew is popular. Make sure you've used this formula:
+
+<https://formulae.brew.sh/formula/postgresql@16>
+
 ## Fake data
 Fake data generated from Ruby, using the Faker gem, may be generated using the following commands.
 
@@ -13,6 +20,25 @@ bin/rails data_generators:trips_and_requests
 ```
 
 For more data, see SQL scripts in: [db/scripts/README.md](db/scripts/README.md)
+
+```sh
+sh db/scripts/bulk_load.sh
+sh db/scripts/bulk_load_extended.sh
+```
+
+## Data Loads Video Demo
+To see a demonstration of both methods:
+
+
+<details>
+<summary>🎥 Rideshare - Loading data using a Rake task and Shell Script</summary>
+<div>
+<div>
+  <a href="https://www.loom.com/share/6a1419efae7b4c3aac51e7d95726baf0">
+    <img style="max-width:300px;" src="https://cdn.loom.com/sessions/thumbnails/6a1419efae7b4c3aac51e7d95726baf0-1714505177620-with-play.gif">
+  </a>
+</div>
+</details>
 
 ## Security Goals
 The *Principle of least privilege*[^prin] is followed by creating explicit `GRANT` commands for the `owner`, `app`, and `app_readonly` users.
@@ -37,6 +63,8 @@ Do that by editing your `pg_hba.conf` file. Changes in `pg_hba.conf` can be appl
 
 
 ## Reloading your PostgreSQL configuration
+Finding config file: `psql -U postgres -c 'SHOW config_file'`
+
 To reload your configuration, run: `pg_ctl reload` in your terminal. If you run into the following message, read on for more information.
 
 ```sh

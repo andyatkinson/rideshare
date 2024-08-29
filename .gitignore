@@ -39,6 +39,7 @@ yarn-debug.log*
 
 # Docker volume directory
 docker/postgres-docker/*
+postgres-docker/
 
 # Ignore backup files
 docker/pg_hba.backup.conf
