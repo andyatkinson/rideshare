@@ -41,3 +41,6 @@ group :development, :test do
   gem 'database_consistency'
   gem 'dotenv-rails' # Manage .env
 end
+
+gem "solid_queue", "~> 0.8.2"
+gem "mission_control-jobs"
