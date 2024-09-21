@@ -11,30 +11,70 @@ SET row_security = off;
 
 ALTER TABLE IF EXISTS ONLY rideshare.trip_requests DROP CONSTRAINT IF EXISTS fk_rails_fa2679b626;
 ALTER TABLE IF EXISTS ONLY rideshare.trips DROP CONSTRAINT IF EXISTS fk_rails_e7560abc33;
+ALTER TABLE IF EXISTS ONLY rideshare.solid_queue_scheduled_executions DROP CONSTRAINT IF EXISTS fk_rails_c4316f352d;
 ALTER TABLE IF EXISTS ONLY rideshare.trip_requests DROP CONSTRAINT IF EXISTS fk_rails_c17a139554;
+ALTER TABLE IF EXISTS ONLY rideshare.solid_queue_claimed_executions DROP CONSTRAINT IF EXISTS fk_rails_9cfe4d4944;
 ALTER TABLE IF EXISTS ONLY rideshare.trip_positions DROP CONSTRAINT IF EXISTS fk_rails_9688ac8706;
+ALTER TABLE IF EXISTS ONLY rideshare.solid_queue_ready_executions DROP CONSTRAINT IF EXISTS fk_rails_81fcbd66af;
 ALTER TABLE IF EXISTS ONLY rideshare.vehicle_reservations DROP CONSTRAINT IF EXISTS fk_rails_7edc8e666a;
 ALTER TABLE IF EXISTS ONLY rideshare.trips DROP CONSTRAINT IF EXISTS fk_rails_6d92acb430;
 ALTER TABLE IF EXISTS ONLY rideshare.vehicle_reservations DROP CONSTRAINT IF EXISTS fk_rails_59996232fc;
+ALTER TABLE IF EXISTS ONLY rideshare.solid_queue_blocked_executions DROP CONSTRAINT IF EXISTS fk_rails_4cd34e2228;
 ALTER TABLE IF EXISTS ONLY rideshare.trip_requests DROP CONSTRAINT IF EXISTS fk_rails_3fdebbfaca;
+ALTER TABLE IF EXISTS ONLY rideshare.solid_queue_failed_executions DROP CONSTRAINT IF EXISTS fk_rails_39bbc7a631;
+ALTER TABLE IF EXISTS ONLY rideshare.solid_queue_recurring_executions DROP CONSTRAINT IF EXISTS fk_rails_318a5533ed;
 DROP INDEX IF EXISTS rideshare.index_vehicles_on_name;
 DROP INDEX IF EXISTS rideshare.index_vehicle_reservations_on_vehicle_id;
-DROP INDEX IF EXISTS rideshare.index_users_on_last_name;
-DROP INDEX IF EXISTS rideshare.index_users_on_email;
-DROP INDEX IF EXISTS rideshare.index_trips_on_trip_request_id;
-DROP INDEX IF EXISTS rideshare.index_trips_on_rating;
-DROP INDEX IF EXISTS rideshare.index_trips_on_driver_id;
-DROP INDEX IF EXISTS rideshare.index_trip_requests_on_start_location_id;
-DROP INDEX IF EXISTS rideshare.index_trip_requests_on_rider_id;
-DROP INDEX IF EXISTS rideshare.index_trip_requests_on_end_location_id;
+DROP INDEX IF EXISTS rideshare.index_solid_queue_semaphores_on_key_and_value;
+DROP INDEX IF EXISTS rideshare.index_solid_queue_semaphores_on_key;
+DROP INDEX IF EXISTS rideshare.index_solid_queue_semaphores_on_expires_at;
+DROP INDEX IF EXISTS rideshare.index_solid_queue_scheduled_executions_on_job_id;
+DROP INDEX IF EXISTS rideshare.index_solid_queue_recurring_tasks_on_static;
+DROP INDEX IF EXISTS rideshare.index_solid_queue_recurring_tasks_on_key;
+DROP INDEX IF EXISTS rideshare.index_solid_queue_recurring_executions_on_task_key_and_run_at;
+DROP INDEX IF EXISTS rideshare.index_solid_queue_recurring_executions_on_job_id;
+DROP INDEX IF EXISTS rideshare.index_solid_queue_ready_executions_on_job_id;
+DROP INDEX IF EXISTS rideshare.index_solid_queue_processes_on_supervisor_id;
+DROP INDEX IF EXISTS rideshare.index_solid_queue_processes_on_name_and_supervisor_id;
+DROP INDEX IF EXISTS rideshare.index_solid_queue_processes_on_last_heartbeat_at;
+DROP INDEX IF EXISTS rideshare.index_solid_queue_poll_by_queue;
+DROP INDEX IF EXISTS rideshare.index_solid_queue_poll_all;
+DROP INDEX IF EXISTS rideshare.index_solid_queue_pauses_on_queue_name;
+DROP INDEX IF EXISTS rideshare.index_solid_queue_jobs_on_finished_at;
+DROP INDEX IF EXISTS rideshare.index_solid_queue_jobs_on_class_name;
+DROP INDEX IF EXISTS rideshare.index_solid_queue_jobs_on_active_job_id;
+DROP INDEX IF EXISTS rideshare.index_solid_queue_jobs_for_filtering;
+DROP INDEX IF EXISTS rideshare.index_solid_queue_jobs_for_alerting;
+DROP INDEX IF EXISTS rideshare.index_solid_queue_failed_executions_on_job_id;
+DROP INDEX IF EXISTS rideshare.index_solid_queue_dispatch_all;
+DROP INDEX IF EXISTS rideshare.index_solid_queue_claimed_executions_on_process_id_and_job_id;
+DROP INDEX IF EXISTS rideshare.index_solid_queue_claimed_executions_on_job_id;
+DROP INDEX IF EXISTS rideshare.index_solid_queue_blocked_executions_on_job_id;
+DROP INDEX IF EXISTS rideshare.index_solid_queue_blocked_executions_for_release;
+DROP INDEX IF EXISTS rideshare.index_solid_queue_blocked_executions_for_maintenance;
 DROP INDEX IF EXISTS rideshare.index_locations_on_address;
 DROP INDEX IF EXISTS rideshare.index_fast_search_results_on_driver_id;
+DROP INDEX IF EXISTS rideshare.idx_users_sin_cov_partial;
+DROP INDEX IF EXISTS rideshare.idx_trips_multi;
+DROP INDEX IF EXISTS rideshare.idx_trips_driv_rat_completed_cov_part;
+DROP INDEX IF EXISTS rideshare.idx_trip_requests_sin_partial;
 ALTER TABLE IF EXISTS ONLY rideshare.vehicles DROP CONSTRAINT IF EXISTS vehicles_pkey;
 ALTER TABLE IF EXISTS ONLY rideshare.vehicle_reservations DROP CONSTRAINT IF EXISTS vehicle_reservations_pkey;
 ALTER TABLE IF EXISTS ONLY rideshare.users DROP CONSTRAINT IF EXISTS users_pkey;
 ALTER TABLE IF EXISTS ONLY rideshare.trips DROP CONSTRAINT IF EXISTS trips_pkey;
 ALTER TABLE IF EXISTS ONLY rideshare.trip_requests DROP CONSTRAINT IF EXISTS trip_requests_pkey;
 ALTER TABLE IF EXISTS ONLY rideshare.trip_positions DROP CONSTRAINT IF EXISTS trip_positions_pkey;
+ALTER TABLE IF EXISTS ONLY rideshare.solid_queue_semaphores DROP CONSTRAINT IF EXISTS solid_queue_semaphores_pkey;
+ALTER TABLE IF EXISTS ONLY rideshare.solid_queue_scheduled_executions DROP CONSTRAINT IF EXISTS solid_queue_scheduled_executions_pkey;
+ALTER TABLE IF EXISTS ONLY rideshare.solid_queue_recurring_tasks DROP CONSTRAINT IF EXISTS solid_queue_recurring_tasks_pkey;
+ALTER TABLE IF EXISTS ONLY rideshare.solid_queue_recurring_executions DROP CONSTRAINT IF EXISTS solid_queue_recurring_executions_pkey;
+ALTER TABLE IF EXISTS ONLY rideshare.solid_queue_ready_executions DROP CONSTRAINT IF EXISTS solid_queue_ready_executions_pkey;
+ALTER TABLE IF EXISTS ONLY rideshare.solid_queue_processes DROP CONSTRAINT IF EXISTS solid_queue_processes_pkey;
+ALTER TABLE IF EXISTS ONLY rideshare.solid_queue_pauses DROP CONSTRAINT IF EXISTS solid_queue_pauses_pkey;
+ALTER TABLE IF EXISTS ONLY rideshare.solid_queue_jobs DROP CONSTRAINT IF EXISTS solid_queue_jobs_pkey;
+ALTER TABLE IF EXISTS ONLY rideshare.solid_queue_failed_executions DROP CONSTRAINT IF EXISTS solid_queue_failed_executions_pkey;
+ALTER TABLE IF EXISTS ONLY rideshare.solid_queue_claimed_executions DROP CONSTRAINT IF EXISTS solid_queue_claimed_executions_pkey;
+ALTER TABLE IF EXISTS ONLY rideshare.solid_queue_blocked_executions DROP CONSTRAINT IF EXISTS solid_queue_blocked_executions_pkey;
 ALTER TABLE IF EXISTS ONLY rideshare.schema_migrations DROP CONSTRAINT IF EXISTS schema_migrations_pkey;
 ALTER TABLE IF EXISTS ONLY rideshare.vehicle_reservations DROP CONSTRAINT IF EXISTS non_overlapping_vehicle_registration;
 ALTER TABLE IF EXISTS ONLY rideshare.locations DROP CONSTRAINT IF EXISTS locations_pkey;
@@ -46,6 +86,17 @@ ALTER TABLE IF EXISTS rideshare.users ALTER COLUMN id DROP DEFAULT;
 ALTER TABLE IF EXISTS rideshare.trips ALTER COLUMN id DROP DEFAULT;
 ALTER TABLE IF EXISTS rideshare.trip_requests ALTER COLUMN id DROP DEFAULT;
 ALTER TABLE IF EXISTS rideshare.trip_positions ALTER COLUMN id DROP DEFAULT;
+ALTER TABLE IF EXISTS rideshare.solid_queue_semaphores ALTER COLUMN id DROP DEFAULT;
+ALTER TABLE IF EXISTS rideshare.solid_queue_scheduled_executions ALTER COLUMN id DROP DEFAULT;
+ALTER TABLE IF EXISTS rideshare.solid_queue_recurring_tasks ALTER COLUMN id DROP DEFAULT;
+ALTER TABLE IF EXISTS rideshare.solid_queue_recurring_executions ALTER COLUMN id DROP DEFAULT;
+ALTER TABLE IF EXISTS rideshare.solid_queue_ready_executions ALTER COLUMN id DROP DEFAULT;
+ALTER TABLE IF EXISTS rideshare.solid_queue_processes ALTER COLUMN id DROP DEFAULT;
+ALTER TABLE IF EXISTS rideshare.solid_queue_pauses ALTER COLUMN id DROP DEFAULT;
+ALTER TABLE IF EXISTS rideshare.solid_queue_jobs ALTER COLUMN id DROP DEFAULT;
+ALTER TABLE IF EXISTS rideshare.solid_queue_failed_executions ALTER COLUMN id DROP DEFAULT;
+ALTER TABLE IF EXISTS rideshare.solid_queue_claimed_executions ALTER COLUMN id DROP DEFAULT;
+ALTER TABLE IF EXISTS rideshare.solid_queue_blocked_executions ALTER COLUMN id DROP DEFAULT;
 ALTER TABLE IF EXISTS rideshare.locations ALTER COLUMN id DROP DEFAULT;
 DROP SEQUENCE IF EXISTS rideshare.vehicles_id_seq;
 DROP TABLE IF EXISTS rideshare.vehicles;
@@ -57,6 +108,28 @@ DROP SEQUENCE IF EXISTS rideshare.trip_requests_id_seq;
 DROP TABLE IF EXISTS rideshare.trip_requests;
 DROP SEQUENCE IF EXISTS rideshare.trip_positions_id_seq;
 DROP TABLE IF EXISTS rideshare.trip_positions;
+DROP SEQUENCE IF EXISTS rideshare.solid_queue_semaphores_id_seq;
+DROP TABLE IF EXISTS rideshare.solid_queue_semaphores;
+DROP SEQUENCE IF EXISTS rideshare.solid_queue_scheduled_executions_id_seq;
+DROP TABLE IF EXISTS rideshare.solid_queue_scheduled_executions;
+DROP SEQUENCE IF EXISTS rideshare.solid_queue_recurring_tasks_id_seq;
+DROP TABLE IF EXISTS rideshare.solid_queue_recurring_tasks;
+DROP SEQUENCE IF EXISTS rideshare.solid_queue_recurring_executions_id_seq;
+DROP TABLE IF EXISTS rideshare.solid_queue_recurring_executions;
+DROP SEQUENCE IF EXISTS rideshare.solid_queue_ready_executions_id_seq;
+DROP TABLE IF EXISTS rideshare.solid_queue_ready_executions;
+DROP SEQUENCE IF EXISTS rideshare.solid_queue_processes_id_seq;
+DROP TABLE IF EXISTS rideshare.solid_queue_processes;
+DROP SEQUENCE IF EXISTS rideshare.solid_queue_pauses_id_seq;
+DROP TABLE IF EXISTS rideshare.solid_queue_pauses;
+DROP SEQUENCE IF EXISTS rideshare.solid_queue_jobs_id_seq;
+DROP TABLE IF EXISTS rideshare.solid_queue_jobs;
+DROP SEQUENCE IF EXISTS rideshare.solid_queue_failed_executions_id_seq;
+DROP TABLE IF EXISTS rideshare.solid_queue_failed_executions;
+DROP SEQUENCE IF EXISTS rideshare.solid_queue_claimed_executions_id_seq;
+DROP TABLE IF EXISTS rideshare.solid_queue_claimed_executions;
+DROP SEQUENCE IF EXISTS rideshare.solid_queue_blocked_executions_id_seq;
+DROP TABLE IF EXISTS rideshare.solid_queue_blocked_executions;
 DROP VIEW IF EXISTS rideshare.search_results;
 DROP TABLE IF EXISTS rideshare.schema_migrations;
 DROP SEQUENCE IF EXISTS rideshare.locations_id_seq;
@@ -315,6 +388,375 @@ CREATE VIEW rideshare.search_results AS
 
 
 --
+-- Name: solid_queue_blocked_executions; Type: TABLE; Schema: rideshare; Owner: -
+--
+
+CREATE TABLE rideshare.solid_queue_blocked_executions (
+    id bigint NOT NULL,
+    job_id integer NOT NULL,
+    queue_name character varying NOT NULL,
+    priority integer DEFAULT 0 NOT NULL,
+    concurrency_key character varying NOT NULL,
+    expires_at timestamp(6) without time zone NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: solid_queue_blocked_executions_id_seq; Type: SEQUENCE; Schema: rideshare; Owner: -
+--
+
+CREATE SEQUENCE rideshare.solid_queue_blocked_executions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: solid_queue_blocked_executions_id_seq; Type: SEQUENCE OWNED BY; Schema: rideshare; Owner: -
+--
+
+ALTER SEQUENCE rideshare.solid_queue_blocked_executions_id_seq OWNED BY rideshare.solid_queue_blocked_executions.id;
+
+
+--
+-- Name: solid_queue_claimed_executions; Type: TABLE; Schema: rideshare; Owner: -
+--
+
+CREATE TABLE rideshare.solid_queue_claimed_executions (
+    id bigint NOT NULL,
+    job_id integer NOT NULL,
+    process_id bigint,
+    created_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: solid_queue_claimed_executions_id_seq; Type: SEQUENCE; Schema: rideshare; Owner: -
+--
+
+CREATE SEQUENCE rideshare.solid_queue_claimed_executions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: solid_queue_claimed_executions_id_seq; Type: SEQUENCE OWNED BY; Schema: rideshare; Owner: -
+--
+
+ALTER SEQUENCE rideshare.solid_queue_claimed_executions_id_seq OWNED BY rideshare.solid_queue_claimed_executions.id;
+
+
+--
+-- Name: solid_queue_failed_executions; Type: TABLE; Schema: rideshare; Owner: -
+--
+
+CREATE TABLE rideshare.solid_queue_failed_executions (
+    id bigint NOT NULL,
+    job_id integer NOT NULL,
+    error text,
+    created_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: solid_queue_failed_executions_id_seq; Type: SEQUENCE; Schema: rideshare; Owner: -
+--
+
+CREATE SEQUENCE rideshare.solid_queue_failed_executions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: solid_queue_failed_executions_id_seq; Type: SEQUENCE OWNED BY; Schema: rideshare; Owner: -
+--
+
+ALTER SEQUENCE rideshare.solid_queue_failed_executions_id_seq OWNED BY rideshare.solid_queue_failed_executions.id;
+
+
+--
+-- Name: solid_queue_jobs; Type: TABLE; Schema: rideshare; Owner: -
+--
+
+CREATE TABLE rideshare.solid_queue_jobs (
+    id bigint NOT NULL,
+    queue_name character varying NOT NULL,
+    class_name character varying NOT NULL,
+    arguments text,
+    priority integer DEFAULT 0 NOT NULL,
+    active_job_id character varying,
+    scheduled_at timestamp(6) without time zone,
+    finished_at timestamp(6) without time zone,
+    concurrency_key character varying,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: solid_queue_jobs_id_seq; Type: SEQUENCE; Schema: rideshare; Owner: -
+--
+
+CREATE SEQUENCE rideshare.solid_queue_jobs_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: solid_queue_jobs_id_seq; Type: SEQUENCE OWNED BY; Schema: rideshare; Owner: -
+--
+
+ALTER SEQUENCE rideshare.solid_queue_jobs_id_seq OWNED BY rideshare.solid_queue_jobs.id;
+
+
+--
+-- Name: solid_queue_pauses; Type: TABLE; Schema: rideshare; Owner: -
+--
+
+CREATE TABLE rideshare.solid_queue_pauses (
+    id bigint NOT NULL,
+    queue_name character varying NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: solid_queue_pauses_id_seq; Type: SEQUENCE; Schema: rideshare; Owner: -
+--
+
+CREATE SEQUENCE rideshare.solid_queue_pauses_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: solid_queue_pauses_id_seq; Type: SEQUENCE OWNED BY; Schema: rideshare; Owner: -
+--
+
+ALTER SEQUENCE rideshare.solid_queue_pauses_id_seq OWNED BY rideshare.solid_queue_pauses.id;
+
+
+--
+-- Name: solid_queue_processes; Type: TABLE; Schema: rideshare; Owner: -
+--
+
+CREATE TABLE rideshare.solid_queue_processes (
+    id bigint NOT NULL,
+    kind character varying NOT NULL,
+    last_heartbeat_at timestamp(6) without time zone NOT NULL,
+    supervisor_id bigint,
+    pid integer NOT NULL,
+    hostname character varying,
+    metadata text,
+    created_at timestamp(6) without time zone NOT NULL,
+    name character varying NOT NULL
+);
+
+
+--
+-- Name: solid_queue_processes_id_seq; Type: SEQUENCE; Schema: rideshare; Owner: -
+--
+
+CREATE SEQUENCE rideshare.solid_queue_processes_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: solid_queue_processes_id_seq; Type: SEQUENCE OWNED BY; Schema: rideshare; Owner: -
+--
+
+ALTER SEQUENCE rideshare.solid_queue_processes_id_seq OWNED BY rideshare.solid_queue_processes.id;
+
+
+--
+-- Name: solid_queue_ready_executions; Type: TABLE; Schema: rideshare; Owner: -
+--
+
+CREATE TABLE rideshare.solid_queue_ready_executions (
+    id bigint NOT NULL,
+    job_id integer NOT NULL,
+    queue_name character varying NOT NULL,
+    priority integer DEFAULT 0 NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: solid_queue_ready_executions_id_seq; Type: SEQUENCE; Schema: rideshare; Owner: -
+--
+
+CREATE SEQUENCE rideshare.solid_queue_ready_executions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: solid_queue_ready_executions_id_seq; Type: SEQUENCE OWNED BY; Schema: rideshare; Owner: -
+--
+
+ALTER SEQUENCE rideshare.solid_queue_ready_executions_id_seq OWNED BY rideshare.solid_queue_ready_executions.id;
+
+
+--
+-- Name: solid_queue_recurring_executions; Type: TABLE; Schema: rideshare; Owner: -
+--
+
+CREATE TABLE rideshare.solid_queue_recurring_executions (
+    id bigint NOT NULL,
+    job_id integer NOT NULL,
+    task_key character varying NOT NULL,
+    run_at timestamp(6) without time zone NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: solid_queue_recurring_executions_id_seq; Type: SEQUENCE; Schema: rideshare; Owner: -
+--
+
+CREATE SEQUENCE rideshare.solid_queue_recurring_executions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: solid_queue_recurring_executions_id_seq; Type: SEQUENCE OWNED BY; Schema: rideshare; Owner: -
+--
+
+ALTER SEQUENCE rideshare.solid_queue_recurring_executions_id_seq OWNED BY rideshare.solid_queue_recurring_executions.id;
+
+
+--
+-- Name: solid_queue_recurring_tasks; Type: TABLE; Schema: rideshare; Owner: -
+--
+
+CREATE TABLE rideshare.solid_queue_recurring_tasks (
+    id bigint NOT NULL,
+    key character varying NOT NULL,
+    schedule character varying NOT NULL,
+    command character varying(2048),
+    class_name character varying,
+    arguments text,
+    queue_name character varying,
+    priority integer DEFAULT 0,
+    static boolean DEFAULT true NOT NULL,
+    description text,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: solid_queue_recurring_tasks_id_seq; Type: SEQUENCE; Schema: rideshare; Owner: -
+--
+
+CREATE SEQUENCE rideshare.solid_queue_recurring_tasks_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: solid_queue_recurring_tasks_id_seq; Type: SEQUENCE OWNED BY; Schema: rideshare; Owner: -
+--
+
+ALTER SEQUENCE rideshare.solid_queue_recurring_tasks_id_seq OWNED BY rideshare.solid_queue_recurring_tasks.id;
+
+
+--
+-- Name: solid_queue_scheduled_executions; Type: TABLE; Schema: rideshare; Owner: -
+--
+
+CREATE TABLE rideshare.solid_queue_scheduled_executions (
+    id bigint NOT NULL,
+    job_id integer NOT NULL,
+    queue_name character varying NOT NULL,
+    priority integer DEFAULT 0 NOT NULL,
+    scheduled_at timestamp(6) without time zone NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: solid_queue_scheduled_executions_id_seq; Type: SEQUENCE; Schema: rideshare; Owner: -
+--
+
+CREATE SEQUENCE rideshare.solid_queue_scheduled_executions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: solid_queue_scheduled_executions_id_seq; Type: SEQUENCE OWNED BY; Schema: rideshare; Owner: -
+--
+
+ALTER SEQUENCE rideshare.solid_queue_scheduled_executions_id_seq OWNED BY rideshare.solid_queue_scheduled_executions.id;
+
+
+--
+-- Name: solid_queue_semaphores; Type: TABLE; Schema: rideshare; Owner: -
+--
+
+CREATE TABLE rideshare.solid_queue_semaphores (
+    id bigint NOT NULL,
+    key character varying NOT NULL,
+    value integer DEFAULT 1 NOT NULL,
+    expires_at timestamp(6) without time zone NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: solid_queue_semaphores_id_seq; Type: SEQUENCE; Schema: rideshare; Owner: -
+--
+
+CREATE SEQUENCE rideshare.solid_queue_semaphores_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: solid_queue_semaphores_id_seq; Type: SEQUENCE OWNED BY; Schema: rideshare; Owner: -
+--
+
+ALTER SEQUENCE rideshare.solid_queue_semaphores_id_seq OWNED BY rideshare.solid_queue_semaphores.id;
+
+
+--
 -- Name: trip_positions; Type: TABLE; Schema: rideshare; Owner: -
 --
 
@@ -492,6 +934,83 @@ ALTER TABLE ONLY rideshare.locations ALTER COLUMN id SET DEFAULT nextval('ridesh
 
 
 --
+-- Name: solid_queue_blocked_executions id; Type: DEFAULT; Schema: rideshare; Owner: -
+--
+
+ALTER TABLE ONLY rideshare.solid_queue_blocked_executions ALTER COLUMN id SET DEFAULT nextval('rideshare.solid_queue_blocked_executions_id_seq'::regclass);
+
+
+--
+-- Name: solid_queue_claimed_executions id; Type: DEFAULT; Schema: rideshare; Owner: -
+--
+
+ALTER TABLE ONLY rideshare.solid_queue_claimed_executions ALTER COLUMN id SET DEFAULT nextval('rideshare.solid_queue_claimed_executions_id_seq'::regclass);
+
+
+--
+-- Name: solid_queue_failed_executions id; Type: DEFAULT; Schema: rideshare; Owner: -
+--
+
+ALTER TABLE ONLY rideshare.solid_queue_failed_executions ALTER COLUMN id SET DEFAULT nextval('rideshare.solid_queue_failed_executions_id_seq'::regclass);
+
+
+--
+-- Name: solid_queue_jobs id; Type: DEFAULT; Schema: rideshare; Owner: -
+--
+
+ALTER TABLE ONLY rideshare.solid_queue_jobs ALTER COLUMN id SET DEFAULT nextval('rideshare.solid_queue_jobs_id_seq'::regclass);
+
+
+--
+-- Name: solid_queue_pauses id; Type: DEFAULT; Schema: rideshare; Owner: -
+--
+
+ALTER TABLE ONLY rideshare.solid_queue_pauses ALTER COLUMN id SET DEFAULT nextval('rideshare.solid_queue_pauses_id_seq'::regclass);
+
+
+--
+-- Name: solid_queue_processes id; Type: DEFAULT; Schema: rideshare; Owner: -
+--
+
+ALTER TABLE ONLY rideshare.solid_queue_processes ALTER COLUMN id SET DEFAULT nextval('rideshare.solid_queue_processes_id_seq'::regclass);
+
+
+--
+-- Name: solid_queue_ready_executions id; Type: DEFAULT; Schema: rideshare; Owner: -
+--
+
+ALTER TABLE ONLY rideshare.solid_queue_ready_executions ALTER COLUMN id SET DEFAULT nextval('rideshare.solid_queue_ready_executions_id_seq'::regclass);
+
+
+--
+-- Name: solid_queue_recurring_executions id; Type: DEFAULT; Schema: rideshare; Owner: -
+--
+
+ALTER TABLE ONLY rideshare.solid_queue_recurring_executions ALTER COLUMN id SET DEFAULT nextval('rideshare.solid_queue_recurring_executions_id_seq'::regclass);
+
+
+--
+-- Name: solid_queue_recurring_tasks id; Type: DEFAULT; Schema: rideshare; Owner: -
+--
+
+ALTER TABLE ONLY rideshare.solid_queue_recurring_tasks ALTER COLUMN id SET DEFAULT nextval('rideshare.solid_queue_recurring_tasks_id_seq'::regclass);
+
+
+--
+-- Name: solid_queue_scheduled_executions id; Type: DEFAULT; Schema: rideshare; Owner: -
+--
+
+ALTER TABLE ONLY rideshare.solid_queue_scheduled_executions ALTER COLUMN id SET DEFAULT nextval('rideshare.solid_queue_scheduled_executions_id_seq'::regclass);
+
+
+--
+-- Name: solid_queue_semaphores id; Type: DEFAULT; Schema: rideshare; Owner: -
+--
+
+ALTER TABLE ONLY rideshare.solid_queue_semaphores ALTER COLUMN id SET DEFAULT nextval('rideshare.solid_queue_semaphores_id_seq'::regclass);
+
+
+--
 -- Name: trip_positions id; Type: DEFAULT; Schema: rideshare; Owner: -
 --
 
@@ -574,6 +1093,94 @@ ALTER TABLE ONLY rideshare.schema_migrations
 
 
 --
+-- Name: solid_queue_blocked_executions solid_queue_blocked_executions_pkey; Type: CONSTRAINT; Schema: rideshare; Owner: -
+--
+
+ALTER TABLE ONLY rideshare.solid_queue_blocked_executions
+    ADD CONSTRAINT solid_queue_blocked_executions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: solid_queue_claimed_executions solid_queue_claimed_executions_pkey; Type: CONSTRAINT; Schema: rideshare; Owner: -
+--
+
+ALTER TABLE ONLY rideshare.solid_queue_claimed_executions
+    ADD CONSTRAINT solid_queue_claimed_executions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: solid_queue_failed_executions solid_queue_failed_executions_pkey; Type: CONSTRAINT; Schema: rideshare; Owner: -
+--
+
+ALTER TABLE ONLY rideshare.solid_queue_failed_executions
+    ADD CONSTRAINT solid_queue_failed_executions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: solid_queue_jobs solid_queue_jobs_pkey; Type: CONSTRAINT; Schema: rideshare; Owner: -
+--
+
+ALTER TABLE ONLY rideshare.solid_queue_jobs
+    ADD CONSTRAINT solid_queue_jobs_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: solid_queue_pauses solid_queue_pauses_pkey; Type: CONSTRAINT; Schema: rideshare; Owner: -
+--
+
+ALTER TABLE ONLY rideshare.solid_queue_pauses
+    ADD CONSTRAINT solid_queue_pauses_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: solid_queue_processes solid_queue_processes_pkey; Type: CONSTRAINT; Schema: rideshare; Owner: -
+--
+
+ALTER TABLE ONLY rideshare.solid_queue_processes
+    ADD CONSTRAINT solid_queue_processes_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: solid_queue_ready_executions solid_queue_ready_executions_pkey; Type: CONSTRAINT; Schema: rideshare; Owner: -
+--
+
+ALTER TABLE ONLY rideshare.solid_queue_ready_executions
+    ADD CONSTRAINT solid_queue_ready_executions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: solid_queue_recurring_executions solid_queue_recurring_executions_pkey; Type: CONSTRAINT; Schema: rideshare; Owner: -
+--
+
+ALTER TABLE ONLY rideshare.solid_queue_recurring_executions
+    ADD CONSTRAINT solid_queue_recurring_executions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: solid_queue_recurring_tasks solid_queue_recurring_tasks_pkey; Type: CONSTRAINT; Schema: rideshare; Owner: -
+--
+
+ALTER TABLE ONLY rideshare.solid_queue_recurring_tasks
+    ADD CONSTRAINT solid_queue_recurring_tasks_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: solid_queue_scheduled_executions solid_queue_scheduled_executions_pkey; Type: CONSTRAINT; Schema: rideshare; Owner: -
+--
+
+ALTER TABLE ONLY rideshare.solid_queue_scheduled_executions
+    ADD CONSTRAINT solid_queue_scheduled_executions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: solid_queue_semaphores solid_queue_semaphores_pkey; Type: CONSTRAINT; Schema: rideshare; Owner: -
+--
+
+ALTER TABLE ONLY rideshare.solid_queue_semaphores
+    ADD CONSTRAINT solid_queue_semaphores_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: trip_positions trip_positions_pkey; Type: CONSTRAINT; Schema: rideshare; Owner: -
 --
 
@@ -622,6 +1229,34 @@ ALTER TABLE ONLY rideshare.vehicles
 
 
 --
+-- Name: idx_trip_requests_sin_partial; Type: INDEX; Schema: rideshare; Owner: -
+--
+
+CREATE INDEX idx_trip_requests_sin_partial ON rideshare.trip_requests USING btree (id) WHERE (end_location_id = 2);
+
+
+--
+-- Name: idx_trips_driv_rat_completed_cov_part; Type: INDEX; Schema: rideshare; Owner: -
+--
+
+CREATE INDEX idx_trips_driv_rat_completed_cov_part ON rideshare.trips USING btree (driver_id) INCLUDE (rating) WHERE ((rating IS NOT NULL) AND (completed_at IS NOT NULL));
+
+
+--
+-- Name: idx_trips_multi; Type: INDEX; Schema: rideshare; Owner: -
+--
+
+CREATE INDEX idx_trips_multi ON rideshare.trips USING btree (completed_at, trip_request_id, driver_id);
+
+
+--
+-- Name: idx_users_sin_cov_partial; Type: INDEX; Schema: rideshare; Owner: -
+--
+
+CREATE INDEX idx_users_sin_cov_partial ON rideshare.users USING btree (id) INCLUDE (first_name, last_name) WHERE ((type)::text = 'Driver'::text);
+
+
+--
 -- Name: index_fast_search_results_on_driver_id; Type: INDEX; Schema: rideshare; Owner: -
 --
 
@@ -636,59 +1271,192 @@ CREATE UNIQUE INDEX index_locations_on_address ON rideshare.locations USING btre
 
 
 --
--- Name: index_trip_requests_on_end_location_id; Type: INDEX; Schema: rideshare; Owner: -
+-- Name: index_solid_queue_blocked_executions_for_maintenance; Type: INDEX; Schema: rideshare; Owner: -
 --
 
-CREATE INDEX index_trip_requests_on_end_location_id ON rideshare.trip_requests USING btree (end_location_id);
-
-
---
--- Name: index_trip_requests_on_rider_id; Type: INDEX; Schema: rideshare; Owner: -
---
-
-CREATE INDEX index_trip_requests_on_rider_id ON rideshare.trip_requests USING btree (rider_id);
+CREATE INDEX index_solid_queue_blocked_executions_for_maintenance ON rideshare.solid_queue_blocked_executions USING btree (expires_at, concurrency_key);
 
 
 --
--- Name: index_trip_requests_on_start_location_id; Type: INDEX; Schema: rideshare; Owner: -
+-- Name: index_solid_queue_blocked_executions_for_release; Type: INDEX; Schema: rideshare; Owner: -
 --
 
-CREATE INDEX index_trip_requests_on_start_location_id ON rideshare.trip_requests USING btree (start_location_id);
-
-
---
--- Name: index_trips_on_driver_id; Type: INDEX; Schema: rideshare; Owner: -
---
-
-CREATE INDEX index_trips_on_driver_id ON rideshare.trips USING btree (driver_id);
+CREATE INDEX index_solid_queue_blocked_executions_for_release ON rideshare.solid_queue_blocked_executions USING btree (concurrency_key, priority, job_id);
 
 
 --
--- Name: index_trips_on_rating; Type: INDEX; Schema: rideshare; Owner: -
+-- Name: index_solid_queue_blocked_executions_on_job_id; Type: INDEX; Schema: rideshare; Owner: -
 --
 
-CREATE INDEX index_trips_on_rating ON rideshare.trips USING btree (rating);
-
-
---
--- Name: index_trips_on_trip_request_id; Type: INDEX; Schema: rideshare; Owner: -
---
-
-CREATE INDEX index_trips_on_trip_request_id ON rideshare.trips USING btree (trip_request_id);
+CREATE UNIQUE INDEX index_solid_queue_blocked_executions_on_job_id ON rideshare.solid_queue_blocked_executions USING btree (job_id);
 
 
 --
--- Name: index_users_on_email; Type: INDEX; Schema: rideshare; Owner: -
+-- Name: index_solid_queue_claimed_executions_on_job_id; Type: INDEX; Schema: rideshare; Owner: -
 --
 
-CREATE UNIQUE INDEX index_users_on_email ON rideshare.users USING btree (email);
+CREATE UNIQUE INDEX index_solid_queue_claimed_executions_on_job_id ON rideshare.solid_queue_claimed_executions USING btree (job_id);
 
 
 --
--- Name: index_users_on_last_name; Type: INDEX; Schema: rideshare; Owner: -
+-- Name: index_solid_queue_claimed_executions_on_process_id_and_job_id; Type: INDEX; Schema: rideshare; Owner: -
 --
 
-CREATE INDEX index_users_on_last_name ON rideshare.users USING btree (last_name);
+CREATE INDEX index_solid_queue_claimed_executions_on_process_id_and_job_id ON rideshare.solid_queue_claimed_executions USING btree (process_id, job_id);
+
+
+--
+-- Name: index_solid_queue_dispatch_all; Type: INDEX; Schema: rideshare; Owner: -
+--
+
+CREATE INDEX index_solid_queue_dispatch_all ON rideshare.solid_queue_scheduled_executions USING btree (scheduled_at, priority, job_id);
+
+
+--
+-- Name: index_solid_queue_failed_executions_on_job_id; Type: INDEX; Schema: rideshare; Owner: -
+--
+
+CREATE UNIQUE INDEX index_solid_queue_failed_executions_on_job_id ON rideshare.solid_queue_failed_executions USING btree (job_id);
+
+
+--
+-- Name: index_solid_queue_jobs_for_alerting; Type: INDEX; Schema: rideshare; Owner: -
+--
+
+CREATE INDEX index_solid_queue_jobs_for_alerting ON rideshare.solid_queue_jobs USING btree (scheduled_at, finished_at);
+
+
+--
+-- Name: index_solid_queue_jobs_for_filtering; Type: INDEX; Schema: rideshare; Owner: -
+--
+
+CREATE INDEX index_solid_queue_jobs_for_filtering ON rideshare.solid_queue_jobs USING btree (queue_name, finished_at);
+
+
+--
+-- Name: index_solid_queue_jobs_on_active_job_id; Type: INDEX; Schema: rideshare; Owner: -
+--
+
+CREATE INDEX index_solid_queue_jobs_on_active_job_id ON rideshare.solid_queue_jobs USING btree (active_job_id);
+
+
+--
+-- Name: index_solid_queue_jobs_on_class_name; Type: INDEX; Schema: rideshare; Owner: -
+--
+
+CREATE INDEX index_solid_queue_jobs_on_class_name ON rideshare.solid_queue_jobs USING btree (class_name);
+
+
+--
+-- Name: index_solid_queue_jobs_on_finished_at; Type: INDEX; Schema: rideshare; Owner: -
+--
+
+CREATE INDEX index_solid_queue_jobs_on_finished_at ON rideshare.solid_queue_jobs USING btree (finished_at);
+
+
+--
+-- Name: index_solid_queue_pauses_on_queue_name; Type: INDEX; Schema: rideshare; Owner: -
+--
+
+CREATE UNIQUE INDEX index_solid_queue_pauses_on_queue_name ON rideshare.solid_queue_pauses USING btree (queue_name);
+
+
+--
+-- Name: index_solid_queue_poll_all; Type: INDEX; Schema: rideshare; Owner: -
+--
+
+CREATE INDEX index_solid_queue_poll_all ON rideshare.solid_queue_ready_executions USING btree (priority, job_id);
+
+
+--
+-- Name: index_solid_queue_poll_by_queue; Type: INDEX; Schema: rideshare; Owner: -
+--
+
+CREATE INDEX index_solid_queue_poll_by_queue ON rideshare.solid_queue_ready_executions USING btree (queue_name, priority, job_id);
+
+
+--
+-- Name: index_solid_queue_processes_on_last_heartbeat_at; Type: INDEX; Schema: rideshare; Owner: -
+--
+
+CREATE INDEX index_solid_queue_processes_on_last_heartbeat_at ON rideshare.solid_queue_processes USING btree (last_heartbeat_at);
+
+
+--
+-- Name: index_solid_queue_processes_on_name_and_supervisor_id; Type: INDEX; Schema: rideshare; Owner: -
+--
+
+CREATE UNIQUE INDEX index_solid_queue_processes_on_name_and_supervisor_id ON rideshare.solid_queue_processes USING btree (name, supervisor_id);
+
+
+--
+-- Name: index_solid_queue_processes_on_supervisor_id; Type: INDEX; Schema: rideshare; Owner: -
+--
+
+CREATE INDEX index_solid_queue_processes_on_supervisor_id ON rideshare.solid_queue_processes USING btree (supervisor_id);
+
+
+--
+-- Name: index_solid_queue_ready_executions_on_job_id; Type: INDEX; Schema: rideshare; Owner: -
+--
+
+CREATE UNIQUE INDEX index_solid_queue_ready_executions_on_job_id ON rideshare.solid_queue_ready_executions USING btree (job_id);
+
+
+--
+-- Name: index_solid_queue_recurring_executions_on_job_id; Type: INDEX; Schema: rideshare; Owner: -
+--
+
+CREATE UNIQUE INDEX index_solid_queue_recurring_executions_on_job_id ON rideshare.solid_queue_recurring_executions USING btree (job_id);
+
+
+--
+-- Name: index_solid_queue_recurring_executions_on_task_key_and_run_at; Type: INDEX; Schema: rideshare; Owner: -
+--
+
+CREATE UNIQUE INDEX index_solid_queue_recurring_executions_on_task_key_and_run_at ON rideshare.solid_queue_recurring_executions USING btree (task_key, run_at);
+
+
+--
+-- Name: index_solid_queue_recurring_tasks_on_key; Type: INDEX; Schema: rideshare; Owner: -
+--
+
+CREATE UNIQUE INDEX index_solid_queue_recurring_tasks_on_key ON rideshare.solid_queue_recurring_tasks USING btree (key);
+
+
+--
+-- Name: index_solid_queue_recurring_tasks_on_static; Type: INDEX; Schema: rideshare; Owner: -
+--
+
+CREATE INDEX index_solid_queue_recurring_tasks_on_static ON rideshare.solid_queue_recurring_tasks USING btree (static);
+
+
+--
+-- Name: index_solid_queue_scheduled_executions_on_job_id; Type: INDEX; Schema: rideshare; Owner: -
+--
+
+CREATE UNIQUE INDEX index_solid_queue_scheduled_executions_on_job_id ON rideshare.solid_queue_scheduled_executions USING btree (job_id);
+
+
+--
+-- Name: index_solid_queue_semaphores_on_expires_at; Type: INDEX; Schema: rideshare; Owner: -
+--
+
+CREATE INDEX index_solid_queue_semaphores_on_expires_at ON rideshare.solid_queue_semaphores USING btree (expires_at);
+
+
+--
+-- Name: index_solid_queue_semaphores_on_key; Type: INDEX; Schema: rideshare; Owner: -
+--
+
+CREATE UNIQUE INDEX index_solid_queue_semaphores_on_key ON rideshare.solid_queue_semaphores USING btree (key);
+
+
+--
+-- Name: index_solid_queue_semaphores_on_key_and_value; Type: INDEX; Schema: rideshare; Owner: -
+--
+
+CREATE INDEX index_solid_queue_semaphores_on_key_and_value ON rideshare.solid_queue_semaphores USING btree (key, value);
 
 
 --
@@ -706,11 +1474,35 @@ CREATE UNIQUE INDEX index_vehicles_on_name ON rideshare.vehicles USING btree (na
 
 
 --
+-- Name: solid_queue_recurring_executions fk_rails_318a5533ed; Type: FK CONSTRAINT; Schema: rideshare; Owner: -
+--
+
+ALTER TABLE ONLY rideshare.solid_queue_recurring_executions
+    ADD CONSTRAINT fk_rails_318a5533ed FOREIGN KEY (job_id) REFERENCES rideshare.solid_queue_jobs(id) ON DELETE CASCADE;
+
+
+--
+-- Name: solid_queue_failed_executions fk_rails_39bbc7a631; Type: FK CONSTRAINT; Schema: rideshare; Owner: -
+--
+
+ALTER TABLE ONLY rideshare.solid_queue_failed_executions
+    ADD CONSTRAINT fk_rails_39bbc7a631 FOREIGN KEY (job_id) REFERENCES rideshare.solid_queue_jobs(id) ON DELETE CASCADE;
+
+
+--
 -- Name: trip_requests fk_rails_3fdebbfaca; Type: FK CONSTRAINT; Schema: rideshare; Owner: -
 --
 
 ALTER TABLE ONLY rideshare.trip_requests
     ADD CONSTRAINT fk_rails_3fdebbfaca FOREIGN KEY (end_location_id) REFERENCES rideshare.locations(id);
+
+
+--
+-- Name: solid_queue_blocked_executions fk_rails_4cd34e2228; Type: FK CONSTRAINT; Schema: rideshare; Owner: -
+--
+
+ALTER TABLE ONLY rideshare.solid_queue_blocked_executions
+    ADD CONSTRAINT fk_rails_4cd34e2228 FOREIGN KEY (job_id) REFERENCES rideshare.solid_queue_jobs(id) ON DELETE CASCADE;
 
 
 --
@@ -738,6 +1530,14 @@ ALTER TABLE ONLY rideshare.vehicle_reservations
 
 
 --
+-- Name: solid_queue_ready_executions fk_rails_81fcbd66af; Type: FK CONSTRAINT; Schema: rideshare; Owner: -
+--
+
+ALTER TABLE ONLY rideshare.solid_queue_ready_executions
+    ADD CONSTRAINT fk_rails_81fcbd66af FOREIGN KEY (job_id) REFERENCES rideshare.solid_queue_jobs(id) ON DELETE CASCADE;
+
+
+--
 -- Name: trip_positions fk_rails_9688ac8706; Type: FK CONSTRAINT; Schema: rideshare; Owner: -
 --
 
@@ -746,11 +1546,27 @@ ALTER TABLE ONLY rideshare.trip_positions
 
 
 --
+-- Name: solid_queue_claimed_executions fk_rails_9cfe4d4944; Type: FK CONSTRAINT; Schema: rideshare; Owner: -
+--
+
+ALTER TABLE ONLY rideshare.solid_queue_claimed_executions
+    ADD CONSTRAINT fk_rails_9cfe4d4944 FOREIGN KEY (job_id) REFERENCES rideshare.solid_queue_jobs(id) ON DELETE CASCADE;
+
+
+--
 -- Name: trip_requests fk_rails_c17a139554; Type: FK CONSTRAINT; Schema: rideshare; Owner: -
 --
 
 ALTER TABLE ONLY rideshare.trip_requests
     ADD CONSTRAINT fk_rails_c17a139554 FOREIGN KEY (rider_id) REFERENCES rideshare.users(id);
+
+
+--
+-- Name: solid_queue_scheduled_executions fk_rails_c4316f352d; Type: FK CONSTRAINT; Schema: rideshare; Owner: -
+--
+
+ALTER TABLE ONLY rideshare.solid_queue_scheduled_executions
+    ADD CONSTRAINT fk_rails_c4316f352d FOREIGN KEY (job_id) REFERENCES rideshare.solid_queue_jobs(id) ON DELETE CASCADE;
 
 
 --
@@ -776,6 +1592,8 @@ ALTER TABLE ONLY rideshare.trip_requests
 SET search_path TO rideshare;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20240906033935'),
+('20240905235053'),
 ('20231220043547'),
 ('20231218215836'),
 ('20231213045957'),
