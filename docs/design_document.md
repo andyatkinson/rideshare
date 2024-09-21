@@ -82,7 +82,7 @@ The same works when querying, by asking for a particular record, the type inform
 The purpose of this app is to model car-based ride sharing, like Uber or Lyft. This is my take on some objects and their interactions that model this domain. The main model is a Trip and then there are Drivers that provide the trip, and Riders that take the trip.
 
 
-Some Active Record model ideas and notes below. Single-table inheritence can be used for both the Driver and Rider in a `users` table. :bulb: Trade-off: this saves a bit of initial work having separate models and potentially, duplication between two similar models.
+Some Active Record model ideas and notes below. Single-table inheritance can be used for both the Driver and Rider in a `users` table. :bulb: Trade-off: this saves a bit of initial work having separate models and potentially, duplication between two similar models.
 
 ```
 Driver(name:string) (use STI?)

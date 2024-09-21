@@ -148,7 +148,7 @@ pg_basebackup: renaming backup_manifest.tmp to backup_manifest
 pg_basebackup: base backup completed
 ```
 
-And on db02, somethign like this:
+And on db02, something like this:
 ```
 2024-05-01 02:07:18.636 UTC [30] LOG:  entering standby mode
 2024-05-01 02:07:18.641 UTC [30] LOG:  redo starts at 0/6000028

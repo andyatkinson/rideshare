@@ -11,7 +11,7 @@ namespace :simulate do
     # Steps in end-to-end cycle
     # 1. (API) Rider creates trip_request
     # 1. (API) Rider polls for trip_request status
-    # 1. Best available driver pickes up trip request, updates status, trip created
+    # 1. Best available driver picks up trip request, updates status, trip created
     # 1. (API) Rider polls for trip status
     # 1. Driver completes trip
 
