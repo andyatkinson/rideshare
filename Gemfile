@@ -41,3 +41,5 @@ group :development, :test do
   gem 'database_consistency'
   gem 'dotenv-rails' # Manage .env
 end
+
+gem "solid_cache", "~> 0.7.0"
