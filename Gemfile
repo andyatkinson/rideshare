@@ -13,6 +13,8 @@ gem 'pg_query', '~> 5.1'
 gem 'pg_search', '~> 2.3'
 gem 'activerecord-import', '~> 1.5'
 
+gem 'activerecord-clean-db-structure', '~> 0.4.3'
+
 # assets gems default Rails 7 app
 gem 'sprockets-rails', '~> 3.4'
 gem 'importmap-rails', '~> 1.2'
