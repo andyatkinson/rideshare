@@ -7,10 +7,10 @@ class Vehicle < ApplicationRecord
 
   has_many :vehicle_reservations, dependent: :destroy
 
-  enum status: {
+  enum :status, {
     draft: VehicleStatus::DRAFT,
     published: VehicleStatus::PUBLISHED
-  }, _prefix: true
+  }, prefix: true
 
   validates :status,
     inclusion: { in: VehicleStatus::VALID_STATUSES },
