@@ -6,8 +6,8 @@ class AddStatusColumnDbEnumTypeToVehicles < ActiveRecord::Migration[7.0]
     ]
 
     add_column :vehicles, :status, :enum,
-      enum_type: :vehicle_status,
-      default: VehicleStatus::DRAFT,
-      null: false
+               enum_type: :vehicle_status,
+               default: VehicleStatus::DRAFT,
+               null: false
   end
 end

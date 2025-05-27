@@ -1,7 +1,7 @@
 class Vehicle < ApplicationRecord
   validates :name,
-    presence: true,
-    uniqueness: true
+            presence: true,
+            uniqueness: true
 
   attr_accessor :status
 
@@ -13,7 +13,6 @@ class Vehicle < ApplicationRecord
   }, prefix: true
 
   validates :status,
-    inclusion: { in: VehicleStatus::VALID_STATUSES },
-    presence: true
-
+            inclusion: { in: VehicleStatus::VALID_STATUSES },
+            presence: true
 end

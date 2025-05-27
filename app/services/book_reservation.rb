@@ -1,9 +1,7 @@
 class BookReservation
-
   def initialize(vehicle_id:, rider_id:,
                  start_location_id:, end_location_id:,
-                 starts_at:, ends_at:
-                )
+                 starts_at:, ends_at:)
     @vehicle = Vehicle.find(vehicle_id)
     @rider = Rider.find(rider_id)
     @start_location = Location.find(start_location_id)
@@ -27,5 +25,4 @@ class BookReservation
       )
     end
   end
-
 end

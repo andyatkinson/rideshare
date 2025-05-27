@@ -10,32 +10,32 @@ class Trip < ApplicationRecord
   validates :rating, numericality: {
     only_integer: true,
     greater_than_or_equal_to: 1,
-    less_than_or_equal_to: 5,
+    less_than_or_equal_to: 5
   }, allow_nil: true
 
   validate :rating_requires_completed_trip
 
-  scope :with_start_location, -> (text) {
-    joins(trip_request: :start_location).
-    where('locations.address ILIKE ?', "%#{text}%")
+  scope :with_start_location, lambda { |text|
+    joins(trip_request: :start_location)
+      .where('locations.address ILIKE ?', "%#{text}%")
   }
 
-  scope :with_driver_name, -> (text) {
-    joins(:driver).
-    where('users.first_name ILIKE ?', "%#{text}%")
+  scope :with_driver_name, lambda { |text|
+    joins(:driver)
+      .where('users.first_name ILIKE ?', "%#{text}%")
   }
 
-  scope :with_rider_name, -> (text) {
-    joins(trip_request: :rider).
-    where('users.first_name ILIKE ?', "%#{text}%")
+  scope :with_rider_name, lambda { |text|
+    joins(trip_request: :rider)
+      .where('users.first_name ILIKE ?', "%#{text}%")
   }
 
   scope :completed, -> { where.not(completed_at: nil) }
 
   def rating_requires_completed_trip
-    if rating_changed? && completed_at.nil?
-      errors.add(:rating, "must be completed before a rating can be added")
-    end
+    return unless rating_changed? && completed_at.nil?
+
+    errors.add(:rating, 'must be completed before a rating can be added')
   end
 
   def self.apply_scopes(*filters)

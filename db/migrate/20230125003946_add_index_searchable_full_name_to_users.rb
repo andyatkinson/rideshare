@@ -3,7 +3,7 @@ class AddIndexSearchableFullNameToUsers < ActiveRecord::Migration[7.1]
 
   def change
     add_index :users, :searchable_full_name,
-      using: :gin, # GIN index
-      algorithm: :concurrently
+              using: :gin, # GIN index
+              algorithm: :concurrently
   end
 end

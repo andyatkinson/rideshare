@@ -5,11 +5,11 @@ require_relative 'config/application'
 
 Rails.application.load_tasks
 
-Rake::Task["db:reset"].clear
+Rake::Task['db:reset'].clear
 
 namespace :db do
   desc 'Custom database tasks'
   task :reset do
-    Rake::Task["custom:db_reset"].invoke
+    Rake::Task['custom:db_reset'].invoke
   end
 end

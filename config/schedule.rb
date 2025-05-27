@@ -20,7 +20,7 @@
 # Learn more: http://github.com/javan/whenever
 #
 every 15.minutes do
-  runner "FastSearchResult.refresh"
+  runner 'FastSearchResult.refresh'
 end
 
 every 1.month do

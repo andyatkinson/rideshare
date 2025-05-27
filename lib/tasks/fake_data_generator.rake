@@ -1,8 +1,8 @@
 require 'faker'
 
 namespace :data_generators do
-  desc "Generator Drivers"
-  task drivers: :environment do |t, args|
+  desc 'Generator Drivers'
+  task drivers: :environment do |_t, _args|
     TOTAL = 20_000
     BATCH_SIZE = 10_000
     results = Benchmark.measure do
@@ -27,8 +27,8 @@ namespace :data_generators do
         puts "Created #{batch.size} drivers."
       end
     end
-    puts "VACUUM (ANALYZE) users"
-    Driver.connection.execute("VACUUM (ANALYZE) users")
+    puts 'VACUUM (ANALYZE) users'
+    Driver.connection.execute('VACUUM (ANALYZE) users')
     puts results
   end
 end

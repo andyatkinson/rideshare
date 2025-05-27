@@ -18,9 +18,9 @@ class Api::TripsController < ApiController
     expires_in 1.minute, public: true
     @trip = Trip.find(params[:id])
 
-    if stale?(@trip)
-      render json: @trip
-    end
+    return unless stale?(@trip)
+
+    render json: @trip
   end
 
   # Get more details about a single trip
@@ -30,27 +30,27 @@ class Api::TripsController < ApiController
     # include=driver
     # fields[driver]=average_rating
     if params[:fields]
-      driver_fields = params[:fields].permit(:driver).to_h.
-        inject({}) { |h, (k,v)| h[k.to_sym] = v.split(",").map(&:to_sym); h }
+      driver_fields = params[:fields].permit(:driver).to_h
+                                     .each_with_object({}) do |(k, v), h|
+        h[k.to_sym] = v.split(',').map(&:to_sym)
+      end
       options.merge!(fields: driver_fields)
     end
 
     # multiple associated resources are comma-separated
-    if params[:include]
-      options[:include] = params[:include].split(",").map(&:to_sym)
-    end
+    options[:include] = params[:include].split(',').map(&:to_sym) if params[:include]
 
     @trip = Trip.includes(:driver).find_by(id: params[:id])
 
     render json: TripSerializer.new(@trip, options).serializable_hash
   end
 
-  # TODO add JSON API mime type
+  # TODO: add JSON API mime type
   def my
-    @trips = Trip.completed.
-      includes(:driver, {trip_request: :rider}).
-      joins(trip_request: :rider).
-      where(users: {id: params[:rider_id]})
+    @trips = Trip.completed
+                 .includes(:driver, { trip_request: :rider })
+                 .joins(trip_request: :rider)
+                 .where(users: { id: params[:rider_id] })
 
     options = {}
     # JSON API: https://jsonapi.org/format/#fetching-sparse-fieldsets
@@ -58,8 +58,10 @@ class Api::TripsController < ApiController
     #
     # convert input params to options arguments
     if params[:fields]
-      trip_params = params[:fields].permit(:trips).to_h.
-        inject({}) { |h, (k,v)| h[k.singularize.to_sym] = v.split(",").map(&:to_sym); h }
+      trip_params = params[:fields].permit(:trips).to_h
+                                   .each_with_object({}) do |(k, v), h|
+        h[k.singularize.to_sym] = v.split(',').map(&:to_sym)
+      end
       options.merge!(fields: trip_params)
     end
 
@@ -73,6 +75,6 @@ class Api::TripsController < ApiController
       :start_location,
       :driver_name,
       :rider_name
-   )
+    )
   end
 end

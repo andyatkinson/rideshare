@@ -1,0 +1,19 @@
+AllCops:
+  NewCops: enable
+  Exclude:
+    - "db/schema.rb"
+    - "db/structure.sql"
+    - "Gemfile"
+    - "lib/tasks/*.rake"
+    - "bin/*"
+    - "config/puma.rb"
+    - "config/spring.rb"
+    - "config/environments/development.rb"
+    - "config/environments/production.rb"
+    - "spec/spec_helper.rb"
+Style/Documentation:
+  Enabled: false
+
+# Disable suggestions for rubocop-rails for now
+AllCops:
+  SuggestExtensions: false

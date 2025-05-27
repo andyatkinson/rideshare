@@ -9,9 +9,9 @@ class AddConstraintsLocationsState < ActiveRecord::Migration[7.1]
     # Opt-out of Strong Migrations checks
     safety_assured do
       add_check_constraint :locations,
-        "LENGTH(state) = 2",
-        name: "state_length_check",
-        validate: true
+                           'LENGTH(state) = 2',
+                           name: 'state_length_check',
+                           validate: true
     end
   end
 end

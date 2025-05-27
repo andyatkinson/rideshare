@@ -13,6 +13,7 @@ class TripCreator
       driver: best_available_driver
     )
     raise TripCreationFailure unless trip.valid?
+
     trip.save!
   end
 

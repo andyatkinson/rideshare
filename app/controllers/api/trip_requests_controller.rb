@@ -8,11 +8,11 @@ class Api::TripRequestsController < ApiController
       TripCreator.new(
         trip_request_id: trip_request.id
       ).create_trip!
-      render json: {trip_request_id: trip_request.id},
-        status: :created
+      render json: { trip_request_id: trip_request.id },
+             status: :created
     else
       render nothing: true,
-        status: :unprocessable_entity
+             status: :unprocessable_entity
     end
   end
 
@@ -24,16 +24,16 @@ class Api::TripRequestsController < ApiController
       }
     else
       render nothing: true,
-        status: :unprocessable_entity
+             status: :unprocessable_entity
     end
   end
 
   private
 
   def trip_request_params
-    params.
-      require(:trip_request).
-      permit(:rider_id, :start_address, :end_address)
+    params
+      .require(:trip_request)
+      .permit(:rider_id, :start_address, :end_address)
   end
 
   def current_trip_request
@@ -41,9 +41,9 @@ class Api::TripRequestsController < ApiController
   end
 
   def created_trip
-    if Trip.exists?(trip_request_id: params[:id])
-      Trip.find_by(trip_request_id: params[:id])
-    end
+    return unless Trip.exists?(trip_request_id: params[:id])
+
+    Trip.find_by(trip_request_id: params[:id])
   end
 
   def current_rider

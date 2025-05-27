@@ -1,7 +1,7 @@
 require 'test_helper'
 
 class BookReservationTest < ActiveSupport::TestCase
-  test "can book reservation" do
+  test 'can book reservation' do
     jane = riders(:jane)
     nyc = locations(:nyc)
     comedy_cellar = locations(:comedy_cellar)
@@ -12,8 +12,8 @@ class BookReservationTest < ActiveSupport::TestCase
       rider_id: jane.id,
       start_location_id: nyc.id,
       end_location_id: comedy_cellar.id,
-      starts_at: Time.zone.local(2022, 07, 29, 20, 00, 00),
-      ends_at: Time.zone.local(2022, 07, 29, 23, 00, 00)
+      starts_at: Time.zone.local(2022, 0o7, 29, 20, 0o0, 0o0),
+      ends_at: Time.zone.local(2022, 0o7, 29, 23, 0o0, 0o0)
     )
 
     assert_difference -> { ::VehicleReservation.count }, +1 do
@@ -21,7 +21,7 @@ class BookReservationTest < ActiveSupport::TestCase
     end
   end
 
-  test "can NOT book overlapping reservation" do
+  test 'can NOT book overlapping reservation' do
     existing_reservation = vehicle_reservations(:party_bus)
 
     violation_msg = 'PG::ExclusionViolation: ERROR:  " +
