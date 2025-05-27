@@ -1,8 +1,8 @@
 require 'test_helper'
 
 class TripCreatorTest < ActiveSupport::TestCase
-  test "can create trip" do
-    driver = drivers(:jack) # at least one exists
+  test 'can create trip' do
+    drivers(:jack) # at least one exists
     trip_request = trip_requests(:big_trip)
 
     trip_creator = TripCreator.new(

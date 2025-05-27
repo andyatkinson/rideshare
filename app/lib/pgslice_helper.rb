@@ -18,21 +18,21 @@
 class PgsliceHelper
   DEFAULT_COLUMN = 'created_at'
 
-  def add_partitions(table_name:, intermediate: true, past:, future:, dry_run: true)
+  def add_partitions(table_name:, past:, future:, intermediate: true, dry_run: true)
     cmd = %(./bin/pgslice add_partitions #{table_name} \
-    #{"--intermediate " if intermediate} \
+    #{'--intermediate ' if intermediate} \
     #{"--past #{past}" if past} \
     #{"--future #{future}" if future} \
-    #{"--dry-run" if dry_run} \
+    #{'--dry-run' if dry_run} \
     ).squish
     log("dry_run=#{dry_run} invoking: #{cmd}")
     system(cmd)
   end
 
-  def fill(table_name:, partition_column: DEFAULT_COLUMN, swapped: false, from_date:)
+  def fill(table_name:, from_date:, partition_column: DEFAULT_COLUMN, swapped: false)
     cmd = %(./bin/pgslice fill #{table_name}
     #{"--where \"date(#{partition_column}) >= date('#{from_date}')\"" if from_date}
-    #{"--swapped" if swapped}
+    #{'--swapped' if swapped}
     ).squish
     log("fill cmd: #{cmd}")
     system(cmd)

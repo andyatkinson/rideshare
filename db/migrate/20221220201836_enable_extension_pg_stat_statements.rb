@@ -6,7 +6,6 @@ class EnableExtensionPgStatStatements < ActiveRecord::Migration[7.1]
   #   enable_extension(PGSS) unless extension_enabled?(PGSS)
   # end
 
-
   # Replaced by:
   # sh scripts/setup_db.sh
   #

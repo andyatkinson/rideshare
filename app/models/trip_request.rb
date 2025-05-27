@@ -11,5 +11,4 @@ class TripRequest < ApplicationRecord
   # only trip could be in progress for a rider between the same locations.
 
   validates :rider, :start_location, :end_location, presence: true
-
 end

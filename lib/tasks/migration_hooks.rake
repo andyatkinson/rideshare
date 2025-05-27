@@ -5,11 +5,11 @@
 namespace :migration_hooks do
   task set_role: :environment do
     if Rails.env.development?
-      puts "Setting role for development"
-      ActiveRecord::Base.connection.execute("SET ROLE owner")
+      puts 'Setting role for development'
+      ActiveRecord::Base.connection.execute('SET ROLE owner')
     end
   end
 end
 
 # https://dev.to/molly/rake-task-enhance-method-explained-3bo0
-Rake::Task["db:migrate"].enhance(["migration_hooks:set_role"])
+Rake::Task['db:migrate'].enhance(['migration_hooks:set_role'])

@@ -91,6 +91,7 @@ GEM
       minitest (>= 5.1)
       securerandom (>= 0.3)
       tzinfo (~> 2.0, >= 2.0.5)
+    ast (2.4.3)
     base64 (0.2.0)
     bcrypt (3.1.20)
     benchmark (0.4.0)
@@ -164,6 +165,8 @@ GEM
     json (2.10.2)
     jwt (2.10.1)
       base64
+    language_server-protocol (3.17.0.5)
+    lint_roller (1.1.0)
     logger (1.7.0)
     loofah (2.24.0)
       crass (~> 1.0.2)
@@ -198,6 +201,10 @@ GEM
       racc (~> 1.4)
     nokogiri (1.18.7-x86_64-linux-gnu)
       racc (~> 1.4)
+    parallel (1.27.0)
+    parser (3.3.8.0)
+      ast (~> 2.4.1)
+      racc
     pg (1.5.9)
     pg_query (5.1.0)
       google-protobuf (>= 3.22.3)
@@ -207,6 +214,7 @@ GEM
     pp (0.6.2)
       prettyprint
     prettyprint (0.2.0)
+    prism (1.4.0)
     prosopite (1.4.2)
     pry (0.15.2)
       coderay (~> 1.1)
@@ -270,13 +278,29 @@ GEM
       rake (>= 12.2)
       thor (~> 1.0, >= 1.2.2)
       zeitwerk (~> 2.6)
+    rainbow (3.1.1)
     rake (13.2.1)
     rdoc (6.13.1)
       psych (>= 4.0.0)
+    regexp_parser (2.10.0)
     reline (0.6.1)
       io-console (~> 0.5)
     require_all (3.0.0)
     rexml (3.4.1)
+    rubocop (1.75.7)
+      json (~> 2.3)
+      language_server-protocol (~> 3.17.0.2)
+      lint_roller (~> 1.1.0)
+      parallel (~> 1.10)
+      parser (>= 3.3.0.2)
+      rainbow (>= 2.2.2, < 4.0)
+      regexp_parser (>= 2.9.3, < 3.0)
+      rubocop-ast (>= 1.44.0, < 2.0)
+      ruby-progressbar (~> 1.7)
+      unicode-display_width (>= 2.4.0, < 4.0)
+    rubocop-ast (1.44.1)
+      parser (>= 3.3.7.2)
+      prism (~> 1.4)
     ruby-graphviz (1.2.5)
       rexml
     ruby-pg-extras (5.6.7)
@@ -357,6 +381,7 @@ DEPENDENCIES
   rails-erd
   rails-pg-extras
   rails_best_practices
+  rubocop
   scenic
   sprockets-rails (~> 3.4)
   strong_migrations
