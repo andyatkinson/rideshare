@@ -28,6 +28,7 @@ gem 'scenic' # manage DB views, materialized views
 gem 'strong_migrations' # Use safe Migration patterns
 
 gem 'rubocop'
+gem 'rollups'
 
 group :development, :test do
   gem 'active_record_doctor'

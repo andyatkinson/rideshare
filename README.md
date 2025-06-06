@@ -36,7 +36,6 @@ PostgreSQL 16 or greater is required. Installation may be via Homebrew, although
 ### PostgresApp
 - Once installed, from the Menu Bar app, choose "Open Postgres" then click the "+" icon to create a new PostgreSQL 16 server
 
-
 ## Ruby
 Run `cat .ruby-version` from the Rideshare directory to find the needed version of Ruby.
 
