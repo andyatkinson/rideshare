@@ -37,12 +37,14 @@ Run without an argument, get a Usage statement:
 ```sh
 ./db/sql_migrations/rails_migration_generator.rb
 Usage: ./db/sql_migrations/rails_migration_generator.rb <file_path>
+```
 
+Run it with an argument for the path to a SQL file:
 ```sh
 ./db/sql_migrations/rails_migration_generator.rb db/sql_migrations/02_create_index.sql
 ```
 
-You'll see:
+A Rails migration file will be generated with the SQL filled in:
 ```sh
 Wrote file: /Users/andy/Projects/rideshare/db/migrate/20250610033520_create_index_idx_trips_id_created_at.rb
 class CreateIndexIdxTripsIdCreatedAt < ActiveRecord::Migration[7.2]
