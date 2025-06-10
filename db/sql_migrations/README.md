@@ -3,6 +3,11 @@ Linter for Postgres migrations
 <https://squawkhq.com>
 
 ## Squawk
+1. Requirements: give it a name
+1. Squawk finds missing "concurrently"
+1. Bring your own idempotency, add "if not exists"
+1. Use same index name
+
 ```sh
 squawk db/sql_migrations/01_create_index.sql
 warning[require-concurrent-index-creation]: During normal index creation, table updates are blocked, but reads are still allowed.
