@@ -3,12 +3,16 @@
 class RailsMigrationGenerator
   def initialize(sql_ddl)
     @sql_ddl = sql_ddl
+    @index_name = nil # set below
+    @migration_file_suffix = nil
+    @migration_name = nil
+    parse_sql_ddl
   end
 
   def generate
     # TODO add more operation types
     if @sql_ddl =~ /create index/i
-      output_file = "#{rails_style_timestamp}_create_index.rb"
+      output_file = "#{migrations_dir}/#{rails_style_timestamp}_#{@migration_file_suffix}.rb"
       File.write(output_file, rails_generate_migration_code)
       puts "Wrote file: #{output_file}"
       puts `cat #{output_file}`
@@ -16,6 +20,13 @@ class RailsMigrationGenerator
   end
 
   private
+
+  def migrations_dir
+    output = `bundle exec rails runner "puts Rails.root.to_s"`
+    base_dir = output.lines.last.chomp
+    subdirs = ["db", "migrate"]
+    File.join(base_dir, *subdirs)
+  end
 
   def get_rails_version
     input = `bundle exec rails version` # assumes bundler and same Rails version
@@ -27,23 +38,36 @@ class RailsMigrationGenerator
   end
 
   # Try and deduce the operation type
-  def rails_migration_filename
-    # TODO add more operation types
-    if @sql_ddl =~ /create index/i
-      "CreateIndex"
+  # TODO add more operation types, only supporting CREATE INDEX for now
+  def parse_sql_ddl
+    # Case-insensitive regex with optional keywords
+    if @sql_ddl =~ /\A
+      create\s+index          # "create index" keywords
+      (?:\s+concurrently)?    # optional "concurrently"
+      (?:\s+if\s+not\s+exists)?  # optional "if not exists"
+      \s+(\S+)                # capture index name (non-whitespace)
+      \s+on\s+                # "on" keyword
+    /xi
+      @index_name = $1
+      migration_name_from_index = @index_name.split("_").map(&:capitalize).join
+      @migration_file_suffix = "create_index_#{@index_name}"
+      @migration_name = "CreateIndex#{migration_name_from_index}"
     end
   end
 
   # Assume it's a concurrently operation for now, disable_ddl_transaction!
+  # Assumes strong_migrations is being used so we need: safety_assured {}
   def rails_generate_migration_code
     template = <<~MIG_TEMPLATE.strip
-      class #{rails_migration_filename} < ActiveRecord::Migration[#{get_rails_version}]
+      class #{@migration_name} < ActiveRecord::Migration[#{get_rails_version}]
         disable_ddl_transaction!
 
         def change
-          execute <<-SQL
-            #{@sql_ddl}
-          SQL
+          safety_assured do
+            execute <<-SQL
+              #{@sql_ddl}
+            SQL
+          end
         end
       end
     MIG_TEMPLATE
