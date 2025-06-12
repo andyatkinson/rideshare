@@ -203,3 +203,13 @@ bin/rails server
 Once that's running, visit <http://localhost:3000/pghero> in your browser to see it.
 
 ![Screenshot of PgHero for Rideshare](https://i.imgur.com/VduvxSK.png)
+
+## Rubocop
+
+- <https://danielabaron.me/blog/add-rubocop-to-legacy-project/>
+- Custom cop for detecting missing explicit select
+
+```
+app/controllers/api/trip_requests_controller.rb:3:5: C: [Correctable] Custom/ExplicitSelect: Avoid using all without an explicit .select(...). Autocorrecting to .select(:id).
+    Driver.all
+```

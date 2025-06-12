@@ -1,7 +1,13 @@
+require:
+  - ./lib/rubocop/cop/custom/explicit_select.rb
+
+Custom/ExplicitSelect:
+  Enabled: true
+
 AllCops:
-  NewCops: enable
   Exclude:
     - "db/schema.rb"
+    - "db/migrate.rb"
     - "db/structure.sql"
     - "Gemfile"
     - "lib/tasks/*.rake"
@@ -11,9 +17,13 @@ AllCops:
     - "config/environments/development.rb"
     - "config/environments/production.rb"
     - "spec/spec_helper.rb"
+    - 'tmp/**/*'
+    - 'docker/**/*'
+    - 'log/**/*'
+    - '.circleci/**/*'
+    - '.git/**/*'
+  SuggestExtensions: false
+  NewCops: enable
+
 Style/Documentation:
   Enabled: false
-
-# Disable suggestions for rubocop-rails for now
-AllCops:
-  SuggestExtensions: false
