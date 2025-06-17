@@ -29,6 +29,8 @@ gem 'strong_migrations' # Use safe Migration patterns
 
 gem 'rubocop'
 
+gem "activerecord-slotted_counters"
+
 group :development, :test do
   gem 'active_record_doctor'
   gem 'benchmark-ips'
