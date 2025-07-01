@@ -42,4 +42,5 @@ group :development, :test do
   gem 'rails_best_practices'
   gem 'rails-erd'
   gem 'rails-pg-extras'
+  gem 'active_record_tracer'
 end

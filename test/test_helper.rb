@@ -1,6 +1,6 @@
 ENV['RAILS_ENV'] ||= 'test'
 require_relative '../config/environment'
-require 'rails/test_help'
+require 'rails/test_help' # fixtures
 
 class ActiveSupport::TestCase
   # Run tests in parallel with specified workers
@@ -38,4 +38,12 @@ class ActiveSupport::TestCase
       }
     ]
   )
+end
+
+ActiveRecordTracer.start
+
+require "minitest/autorun"
+Minitest.after_run do
+  report = ActiveRecordTracer.stop
+  report.pretty_print(to_file: "tmp/active_record_tracer-tests.txt")
 end
