@@ -1,0 +1,77 @@
+name: rideshare_devcontainer
+
+x-env: &default-env
+  RAILS_ENV: ${RAILS_ENV:-development}
+  RACK_ENV: ${RACK_ENV:-development}
+  WEB_CONCURRENCY: ${WEB_CONCURRENCY:-1}
+  RAILS_MIN_THREADS: ${RAILS_MIN_THREADS:-2}
+  RAILS_MAX_THREADS: ${RAILS_MAX_THREADS:-3}
+  MALLOC_ARENA_MAX: ${MALLOC_ARENA_MAX:-2}
+
+x-app: &app
+  image: rideshare_app:0.0.1
+  user: "vscode"
+  tty: true
+  stdin_open: true
+  build:
+    context: ..
+    dockerfile: .devcontainer/Dockerfile
+    args:
+      RUBY_VERSION: ${RUBY_VERSION:-3.2}
+  networks:
+      - default
+  volumes:
+    - ../:/app:cached
+    - ../log:/app/log:rw,delegated
+    - bundle_data:/usr/local/rvm
+  tmpfs:
+    - /app/tmp:mode=01777
+  environment: &app-env
+    <<: *default-env
+    BIND: 0.0.0.0
+    DATABASE_URL: postgres://${POSTGRES_USER:-owner}:${POSTGRES_PASSWORD:-postgres}@postgres:5432
+    HISTFILE: /app/log/.sh_history
+    SOURCE_PATH: $PWD
+
+networks:
+  default:
+
+volumes:
+  bundle_data:
+    name: rideshare_bundle_data
+  postgres_data:
+    name: rideshare_postgres_data
+
+services:
+  app:
+    <<: *app
+    # Overrides default command so things don't shut down after the process ends.
+    command: sleep infinity
+    ports:
+      - "127.0.0.1:3000:3000"
+    environment:
+      <<: *app-env
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:${POSTGRES_VERSION:-16}
+    restart: unless-stopped
+    healthcheck:
+      test: pg_isready -U ${POSTGRES_USER:-postgres} -h postgres
+      interval: 30s
+      timeout: 3s
+      retries: 3
+    networks:
+      - default
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - ../.devcontainer/.psqlrc:/root/.psqlrc:ro
+      - ../log:/var/log/postgresql:rw,delegated
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      HISTFILE: /root/log/.bash_history
+      PSQL_HISTFILE: /root/log/.psql_history
