@@ -1,7 +1,7 @@
 require 'faker'
 
 namespace :data_generators do
-  desc 'Generator Drivers'
+  desc 'Generate Drivers'
   task drivers: :environment do |_t, _args|
     TOTAL = 20_000
     BATCH_SIZE = 10_000
@@ -14,12 +14,14 @@ namespace :data_generators do
             first_name: first_name,
             last_name: last_name,
             email: "#{first_name}-#{last_name}-#{i}@email.com",
-            password_digest: SecureRandom.hex
+            password_digest: SecureRandom.hex,
+            created_at: random_day
           )
         end.map do |d|
           d.attributes.symbolize_keys.slice(
             :first_name, :last_name,
-            :email, :password, :type
+            :email, :password, :type,
+            :created_at
           )
         end
 
@@ -30,5 +32,11 @@ namespace :data_generators do
     puts 'VACUUM (ANALYZE) users'
     Driver.connection.execute('VACUUM (ANALYZE) users')
     puts results
+  end
+
+  private
+
+  def random_day
+    (Date.today - rand(7))
   end
 end

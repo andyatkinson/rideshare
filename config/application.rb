@@ -43,6 +43,7 @@ module Rideshare
     # set a timezone. Times are generally stored as
     # timestamps without a time zone. This application
     # would need to treat times based on the user's timezone.
+
     config.time_zone = 'Central Time (US & Canada)'
 
     # Enable Query Logging
@@ -63,6 +64,8 @@ module Rideshare
     # Consider timestamps in the local time zone
     # This is because the app used "timestamp without time zone" columns and times are
     # stored in the local timezone (CST).
-    config.active_record.default_timezone = :local
+
+    # Needed for ankane/rollups
+    config.active_record.default_timezone = :utc
   end
 end

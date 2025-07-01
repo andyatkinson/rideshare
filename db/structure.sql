@@ -27,6 +27,7 @@ DROP INDEX IF EXISTS rideshare.index_trips_on_driver_id;
 DROP INDEX IF EXISTS rideshare.index_trip_requests_on_start_location_id;
 DROP INDEX IF EXISTS rideshare.index_trip_requests_on_rider_id;
 DROP INDEX IF EXISTS rideshare.index_trip_requests_on_end_location_id;
+DROP INDEX IF EXISTS rideshare.index_rollups_on_name_and_interval_and_time_and_dimensions;
 DROP INDEX IF EXISTS rideshare.index_locations_on_address;
 DROP INDEX IF EXISTS rideshare.index_fast_search_results_on_driver_id;
 ALTER TABLE IF EXISTS ONLY rideshare.vehicles DROP CONSTRAINT IF EXISTS vehicles_pkey;
@@ -36,6 +37,7 @@ ALTER TABLE IF EXISTS ONLY rideshare.trips DROP CONSTRAINT IF EXISTS trips_pkey;
 ALTER TABLE IF EXISTS ONLY rideshare.trip_requests DROP CONSTRAINT IF EXISTS trip_requests_pkey;
 ALTER TABLE IF EXISTS ONLY rideshare.trip_positions DROP CONSTRAINT IF EXISTS trip_positions_pkey;
 ALTER TABLE IF EXISTS ONLY rideshare.schema_migrations DROP CONSTRAINT IF EXISTS schema_migrations_pkey;
+ALTER TABLE IF EXISTS ONLY rideshare.rollups DROP CONSTRAINT IF EXISTS rollups_pkey;
 ALTER TABLE IF EXISTS ONLY rideshare.vehicle_reservations DROP CONSTRAINT IF EXISTS non_overlapping_vehicle_registration;
 ALTER TABLE IF EXISTS ONLY rideshare.locations DROP CONSTRAINT IF EXISTS locations_pkey;
 ALTER TABLE IF EXISTS rideshare.trips DROP CONSTRAINT IF EXISTS chk_rails_4743ddc2d2;
@@ -46,6 +48,7 @@ ALTER TABLE IF EXISTS rideshare.users ALTER COLUMN id DROP DEFAULT;
 ALTER TABLE IF EXISTS rideshare.trips ALTER COLUMN id DROP DEFAULT;
 ALTER TABLE IF EXISTS rideshare.trip_requests ALTER COLUMN id DROP DEFAULT;
 ALTER TABLE IF EXISTS rideshare.trip_positions ALTER COLUMN id DROP DEFAULT;
+ALTER TABLE IF EXISTS rideshare.rollups ALTER COLUMN id DROP DEFAULT;
 ALTER TABLE IF EXISTS rideshare.locations ALTER COLUMN id DROP DEFAULT;
 DROP SEQUENCE IF EXISTS rideshare.vehicles_id_seq;
 DROP TABLE IF EXISTS rideshare.vehicles;
@@ -59,6 +62,8 @@ DROP SEQUENCE IF EXISTS rideshare.trip_positions_id_seq;
 DROP TABLE IF EXISTS rideshare.trip_positions;
 DROP VIEW IF EXISTS rideshare.search_results;
 DROP TABLE IF EXISTS rideshare.schema_migrations;
+DROP SEQUENCE IF EXISTS rideshare.rollups_id_seq;
+DROP TABLE IF EXISTS rideshare.rollups;
 DROP SEQUENCE IF EXISTS rideshare.locations_id_seq;
 DROP TABLE IF EXISTS rideshare.locations;
 DROP MATERIALIZED VIEW IF EXISTS rideshare.fast_search_results;
@@ -292,6 +297,39 @@ ALTER SEQUENCE rideshare.locations_id_seq OWNED BY rideshare.locations.id;
 
 
 --
+-- Name: rollups; Type: TABLE; Schema: rideshare; Owner: -
+--
+
+CREATE TABLE rideshare.rollups (
+    id bigint NOT NULL,
+    name character varying NOT NULL,
+    "interval" character varying NOT NULL,
+    "time" timestamp(6) without time zone NOT NULL,
+    dimensions jsonb DEFAULT '{}'::jsonb NOT NULL,
+    value double precision
+);
+
+
+--
+-- Name: rollups_id_seq; Type: SEQUENCE; Schema: rideshare; Owner: -
+--
+
+CREATE SEQUENCE rideshare.rollups_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: rollups_id_seq; Type: SEQUENCE OWNED BY; Schema: rideshare; Owner: -
+--
+
+ALTER SEQUENCE rideshare.rollups_id_seq OWNED BY rideshare.rollups.id;
+
+
+--
 -- Name: schema_migrations; Type: TABLE; Schema: rideshare; Owner: -
 --
 
@@ -492,6 +530,13 @@ ALTER TABLE ONLY rideshare.locations ALTER COLUMN id SET DEFAULT nextval('ridesh
 
 
 --
+-- Name: rollups id; Type: DEFAULT; Schema: rideshare; Owner: -
+--
+
+ALTER TABLE ONLY rideshare.rollups ALTER COLUMN id SET DEFAULT nextval('rideshare.rollups_id_seq'::regclass);
+
+
+--
 -- Name: trip_positions id; Type: DEFAULT; Schema: rideshare; Owner: -
 --
 
@@ -566,6 +611,14 @@ ALTER TABLE ONLY rideshare.vehicle_reservations
 
 
 --
+-- Name: rollups rollups_pkey; Type: CONSTRAINT; Schema: rideshare; Owner: -
+--
+
+ALTER TABLE ONLY rideshare.rollups
+    ADD CONSTRAINT rollups_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: schema_migrations schema_migrations_pkey; Type: CONSTRAINT; Schema: rideshare; Owner: -
 --
 
@@ -633,6 +686,13 @@ CREATE UNIQUE INDEX index_fast_search_results_on_driver_id ON rideshare.fast_sea
 --
 
 CREATE UNIQUE INDEX index_locations_on_address ON rideshare.locations USING btree (address);
+
+
+--
+-- Name: index_rollups_on_name_and_interval_and_time_and_dimensions; Type: INDEX; Schema: rideshare; Owner: -
+--
+
+CREATE UNIQUE INDEX index_rollups_on_name_and_interval_and_time_and_dimensions ON rideshare.rollups USING btree (name, "interval", "time", dimensions);
 
 
 --
@@ -776,6 +836,7 @@ ALTER TABLE ONLY rideshare.trip_requests
 SET search_path TO rideshare;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20250606201409'),
 ('20231220043547'),
 ('20231218215836'),
 ('20231213045957'),
