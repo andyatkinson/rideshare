@@ -27,6 +27,7 @@ DROP INDEX IF EXISTS rideshare.index_trips_on_driver_id;
 DROP INDEX IF EXISTS rideshare.index_trip_requests_on_start_location_id;
 DROP INDEX IF EXISTS rideshare.index_trip_requests_on_rider_id;
 DROP INDEX IF EXISTS rideshare.index_trip_requests_on_end_location_id;
+DROP INDEX IF EXISTS rideshare.index_slotted_counters;
 DROP INDEX IF EXISTS rideshare.index_locations_on_address;
 DROP INDEX IF EXISTS rideshare.index_fast_search_results_on_driver_id;
 ALTER TABLE IF EXISTS ONLY rideshare.vehicles DROP CONSTRAINT IF EXISTS vehicles_pkey;
@@ -35,6 +36,7 @@ ALTER TABLE IF EXISTS ONLY rideshare.users DROP CONSTRAINT IF EXISTS users_pkey;
 ALTER TABLE IF EXISTS ONLY rideshare.trips DROP CONSTRAINT IF EXISTS trips_pkey;
 ALTER TABLE IF EXISTS ONLY rideshare.trip_requests DROP CONSTRAINT IF EXISTS trip_requests_pkey;
 ALTER TABLE IF EXISTS ONLY rideshare.trip_positions DROP CONSTRAINT IF EXISTS trip_positions_pkey;
+ALTER TABLE IF EXISTS ONLY rideshare.slotted_counters DROP CONSTRAINT IF EXISTS slotted_counters_pkey;
 ALTER TABLE IF EXISTS ONLY rideshare.schema_migrations DROP CONSTRAINT IF EXISTS schema_migrations_pkey;
 ALTER TABLE IF EXISTS ONLY rideshare.vehicle_reservations DROP CONSTRAINT IF EXISTS non_overlapping_vehicle_registration;
 ALTER TABLE IF EXISTS ONLY rideshare.locations DROP CONSTRAINT IF EXISTS locations_pkey;
@@ -46,6 +48,7 @@ ALTER TABLE IF EXISTS rideshare.users ALTER COLUMN id DROP DEFAULT;
 ALTER TABLE IF EXISTS rideshare.trips ALTER COLUMN id DROP DEFAULT;
 ALTER TABLE IF EXISTS rideshare.trip_requests ALTER COLUMN id DROP DEFAULT;
 ALTER TABLE IF EXISTS rideshare.trip_positions ALTER COLUMN id DROP DEFAULT;
+ALTER TABLE IF EXISTS rideshare.slotted_counters ALTER COLUMN id DROP DEFAULT;
 ALTER TABLE IF EXISTS rideshare.locations ALTER COLUMN id DROP DEFAULT;
 DROP SEQUENCE IF EXISTS rideshare.vehicles_id_seq;
 DROP TABLE IF EXISTS rideshare.vehicles;
@@ -57,6 +60,8 @@ DROP SEQUENCE IF EXISTS rideshare.trip_requests_id_seq;
 DROP TABLE IF EXISTS rideshare.trip_requests;
 DROP SEQUENCE IF EXISTS rideshare.trip_positions_id_seq;
 DROP TABLE IF EXISTS rideshare.trip_positions;
+DROP SEQUENCE IF EXISTS rideshare.slotted_counters_id_seq;
+DROP TABLE IF EXISTS rideshare.slotted_counters;
 DROP VIEW IF EXISTS rideshare.search_results;
 DROP TABLE IF EXISTS rideshare.schema_migrations;
 DROP SEQUENCE IF EXISTS rideshare.locations_id_seq;
@@ -315,6 +320,41 @@ CREATE VIEW rideshare.search_results AS
 
 
 --
+-- Name: slotted_counters; Type: TABLE; Schema: rideshare; Owner: -
+--
+
+CREATE TABLE rideshare.slotted_counters (
+    id bigint NOT NULL,
+    counter_name character varying NOT NULL,
+    associated_record_type character varying NOT NULL,
+    associated_record_id integer NOT NULL,
+    slot integer NOT NULL,
+    count integer NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: slotted_counters_id_seq; Type: SEQUENCE; Schema: rideshare; Owner: -
+--
+
+CREATE SEQUENCE rideshare.slotted_counters_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: slotted_counters_id_seq; Type: SEQUENCE OWNED BY; Schema: rideshare; Owner: -
+--
+
+ALTER SEQUENCE rideshare.slotted_counters_id_seq OWNED BY rideshare.slotted_counters.id;
+
+
+--
 -- Name: trip_positions; Type: TABLE; Schema: rideshare; Owner: -
 --
 
@@ -492,6 +532,13 @@ ALTER TABLE ONLY rideshare.locations ALTER COLUMN id SET DEFAULT nextval('ridesh
 
 
 --
+-- Name: slotted_counters id; Type: DEFAULT; Schema: rideshare; Owner: -
+--
+
+ALTER TABLE ONLY rideshare.slotted_counters ALTER COLUMN id SET DEFAULT nextval('rideshare.slotted_counters_id_seq'::regclass);
+
+
+--
 -- Name: trip_positions id; Type: DEFAULT; Schema: rideshare; Owner: -
 --
 
@@ -574,6 +621,14 @@ ALTER TABLE ONLY rideshare.schema_migrations
 
 
 --
+-- Name: slotted_counters slotted_counters_pkey; Type: CONSTRAINT; Schema: rideshare; Owner: -
+--
+
+ALTER TABLE ONLY rideshare.slotted_counters
+    ADD CONSTRAINT slotted_counters_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: trip_positions trip_positions_pkey; Type: CONSTRAINT; Schema: rideshare; Owner: -
 --
 
@@ -633,6 +688,13 @@ CREATE UNIQUE INDEX index_fast_search_results_on_driver_id ON rideshare.fast_sea
 --
 
 CREATE UNIQUE INDEX index_locations_on_address ON rideshare.locations USING btree (address);
+
+
+--
+-- Name: index_slotted_counters; Type: INDEX; Schema: rideshare; Owner: -
+--
+
+CREATE UNIQUE INDEX index_slotted_counters ON rideshare.slotted_counters USING btree (associated_record_id, associated_record_type, counter_name, slot);
 
 
 --
@@ -776,6 +838,7 @@ ALTER TABLE ONLY rideshare.trip_requests
 SET search_path TO rideshare;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20250617150055'),
 ('20231220043547'),
 ('20231218215836'),
 ('20231213045957'),
