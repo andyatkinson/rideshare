@@ -6,7 +6,7 @@ gem 'fast_jsonapi', '~> 1.5'
 gem 'geocoder', '~> 1.8'
 gem 'jwt', '~> 2.7'
 gem 'pg', '~> 1.5'
-gem 'pg_query', '~> 5.1'
+gem 'pg_query', '~> 6.1'
 gem 'pg_search', '~> 2.3'
 gem 'prosopite', '~> 1.4' # identify N+1 queries
 gem 'puma', '~> 6.4'

@@ -140,16 +140,16 @@ GEM
       csv (>= 3.0.0)
     globalid (1.2.1)
       activesupport (>= 6.1)
-    google-protobuf (4.31.1-aarch64-linux-gnu)
+    google-protobuf (4.32.0-aarch64-linux-gnu)
       bigdecimal
       rake (>= 13)
-    google-protobuf (4.31.1-arm64-darwin)
+    google-protobuf (4.32.0-arm64-darwin)
       bigdecimal
       rake (>= 13)
-    google-protobuf (4.31.1-x86_64-darwin)
+    google-protobuf (4.32.0-x86_64-darwin)
       bigdecimal
       rake (>= 13)
-    google-protobuf (4.31.1-x86_64-linux-gnu)
+    google-protobuf (4.32.0-x86_64-linux-gnu)
       bigdecimal
       rake (>= 13)
     i18n (1.14.7)
@@ -207,8 +207,8 @@ GEM
       ast (~> 2.4.1)
       racc
     pg (1.5.9)
-    pg_query (5.1.0)
-      google-protobuf (>= 3.22.3)
+    pg_query (6.1.0)
+      google-protobuf (>= 3.25.3)
     pg_search (2.3.7)
       activerecord (>= 6.1)
       activesupport (>= 6.1)
@@ -373,7 +373,7 @@ DEPENDENCIES
   json
   jwt (~> 2.7)
   pg (~> 1.5)
-  pg_query (~> 5.1)
+  pg_query (~> 6.1)
   pg_search (~> 2.3)
   pghero!
   pgslice!
