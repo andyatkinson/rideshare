@@ -9,6 +9,7 @@ This configuration is also used for Circle CI.
 From the Rideshare directory, run:
 
 1. `sh db/setup_test_database.sh`, which sets up `rideshare_test`
+1. `RAILS_ENV=test bin/rails db:migrate`
 1. `bin/rails test`
 
 Refer to `.circleci/config.yml` for the Circle CI config.
