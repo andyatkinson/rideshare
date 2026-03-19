@@ -37,7 +37,7 @@ group :development, :test do
   gem 'dotenv-rails', '~> 3.1' # Manage .env
   gem 'faker', '~> 3.5', require: false
   gem 'faraday', '~> 2.13'
-  gem 'json', '~> 2.1'
+  gem 'json', '~> 2.17'
   gem 'pry', '~> 0.15'
   gem 'rails_best_practices', '~> 1.23'
   gem 'rails-erd', '~> 1.7'
