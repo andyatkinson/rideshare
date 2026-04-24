@@ -120,7 +120,7 @@ GEM
       dotenv (= 3.1.8)
       railties (>= 6.1)
     drb (2.2.3)
-    erb (6.0.0)
+    erb (6.0.1.1)
     erubi (1.13.1)
     erubis (2.7.0)
     faker (3.5.2)
