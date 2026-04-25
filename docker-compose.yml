@@ -1,7 +1,7 @@
 services:
   db:
     image: postgres:18
-    restart: unless-stopped
+    restart: always
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -9,7 +9,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - postgres-data:/var/lib/postgresql
 
   app:
     build:
@@ -28,4 +28,4 @@ services:
     tty: true
 
 volumes:
-  pgdata:
+  postgres-data:
