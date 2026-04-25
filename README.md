@@ -220,3 +220,5 @@ docker compose up # bring them up
 docker compose down -v # bring them down, remove mapped volume
 docker compose exec -it app bash
 ```
+
+Gems aren't installed properly, so run `bundle install`. This is a TODO to fix.

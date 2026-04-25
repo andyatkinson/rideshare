@@ -17,9 +17,11 @@ services:
     depends_on:
       - db
     environment:
-      DATABASE_URL: postgres://owner:@localhost:5432/rideshare_development
+      DATABASE_URL: postgres://owner:@db:5432/rideshare_development
       RAILS_ENV: development
       BUNDLE_PATH: /bundle
+      RIDESHARE_DB_PASSWORD: HSnDDgFtyW9fyFI
+      DB_URL: postgres://postgres:postgres@db:5432/postgres
     ports:
       - "3000:3000"
     volumes:
