@@ -26,8 +26,8 @@ gem 'pgslice', git: 'https://github.com/andyatkinson/pgslice.git'
 gem 'fx', '~> 0.9' # manage DB functions, triggers
 gem 'scenic', '~> 1.9' # manage DB views, materialized views
 gem 'strong_migrations', '~> 2.4' # Use safe Migration patterns
-
 gem 'rubocop', '~> 1.77'
+gem 'faker', '~> 3.8', require: false
 
 group :development, :test do
   gem 'active_record_doctor', '~> 1.15'
@@ -35,7 +35,6 @@ group :development, :test do
   gem 'benchmark-memory', '~> 0.2'
   gem 'database_consistency', '~> 2.0'
   gem 'dotenv-rails', '~> 3.1' # Manage .env
-  gem 'faker', '~> 3.5', require: false
   gem 'faraday', '~> 2.13'
   gem 'json', '~> 2.1'
   gem 'pry', '~> 0.15'

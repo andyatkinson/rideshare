@@ -19,6 +19,7 @@ Prepare your development machine.
 First, install [Homebrew](https://brew.sh).
 
 ### Graphviz
+Optional, development only, for generating Entity Relationship Diagrams (ERD) automatically with migrations.
 ```sh
 brew install graphviz
 ```
@@ -203,3 +204,15 @@ bin/rails server
 Once that's running, visit <http://localhost:3000/pghero> in your browser to see it.
 
 ![Screenshot of PgHero for Rideshare](https://i.imgur.com/VduvxSK.png)
+
+
+## Docker
+Docker based Rideshare installation
+```sh
+sh build.sh # build container
+
+docker compose up # bring them up
+docker compose down -v # bring them down, remove mapped volume
+
+docker compose exec -it app bash
+```
