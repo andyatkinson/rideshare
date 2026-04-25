@@ -207,12 +207,16 @@ Once that's running, visit <http://localhost:3000/pghero> in your browser to see
 
 
 ## Docker
+NOTE: To clean up docker
+```sh
+docker volume prune -f
+docker system prune -a --volumes -f
+```
+
 Docker based Rideshare installation
 ```sh
 sh build.sh # build container
-
 docker compose up # bring them up
 docker compose down -v # bring them down, remove mapped volume
-
 docker compose exec -it app bash
 ```
