@@ -114,7 +114,7 @@ GEM
     csv (3.3.5)
     database_consistency (2.0.8)
       activerecord (>= 3.2)
-    date (3.5.0)
+    date (3.5.1)
     dotenv (3.1.8)
     dotenv-rails (3.1.8)
       dotenv (= 3.1.8)
@@ -188,7 +188,7 @@ GEM
     minitest (5.26.2)
     net-http (0.9.1)
       uri (>= 0.11.1)
-    net-imap (0.5.12)
+    net-imap (0.5.14)
       date
       net-protocol
     net-pop (0.1.2)
@@ -340,7 +340,7 @@ GEM
     terminal-table (4.0.0)
       unicode-display_width (>= 1.1.1, < 4)
     thor (1.4.0)
-    timeout (0.4.4)
+    timeout (0.6.1)
     tsort (0.2.0)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
