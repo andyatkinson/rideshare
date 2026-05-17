@@ -207,15 +207,18 @@ Once that's running, visit <http://localhost:3000/pghero> in your browser to see
 
 
 ## Docker
+Docker setup added in 2026 (`Dockerfile` and `docker-compose.yml` and `build.sh`)
+
 NOTE: To clean up docker
 ```sh
 docker volume prune -f
 docker system prune -a --volumes -f
 ```
 
-Docker based Rideshare installation
+Docker based Rideshare installation:
 ```sh
-sh build.sh # build container
+# build container
+sh build.sh
 
 # Bring them up and down
 docker compose up
@@ -223,6 +226,14 @@ docker compose down -v
 
 # Open a console
 docker compose exec -it app bash
+
+# Set up DB, populate tables etc.
+sh db/setup.sh 2>&1
+
+# Run migrations
+rails db:migrate
 ```
 
-Gems aren't installed properly, so run `bundle install`. This is a TODO to fix.
+At this point, links should work!
+- `http://localhost:3000`
+- `http://localhost:3000/pghero`
