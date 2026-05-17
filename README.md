@@ -216,8 +216,12 @@ docker system prune -a --volumes -f
 Docker based Rideshare installation
 ```sh
 sh build.sh # build container
-docker compose up # bring them up
-docker compose down -v # bring them down, remove mapped volume
+
+# Bring them up and down
+docker compose up
+docker compose down -v
+
+# Open a console
 docker compose exec -it app bash
 ```
 

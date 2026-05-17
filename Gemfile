@@ -23,11 +23,10 @@ gem 'pghero', git: 'https://github.com/andyatkinson/pghero.git'
 gem 'pgslice', git: 'https://github.com/andyatkinson/pgslice.git'
 
 # Keep these updated
+gem 'faker', '~> 3.8', require: false
 gem 'fx', '~> 0.9' # manage DB functions, triggers
 gem 'scenic', '~> 1.9' # manage DB views, materialized views
 gem 'strong_migrations', '~> 2.4' # Use safe Migration patterns
-gem 'rubocop', '~> 1.77'
-gem 'faker', '~> 3.8', require: false
 
 group :development, :test do
   gem 'active_record_doctor', '~> 1.15'
@@ -41,4 +40,5 @@ group :development, :test do
   gem 'rails_best_practices', '~> 1.23'
   gem 'rails-erd', '~> 1.7'
   gem 'rails-pg-extras', '~> 5.6'
+  gem 'rubocop', '~> 1.77'
 end

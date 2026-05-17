@@ -2,12 +2,11 @@
 
 FROM ruby:3.2.2-bookworm AS base
 
-# Install system deps
+# Install system deps, "git" needed for git gems
 RUN apt-get update -qq && \
     apt-get install -y --no-install-recommends \
       build-essential \
       libpq-dev \
-      nodejs \
       npm \
       curl \
       git && \
@@ -19,6 +18,11 @@ RUN apt-get update -qq && \
 
 WORKDIR /app
 
+# For GitHub gems
+# RUN mkdir -p -m 0700 ~/.ssh && ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+ENV BUNDLE_PATH=/usr/local/bundle
+
 # ---- Bundler layer (cache-friendly) ----
 COPY Gemfile Gemfile.lock ./
 RUN bundle config set without 'development test' && \
@@ -26,7 +30,3 @@ RUN bundle config set without 'development test' && \
 
 # ---- App code ----
 COPY . .
-
-# EXPOSE 3000
-#
-# CMD ["bash", "-c", "bundle exec rails db:prepare && bundle exec rails server -b 0.0.0.0"]
