@@ -211,6 +211,7 @@ Docker setup added in 2026 (`Dockerfile` and `docker-compose.yml` and `build.sh`
 
 NOTE: To clean up docker
 ```sh
+docker images # look for images to prune
 docker volume prune -f
 docker system prune -a --volumes -f
 ```
