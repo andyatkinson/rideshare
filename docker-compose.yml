@@ -1,0 +1,32 @@
+services:
+  db:
+    image: postgres:18
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql
+
+  app:
+    build: .
+    command: bundle exec rails s -b 0.0.0.0 -p 3000
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgres://owner:@db:5432/rideshare_development
+      RAILS_ENV: development
+      RIDESHARE_DB_PASSWORD: HSnDDgFtyW9fyFI
+      DB_URL: postgres://postgres:postgres@db:5432/postgres
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - bundle_cache:/usr/local/bundle
+
+volumes:
+  postgres-data:
+  bundle_cache:

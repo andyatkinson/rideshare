@@ -70,6 +70,8 @@ localhost:6432:rideshare_development:owner:$RIDESHARE_DB_PASSWORD
 localhost:5432:rideshare_development:app:$RIDESHARE_DB_PASSWORD
 localhost:54321:rideshare_development:owner:$RIDESHARE_DB_PASSWORD
 localhost:54322:rideshare_development:owner:$RIDESHARE_DB_PASSWORD
+db:5432:rideshare_development:owner:$RIDESHARE_DB_PASSWORD
+db:5432:postgres:postgres:postgres
 *:*:*:replication_user:$RIDESHARE_DB_PASSWORD
 *:*:*:app_readonly:$RIDESHARE_DB_PASSWORD" >> ~/.pgpass
 
