@@ -125,11 +125,11 @@ GEM
     erubis (2.7.0)
     faker (3.8.0)
       i18n (>= 1.8.11, < 2)
-    faraday (2.14.1)
+    faraday (2.14.2)
       faraday-net_http (>= 2.0, < 3.5)
       json
       logger
-    faraday-net_http (3.4.2)
+    faraday-net_http (3.4.3)
       net-http (~> 0.5)
     fast_count (0.3.0)
       activerecord (>= 6.0)
@@ -377,7 +377,7 @@ DEPENDENCIES
   database_consistency (~> 2.0)
   dotenv-rails (~> 3.1)
   faker (~> 3.8)
-  faraday (~> 2.13)
+  faraday (~> 2.14)
   fast_count (~> 0.3)
   fast_jsonapi (~> 1.5)
   fx (~> 0.9)
