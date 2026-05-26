@@ -220,6 +220,12 @@ Docker based Rideshare installation:
 # build container
 sh build.sh
 
+# build for GitHub
+docker build -t ghcr.io/andyatkinson/rideshare:latest .
+echo YOUR_TOKEN | docker login ghcr.io -u YOUR_USERNAME --password-stdin # Check 1Password for token
+docker push ghcr.io/andyatkinson/rideshare:latest
+
+
 # Bring them up and down
 docker compose up
 docker compose down -v
