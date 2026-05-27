@@ -52,3 +52,7 @@ docker/.pgpass
 output.log
 
 .pgpass
+
+pg18_db01_data/
+pg18_db02_data/
+pg18_db03_data/
