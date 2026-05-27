@@ -206,39 +206,48 @@ Once that's running, visit <http://localhost:3000/pghero> in your browser to see
 ![Screenshot of PgHero for Rideshare](https://i.imgur.com/VduvxSK.png)
 
 
-## Docker
+## Docker (Administrator)
 Docker setup added in 2026 (`Dockerfile` and `docker-compose.yml` and `build.sh`)
 
-NOTE: To clean up docker
-```sh
-docker images # look for images to prune
-docker volume prune -f
-docker system prune -a --volumes -f
-```
-
-Docker based Rideshare installation:
 ```sh
 # build container
 sh build.sh
+
+# Cleanup commands
+docker images # look for images to prune
+docker volume prune -f
+docker system prune -a --volumes -f
 
 # build for GitHub
 docker build -t ghcr.io/andyatkinson/rideshare:latest .
 echo YOUR_TOKEN | docker login ghcr.io -u YOUR_USERNAME --password-stdin # Check 1Password for token
 docker push ghcr.io/andyatkinson/rideshare:latest
 
+# Or the .github workflow
+```
 
-# Bring them up and down
+## Docker (User)
+Clone the repo. Docker based Rideshare installation:
+```sh
+# Terminal #1: Bring containers up (initially empty DB)
 docker compose up
-docker compose down -v
 
-# Open a console
-docker compose exec -it app bash
-
-# Set up DB, populate tables etc.
-sh db/setup.sh 2>&1
+# Terminal #2: Create and populate DB
+docker compose exec -it app sh db/setup.sh 2>&1
 
 # Run migrations
-rails db:migrate
+docker compose exec -it app rails db:migrate
+
+# Load data (takes around 5 minutes)
+docker compose exec -it app rails data_generators:generate_all
+
+# Check out the data
+docker compose exec -it app rails dbconsole
+
+# Bring it down
+docker compose down -v
+
+# Open a console, run psql, rails console etc.
 ```
 
 At this point, links should work!
