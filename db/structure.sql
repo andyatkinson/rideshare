@@ -30,7 +30,6 @@ DROP INDEX IF EXISTS rideshare.index_trip_requests_on_rider_id;
 DROP INDEX IF EXISTS rideshare.index_trip_requests_on_end_location_id;
 DROP INDEX IF EXISTS rideshare.index_locations_on_address;
 DROP INDEX IF EXISTS rideshare.index_fast_search_results_on_driver_id;
-DROP INDEX IF EXISTS rideshare.idx_first_name;
 ALTER TABLE IF EXISTS ONLY rideshare.vehicles DROP CONSTRAINT IF EXISTS vehicles_pkey;
 ALTER TABLE IF EXISTS ONLY rideshare.vehicle_reservations DROP CONSTRAINT IF EXISTS vehicle_reservations_pkey;
 ALTER TABLE IF EXISTS ONLY rideshare.users DROP CONSTRAINT IF EXISTS users_pkey;
@@ -231,8 +230,7 @@ CREATE TABLE rideshare.users (
     updated_at timestamp(6) without time zone NOT NULL,
     password_digest character varying,
     trips_count integer,
-    drivers_license_number character varying(100),
-    birthday_month smallint
+    drivers_license_number character varying(100)
 );
 
 
@@ -625,13 +623,6 @@ ALTER TABLE ONLY rideshare.vehicles
 
 
 --
--- Name: idx_first_name; Type: INDEX; Schema: rideshare; Owner: -
---
-
-CREATE INDEX idx_first_name ON rideshare.users USING btree (first_name) WHERE ((type)::text = 'Driver'::text);
-
-
---
 -- Name: index_fast_search_results_on_driver_id; Type: INDEX; Schema: rideshare; Owner: -
 --
 
@@ -786,7 +777,6 @@ ALTER TABLE ONLY rideshare.trip_requests
 SET search_path TO rideshare;
 
 INSERT INTO "schema_migrations" (version) VALUES
-('20260527034321'),
 ('20231220043547'),
 ('20231218215836'),
 ('20231213045957'),
