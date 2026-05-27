@@ -4,7 +4,7 @@ gem 'activerecord-import', '~> 1.5'
 gem 'bcrypt', '~> 3.1' # Use ActiveModel has_secure_password
 gem 'fast_jsonapi', '~> 1.5'
 gem 'geocoder', '~> 1.8'
-gem 'jwt', '~> 2.7'
+gem 'jwt', '~> 3.2'
 gem 'pg', '~> 1.5'
 gem 'pg_query', '~> 6.1'
 gem 'pg_search', '~> 2.3'
