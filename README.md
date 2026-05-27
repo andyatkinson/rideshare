@@ -206,7 +206,7 @@ Once that's running, visit <http://localhost:3000/pghero> in your browser to see
 ![Screenshot of PgHero for Rideshare](https://i.imgur.com/VduvxSK.png)
 
 
-## Docker (User)
+## Docker Dev Env Set Up (User)
 Clone the repo. Docker based Rideshare installation:
 ```sh
 # Terminal #1: Bring containers up (initially empty DB)
@@ -216,18 +216,28 @@ docker compose up
 docker compose exec -it app sh db/setup.sh 2>&1
 
 # Run migrations
-docker compose exec -it app rails db:migrate
+docker compose exec -it app bin/rails db:migrate
 
 # Load data (takes around 5 minutes)
-docker compose exec -it app rails data_generators:generate_all
+docker compose exec -it app bin/rails data_generators:generate_all
 
 # Check out the data
-docker compose exec -it app rails dbconsole
+docker compose exec -it app bin/rails dbconsole
+```
 
-# Bring it down
+Set up `pg_stat_statements` as a superuser:
+```sh
+# Connect as the postgres superuser to rideshare_development database
+docker container exec -it rideshare-db-1 psql -U postgres -d rideshare_development
+
+# Create PGSS inside the rideshare schema from psql:
+CREATE EXTENSION IF NOT EXISTS pg_stat_statements SCHEMA rideshare;
+```
+
+
+Bring it down, optionally remove mapped volume ("-v"):
+```sh
 docker compose down -v
-
-# Open a console, run psql, rails console etc.
 ```
 
 ## Docker (Administrator)
