@@ -74,28 +74,54 @@ Remember the query time before was around 0.5-2 seconds.
 SELECT * FROM users WHERE first_name = 'Alphonso';
 ```
 
-Nice! The query is now e.g. 2300x faster (2000/0.868), achieving our goal of sub 5ms or sub 1ms when warmed up.
+Nice! The query is now more than 2000x faster (2000/0.868), achieving our goal of sub 5ms or sub 1ms (warm cache) execution time.
 
 Let's dig in further as to what is happening here.
 
 ## Section 3: Index Design Concepts
-Let's look at the query plan. Let's introduce `ANALYZE` now to run the query.
+Let's look at more query execution plan details. We left off with `EXPLAIN`. Let's add the `ANALYZE` option now.
 
+We can run `EXPLAIN (ANALYZE) <our sql query>`.
+
+More details on how we're finding Alphonso:
 ```sql
 EXPLAIN (ANALYZE)
 SELECT * FROM users WHERE first_name = 'Alphonso';
 ```
 
+```
+rideshare_development-> SELECT * FROM users WHERE first_name = 'Alphonso';
+                                                         QUERY PLAN
+----------------------------------------------------------------------------------------------------------------------------
+ Index Scan using idx_first_name on users  (cost=0.43..8.45 rows=1 width=129) (actual time=1.352..2.196 rows=20.00 loops=1)
+   Index Cond: ((first_name)::text = 'Alphonso'::text)
+   Index Searches: 1
+   Buffers: shared hit=23
+ Planning Time: 1.947 ms
+ Execution Time: 2.576 ms
+(6 rows)
+
+Time: 15.146 ms
+```
+`ANALYZE` docs:
+<https://www.postgresql.org/docs/current/using-explain.html#USING-EXPLAIN-ANALYZE>
+
+From the docs:
+> Note that the “actual time” values are in milliseconds of real time, whereas the cost estimates are expressed in arbitrary units;
+
+Let's also consider table size and index size.
 ```sql
 \dt+ users            -- 1154MB size
 \di+ idx_first_name   -- 301MB
 ```
 
 Table size vs. index size:
-- Now we're scanning the index which is smaller, it contains one column, and it's in order
-- This is an Index Scan using the index we created `idx_first_name`
-- We still "filter" on the index, but with much less data access
-- Startup and actual costs are much lower compared with before
+- With `ANALYZE` besides "estimated" costs we now get "Actual costs"
+- e.g. `(cost=0.43..8.45 rows=1 width=129) (actual time=0.056..0.099 rows=20.00 loops=1)`
+- We're scanning the index which is smaller, it contains one column, and nodes are in a tree structure that maintains an order for fast navigation
+- We're see the Index Scan scan node we expected and it says `using` the index we created `idx_first_name`
+- Startup and total costs (estimated and actual) are much lower compared with before
+- We may see "filter" on the index, but with much less data than before
 - Actual rows shows 8 rows, 1 loop
 
 PostgreSQL still needs to access more fields (`SELECT *`) from the heap/table storage, but for a small filtered set of rows.

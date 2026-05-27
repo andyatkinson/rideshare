@@ -55,9 +55,9 @@ set jit=off; -- optional
 - Parallel sequential scan using 2 workers (Parallel Seq Scan), we will set to 1 later
 - Estimated to match one row (`rows=1`) (but we know there are more)
 - Width is "estimated average width of rows" in bytes, e.g. 129 bytes <https://www.postgresql.org/docs/current/using-explain.html>
-- The cost is based on how many disk pages are accessed, it has two figures
-- Startup cost, and total cost, e.g. `cost=0.00..1234.56`
-- Startup cost: before the first row can be returned (index navigation, sorting, build a hash table, 0.00 is no cost)
+- The cost is an "arbitrary unit" based on how many disk pages are accessed, it has two figures, we can calculate it manually
+- Startup cost and total cost, e.g. `cost=0.00..1234.56`
+- Startup cost: before the first row can be returned (index navigation, sorting, build a hash table, 0.00 means no cost)
 - Total cost: Estimated cost to return all rows from node
 
 Let's get into the cost details more.
