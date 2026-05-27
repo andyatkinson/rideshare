@@ -1,5 +1,4 @@
 # Active Record Multiple Databases - Part 2
-
 With multiple databases configured, we're ready to leverage Active Record Multiple Databases.
 
 We can move things up to a higher layer of abstraction, by configuring model code, then making different calls to the primary or replica instance by "role".

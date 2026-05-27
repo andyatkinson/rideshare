@@ -1,6 +1,6 @@
 services:
   db:
-    image: postgres:18
+    image: postgres:18.4
     restart: always
     environment:
       POSTGRES_USER: postgres
@@ -9,11 +9,16 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres-data:/var/lib/postgresql
+      - pg18_rideshare_db_data:/var/lib/postgresql
+      - ./postgresql/postgresql.conf:/etc/postgresql/postgresql.conf
+    command:
+      - postgres
+      - -c
+      - config_file=/etc/postgresql/postgresql.conf
 
   app:
     build: .
-    command: bundle exec rails s -b 0.0.0.0 -p 3000
+    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails server -b 0.0.0.0"
     depends_on:
       - db
     environment:
@@ -28,5 +33,5 @@ services:
       - bundle_cache:/usr/local/bundle
 
 volumes:
-  postgres-data:
+  pg18_rideshare_db_data:
   bundle_cache:

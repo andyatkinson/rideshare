@@ -4,9 +4,9 @@
 #
 docker run \
   --name db03 \
-  --volume ${PWD}/postgres-docker/db03:/var/lib/postgresql/data \
+  --volume ./pg18_db03_data:/var/lib/postgresql \
   --publish 54323:5432 \
   --env POSTGRES_USER=postgres \
   --env POSTGRES_PASSWORD=postgres \
   --net=rideshare-net \
-  --detach postgres:16.1
+  --detach postgres:18.4

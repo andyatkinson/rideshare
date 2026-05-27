@@ -1,6 +1,5 @@
 # Query Planning
-
-We'll use psql (or run `bin/rails db`).
+We'll use psql (or run `rails db`).
 
 ```sql
 psql $DATABASE_URL
@@ -32,40 +31,52 @@ SELECT * FROM users WHERE first_name = 'Alphonso';
 -- Time: 2012.136 ms (00:02.012)
 ```
 
-On my machine, this returns 8 rows, taking around 2 seconds. Two seconds is quite slow!
+On my machine, this returns 8 rows, taking around 2 seconds. Two seconds is way too slow! We want sub-5ms execution or better for a production environment.
 
-Let's look at the query plan. To do that we'll use the `EXPLAIN` keyword.
+We need to figure out why this is slow!
+
+Let's look at the query plan. To do that we'll start with the `EXPLAIN` keyword.
 
 ```sql
 EXPLAIN SELECT * FROM users WHERE first_name = 'Alphonso';
 ```
 
 ## Section 3: Intro to [`EXPLAIN`](https://www.postgresql.org/docs/current/using-explain.html)
-Let's understand the parts of what we're seeing.
+Let's understand the parts we're seeing.
+
+```sql
+set jit=off; -- optional
+```
 
 - Plan step is contained within the one above it
-- Filter operation, condition to match, rows removed by filter (when using `ANALYZE`)
-- Sequential scan on `users` table
-- Parallel sequential scan using 2 workers
-- Estimated to match one row (`rows=1`) but we know there are more
-- Width is "estimated average width of rows" <https://www.postgresql.org/docs/current/using-explain.html>
-- The cost is based on how many disk pages are accessed
+- Filter operation, condition to match, we may see "rows removed by filter" (when using `ANALYZE`, will discuss later)
+- "Sequential scan" (the "scan node") on `users` table (<https://pganalyze.com/docs/explain/scan-nodes/sequential-scan>)
+- This data is not sorted, so it's very inefficient to find data this way. Postgres has no idea where "Alphonso" will be.
+- Parallel sequential scan using 2 workers (Parallel Seq Scan), we will set to 1 later
+- Estimated to match one row (`rows=1`) (but we know there are more)
+- Width is "estimated average width of rows" in bytes, e.g. 129 bytes <https://www.postgresql.org/docs/current/using-explain.html>
+- The cost is an "arbitrary unit" based on how many disk pages are accessed, it has two figures, we can calculate it manually
+- Startup cost and total cost, e.g. `cost=0.00..1234.56`
+- Startup cost: before the first row can be returned (index navigation, sorting, build a hash table, 0.00 means no cost)
+- Total cost: Estimated cost to return all rows from node
 
 Let's get into the cost details more.
 
 ## Section 4: Pages Intro and Cost calculation
-Data in PostgreSQL is stored in "pages" which are fixed size 8kb (by default) chunks. Row data and index data are stored in the pages.
+Data in PostgreSQL is stored in "pages" which are fixed size 8kb (by default) chunks. Row data and index data are stored in pages.
 
-For this workshop, we won't go into greater depth. Just know that more pages = slower query. Less pages = faster query.
+For this workshop, we won't go into greater depth. Just know that "more pages = slower query", as there's latency to access more data. Conversely, "fewer pages = faster query".
 
 Let's look at a simplified version of the query:
-
 - Let's disable parallel sequential scans (max worker of 1)
 
 ```sql
-SET max_parallel_workers_per_gather = 1;
+SET max_parallel_workers_per_gather = 0;
 ```
 
+- Now we should see a single Sequential Scan
+
+Let's make this even more painful:
 - Let's scan the whole table with no `WHERE` clause
 - Let's get the number of pages for the table
 - Let's manually reproduce the cost formula calculation
@@ -108,7 +119,7 @@ SELECT FLOOR((147671 * 1) + (10020300 * 0.01)) AS estimated_cost;
          247874
 ```
 
-Now we understand some planner information, let's continue on with query optimization.
+Now we understand some planner information about the plan type, the cost, the width, plan nodes, let's continue on with query optimization.
 
 ## What's Next?
 Visit [4 - Query Optimization](/docs/workshop/4_query_optimization.md) to continue.

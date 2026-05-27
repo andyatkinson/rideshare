@@ -1,5 +1,4 @@
 # Macro Query Optimization Part 2
-
 In this section, we'll begin to work with multiple PostgreSQL instances.
 
 Remember this hierarchy:
@@ -77,12 +76,65 @@ sh reset_docker_instances.sh
 ```
 
 Let's walk through the highlights:
-- Replaced postgresql.conf config file on db01
+- Replaced `postgresql.conf` config file on db01
 - Created replication slot on primary db01
 - Created `replication_user` user on db01 with a unique password and permissions
 - Created `pg_hba.conf` on db01 to allow access
 - Placed password in `.pgpass` and copied to db01 and db02 for `replication_user`
 - Restarted db01
+
+```sh
+sh reset_docker_instances.sh
+File 'postgresql.conf' exists...continuing
+...
+Stopped containers, waiting a moment
+e6524b91cfa74b269a862bca769c7151953970d113c31b2bd69c28f8254f8790
+ce7654be65f10139cedd8ef6b09bc785302604dc433c3af77a74bc40a92c7179
+Started containers
+CONTAINER ID   IMAGE           COMMAND                  CREATED                  STATUS                  PORTS                                           NAMES
+ce7654be65f1   postgres:16.1   "docker-entrypoint.s…"   Less than a second ago   Up Less than a second   0.0.0.0:54322->5432/tcp, [::]:54322->5432/tcp   db02
+e6524b91cfa7   postgres:16.1   "docker-entrypoint.s…"   Less than a second ago   Up Less than a second   0.0.0.0:54321->5432/tcp, [::]:54321->5432/tcp   db01
+c16f2850a281   postgres:18     "docker-entrypoint.s…"   2 hours ago              Up 2 hours              0.0.0.0:5432->5432/tcp, [::]:5432->5432/tcp     rideshare-db-1
+c971a7c577d9   rideshare-app   "bundle exec rails s…"   8 days ago               Up 4 hours              0.0.0.0:3000->3000/tcp, [::]:3000->3000/tcp     rideshare-app-1
+Getting IP address for db02...
+172.19.0.3
+Generating pg_hba.conf file
+# TYPE  DATABASE        USER            ADDRESS                 METHOD
+# Replication
+host    replication     replication_user 172.19.0.3/32               md5
+local   all             all                                     trust
+# IPv4 local connections:
+host    all             all             127.0.0.1/32            trust
+# IPv6 local connections:
+host    all             all             ::1/128                 trust
+host all all all scram-sha-256
+
+Copy pg_hba.conf to db01
+Successfully copied 2.05kB to db01:/var/lib/postgresql/data/.
+Restart db01 received new file
+db01
+Create replication slot on db01
+ pg_create_physical_replication_slot
+-------------------------------------
+ (rideshare_slot,)
+(1 row)
+
+Configure replication_user
+db01 is running...continuing
+db02 is running...continuing
+Create REP_USER_PASSWORD for replication_user
+9b211d86469ea3f7df117ece
+Successfully copied 2.05kB to db01:.
+Copy .pgpass, chown, chmod it for db02
+Successfully copied 2.05kB to db02:/var/lib/postgresql/.
+CREATE ROLE
+GRANT
+ALTER DEFAULT PRIVILEGES
+Copy existing postgresql.conf to db01
+Successfully copied 31.7kB to db01:/var/lib/postgresql/data/.
+restart db01
+db01
+```
 
 Check logs on db02:
 ```sh
@@ -115,7 +167,6 @@ Instead, this file is a reference of individual commands. Copy and paste each on
 💻 Do that now!
 
 After running the main `pg_basebackup` command as demonstrated, a success message looks like this:
-
 ```sh
 pg_basebackup: base backup completed
 ```

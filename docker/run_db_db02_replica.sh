@@ -5,9 +5,9 @@
 # network: "rideshare-net"
 docker run \
   --name db02 \
-  --volume ${PWD}/postgres-docker/db02:/var/lib/postgresql/data \
+  --volume ./pg18_db02_data:/var/lib/postgresql \
   --publish 54322:5432 \
   --env POSTGRES_USER=postgres \
   --env POSTGRES_PASSWORD=postgres \
   --net=rideshare-net \
-  --detach postgres:16.1
+  --detach postgres:18.4
