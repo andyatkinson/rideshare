@@ -1,5 +1,5 @@
 # Active Record Multiple Databases Part 1
-Now we have `db01` and `db02` running. Let's create the Rideshare DB, and configure it.
+Now we have `db01` and `db02` running (`docker ps`). Let's create the Rideshare DB, and configure it.
 
 We'll work with `db01`, which is mapped to local port 54321.
 
@@ -29,8 +29,10 @@ Verify port 54321 is listed. There should be no tables here: `\dt`. We should se
 
 Now we're ready to run migrations on db01:
 ```sh
-bin/rails db:migrate
+rails db:migrate
 ```
+
+We did this before, what's the difference? The difference is we're now creating this schema definition on db01 which has a live replica db02.
 
 Let's see if the tables were replicated!
 
@@ -53,6 +55,7 @@ psql $DATABASE_URL_REPLICA
 ```
 
 Note:
+- We didn't create the tables there!
 - We automatically got the `owner` role
 - We're connected to port 54322 (one greater), which is the locally mapped port to db02
 - We see the tables in the `rideshare` schema
@@ -63,15 +66,16 @@ If we check row counts on both, all the tables are empty.
 
 Let's populate data so that we work on queries.
 
-Note that this still uses `DATABASE_URL`, but that now points at db01.
+Note that this still uses `DATABASE_URL`, but that now points at db01. Double check the "count" of users on db02 is 0.
 
+Let's create data on db01. We'll then verify it was replicated over to db02.
 ```sh
-bin/rails data_generators:generate_all
+rails data_generators:generate_all
 ```
 
-Connect again to db02 and verify the row counts are the same. There should be data on db02! This data came from db01 via replication.
+Connect again to db02 and verify the row counts are the same. There should be data on db02! This data came from db01 via streaming physical replication.
 
-With data on both instances, we're ready to move to Active Record configuration.
+With data on both instances, we're ready to move back to the client application, the Active Record configuration in the Ruby on Rails app.
 
 ## Section 2: Database config multiple databases
 In this section, we're going to move to a multi-DB configuration.
@@ -97,14 +101,14 @@ Now we can try these out!
 Now when running migrations, they should only run on db01 primary instance:
 
 ```sh
-bin/rails db:migrate
+rails db:migrate
 ```
 
 Test the new configurations, first using `db`:
 
 ```sh
-bin/rails db --database rideshare
-bin/rails db --database rideshare_replica
+rails db --database rideshare
+rails db --database rideshare_replica
 ```
 
 This concludes the configuration portion of Active Record Multiple Databases.
