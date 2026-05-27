@@ -1,16 +1,5 @@
 # Workshop
-Hello! This is meant to be a 2-3 hour long workshop depending on content, facilitated by Andrew Atkinson.
-
-## Prerequisites
-For prerequisites, you'll use the Rideshare app. Follow the instructions in the main [Rideshare README.md](/README.md) to fully set it up.
-
-The best option would be to install Docker and then follow the Docker instructions.
-
-When you've installed the app, verify that:
-- Running `bundle install` in the Rideshare directory installs all Ruby gems
-- `sh db/setup.sh` ran and created the `rideshare_development` database, users, etc.
-- `bin/rails db:migrate` ran and created empty tables, indexes, etc.
-- `bin/rails data_generators:generate_all` ran and created a base set of fake data
+Hello! This is a 2-3 hour workshop on Postgres and Ruby on Rails database features, facilitated by Andrew Atkinson.
 
 The workshop uses content from my book ["High Performance PostgreSQL for Rails"](https://andyatkinson.com/pgrailsbook).
 
@@ -18,18 +7,28 @@ For book references, check Chapters "7 - Query Performance &  8 - Optimized Inde
 
 Check Chapter "13 - Scaling with Replication and Sharding" for the second half of the workshop. (original RailsConf 2024 version)
 
+## Prerequisites
+You'll need Docker. Ideally you're on Mac OS although other platforms that support Docker may work.
+
+You'll work in this app/repo, Rideshare. Follow the Docker Dev Env instructions in the main [Rideshare README.md](/README.md).
+
+Besides the Dev Env, download/run the docker containers for the multi-DB sections. From the Rideshare root:
+```sh
+sh docker/setup_docker_workshop.sh
+```
+
 This workshop is revised for PG Data Chicago 2026, adding a third section.
 
-## Workshop Structure (Original 2024 version)
-- Two 1 hr. halves, with a short break
-- Numbered files from 0 through 9, with "Sections" in the files
-- Each section has runnable code in backticks blocks, that's expected to be run by participants, unless flagged as "instructor only"
-
-## Workshop Changes (2026)
-PG Data 2026 Itinerary:
+## Workshop (PG Data 2026)
+3 hours in total, each section is 1 hour.
 1. Training: SQL Performance Basics
 1. Training: ActiveRecord ORM and Schema Evolution
 1. Training: Scaling with Multiple Databases
+
+## Workshop Structure (Original 2024 RailsConf version)
+- Two 1 hr. halves, with a short break
+- Numbered files from 0 through 9, with "Sections" in the files
+- Each section has runnable code in backticks blocks, that's expected to be run by participants, unless flagged as "instructor only"
 
 ## Support
 As an independent consultant, your support is very meaningful!
