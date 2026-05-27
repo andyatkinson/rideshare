@@ -1,26 +1,35 @@
 # Workshop
-
-Hello! This is meant to be a two hour long workshop, facilitated by Andrew Atkinson.
+Hello! This is meant to be a 2-3 hour long workshop depending on content, facilitated by Andrew Atkinson.
 
 ## Prerequisites
 For prerequisites, you'll use the Rideshare app. Follow the instructions in the main [Rideshare README.md](/README.md) to fully set it up.
 
+The best option would be to install Docker and then follow the Docker instructions.
+
 When you've installed the app, verify that:
 - Running `bundle install` in the Rideshare directory installs all Ruby gems
 - `sh db/setup.sh` ran and created the `rideshare_development` database, users, etc.
-- `bin/rails db:migrate` run and created empty tables, indexes, etc.
+- `bin/rails db:migrate` ran and created empty tables, indexes, etc.
 - `bin/rails data_generators:generate_all` ran and created a base set of fake data
 
 The workshop uses content from my book ["High Performance PostgreSQL for Rails"](https://andyatkinson.com/pgrailsbook).
 
-For book references, check Chapters "7 - Query Performance &  8 - Optimized Indexes for Fast Retrieval" for the first half of the workshop.
+For book references, check Chapters "7 - Query Performance &  8 - Optimized Indexes for Fast Retrieval" for the first half of the workshop (original RailsConf 2024 version).
 
-Check Chapter "13 - Scaling with Replication and Sharding" for the second half of the workshop.
+Check Chapter "13 - Scaling with Replication and Sharding" for the second half of the workshop. (original RailsConf 2024 version)
 
-## Workshop Structure
+This workshop is revised for PG Data Chicago 2026, adding a third section.
+
+## Workshop Structure (Original 2024 version)
 - Two 1 hr. halves, with a short break
 - Numbered files from 0 through 9, with "Sections" in the files
 - Each section has runnable code in backticks blocks, that's expected to be run by participants, unless flagged as "instructor only"
+
+## Workshop Changes (2026)
+PG Data 2026 Itinerary:
+1. Training: SQL Performance Basics
+1. Training: ActiveRecord ORM and Schema Evolution
+1. Training: Scaling with Multiple Databases
 
 ## Support
 As an independent consultant, your support is very meaningful!
@@ -31,7 +40,7 @@ To get a discount, ask me about codes. Usually there are active discounts during
 
 If your team needs help, please visit my [Consulting page](http://andyatkinson.com/consulting), where you can find information about what I offer and how to hire me.
 
-## Rideshare and Workshop Loom Videos
+## Rideshare and Workshop Loom Videos (local non-Docker installation)
 <details>
 <summary>🎥 Installation - Rideshare on a Mac, Ruby, PostgreSQL, Gems</summary>
     <div>

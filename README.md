@@ -206,26 +206,6 @@ Once that's running, visit <http://localhost:3000/pghero> in your browser to see
 ![Screenshot of PgHero for Rideshare](https://i.imgur.com/VduvxSK.png)
 
 
-## Docker (Administrator)
-Docker setup added in 2026 (`Dockerfile` and `docker-compose.yml` and `build.sh`)
-
-```sh
-# build container
-sh build.sh
-
-# Cleanup commands
-docker images # look for images to prune
-docker volume prune -f
-docker system prune -a --volumes -f
-
-# build for GitHub
-docker build -t ghcr.io/andyatkinson/rideshare:latest .
-echo YOUR_TOKEN | docker login ghcr.io -u YOUR_USERNAME --password-stdin # Check 1Password for token
-docker push ghcr.io/andyatkinson/rideshare:latest
-
-# Or the .github workflow
-```
-
 ## Docker (User)
 Clone the repo. Docker based Rideshare installation:
 ```sh
@@ -248,6 +228,26 @@ docker compose exec -it app rails dbconsole
 docker compose down -v
 
 # Open a console, run psql, rails console etc.
+```
+
+## Docker (Administrator)
+Docker setup added in 2026 (`Dockerfile` and `docker-compose.yml` and `build.sh`)
+
+```sh
+# build container
+sh build.sh
+
+# Cleanup commands
+docker images # look for images to prune
+docker volume prune -f
+docker system prune -a --volumes -f
+
+# build for GitHub
+docker build -t ghcr.io/andyatkinson/rideshare:latest .
+echo YOUR_TOKEN | docker login ghcr.io -u YOUR_USERNAME --password-stdin # Check 1Password for token
+docker push ghcr.io/andyatkinson/rideshare:latest
+
+# Or the .github workflow
 ```
 
 At this point, links should work!

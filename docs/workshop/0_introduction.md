@@ -3,18 +3,18 @@
 ## Prerequisites Checklist
 You have Rideshare running:
 - `rideshare_development` database is reachable
-- `bin/rails console` works
-- DB creation scripts ran
-- Migrations ran (`bin/rails db:migrate`)
+- Migrations ran (`rails db:migrate`)
+- `rails console` works
+- DB data creation scripts ran e.g. `Trip.count` returns 1000 records
 
 If any of these aren't completed, go back to the main [Workshop README](/docs/workshop/README.md)
 
 ## Setup
 - Run shell scripts from Rideshare root directory
-- Learn to add psql to your `bin/rails console` command-line tools
+- Learn to add psql to your `rails console` command-line tools
 - Create indexes without Active Record
 
-## Performance
+## Database Performance
 - Individual query optimization (micro)
 - Macro query optimization, reduce system load
 

@@ -1,10 +1,9 @@
 # psql basics
-
 psql is the command-line client that comes with PostgreSQL.
 
-We will use it. Running `bin/rails dbconsole` (or `db` for short), it launches psql.
+We will use it. Running `rails dbconsole` (or `db` for short), it launches psql.
 
-The connection string is supplied from the .env file 
+The connection string is supplied from the .env file
 
 We want the one called `DATABASE_URL`.
 
@@ -13,14 +12,14 @@ cd rideshare
 
 cat .env | grep DATABASE_URL
 
-bin/rails db
+rails db
 ```
 
-We can also connect without `bin/rails dbconsole` and use psql directly.
+We can also connect without `rails dbconsole` and use psql directly.
 
+NOTE: This only works when installed locally, not via Docker.
 ```sh
 export DATABASE_URL=postgres://owner@localhost:5432/rideshare_development
-
 psql $DATABASE_URL
 ```
 
