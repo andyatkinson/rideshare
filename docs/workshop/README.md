@@ -10,11 +10,24 @@ Check Chapter "13 - Scaling with Replication and Sharding" for the second half o
 ## Prerequisites
 You'll need Docker. Ideally you're on Mac OS although other platforms that support Docker may work.
 
-You'll work in this app/repo, Rideshare. Follow the Docker Dev Env instructions in the main [Rideshare README.md](/README.md).
+You'll work in this app/repo, Rideshare. Follow the instructions for the [Docker Dev Env](https://github.com/andyatkinson/rideshare/blob/main/README.md#docker-dev-env) in the main [Rideshare README.md](/README.md).
 
-Besides the Dev Env, download/run the docker containers for the multi-DB sections. From the Rideshare root:
+For that you'll use Docker & Docker Compose, running `docker compose up` to bring up the app and DB. You'll set up the schema, run migrations, enable `pg_stat_statements`, and populate data.
+
+Besides the Dev Env, download/run the docker containers for the multi-DB sections. These are 3 additional instances (db01, db02, db03) that will be used as a primary and replicas. From the Rideshare root:
 ```sh
 sh docker/setup_docker_workshop.sh
+```
+
+When everything above is up and running, you should be able to run `docker ps -a` and see something like:
+```sh
+andy@MacBookPro ~/P/rideshare (main)> docker ps -a
+CONTAINER ID   IMAGE           COMMAND                  CREATED       STATUS         PORTS                                           NAMES
+1375d841de1d   postgres:18.4   "docker-entrypoint.s…"   3 hours ago   Up 3 hours     0.0.0.0:54323->5432/tcp, [::]:54323->5432/tcp   db03
+ea5e643b688d   postgres:18.4   "docker-entrypoint.s…"   3 hours ago   Up 3 hours     0.0.0.0:54322->5432/tcp, [::]:54322->5432/tcp   db02
+8e29a5aedd84   postgres:18.4   "docker-entrypoint.s…"   3 hours ago   Up 3 hours     0.0.0.0:54321->5432/tcp, [::]:54321->5432/tcp   db01
+a506f74a11d3   rideshare-app   "bash -c 'rm -f tmp/…"   3 hours ago   Up 2 seconds   0.0.0.0:3000->3000/tcp, [::]:3000->3000/tcp     rideshare-app-1
+24a4749934c1   postgres:18.4   "docker-entrypoint.s…"   3 hours ago   Up 3 seconds   0.0.0.0:5432->5432/tcp, [::]:5432->5432/tcp     rideshare-db-1
 ```
 
 This workshop is revised for PG Data Chicago 2026, adding a third section.
