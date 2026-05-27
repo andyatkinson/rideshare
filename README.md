@@ -6,6 +6,8 @@ Rideshare is the Rails application supporting the book "High Performance Postgre
 # Installation
 Prepare your development machine.
 
+NOTE: For 2026, there is now a [Docker Dev Env method](#docker-dev-env) that's recommended over installating everything locally.
+
 <details>
 <summary>🎥 Installation - Rideshare on a Mac, Ruby, PostgreSQL, Gems</summary>
 <div>
@@ -206,8 +208,11 @@ Once that's running, visit <http://localhost:3000/pghero> in your browser to see
 ![Screenshot of PgHero for Rideshare](https://i.imgur.com/VduvxSK.png)
 
 
-## Docker Dev Env Set Up (User)
-Clone the repo. Docker based Rideshare installation:
+## Docker Dev Env
+> [!TIP]
+> For 2026, this is the recommended dev env setup method.
+
+Clone the repo then run the following steps:
 ```sh
 # Terminal #1: Bring containers up (initially empty DB)
 docker compose up
@@ -225,7 +230,7 @@ docker compose exec -it app bin/rails data_generators:generate_all
 docker compose exec -it app bin/rails dbconsole
 ```
 
-Set up `pg_stat_statements` as a superuser:
+Set up `pg_stat_statements` as a superuser for Rideshare:
 ```sh
 # Connect as the postgres superuser to rideshare_development database
 docker container exec -it rideshare-db-1 psql -U postgres -d rideshare_development
@@ -234,9 +239,9 @@ docker container exec -it rideshare-db-1 psql -U postgres -d rideshare_developme
 CREATE EXTENSION IF NOT EXISTS pg_stat_statements SCHEMA rideshare;
 ```
 
-
-Bring it down, optionally remove mapped volume ("-v"):
+Bring it down, optionally use "-v" to remove mapped volumes:
 ```sh
+docker compose down
 docker compose down -v
 ```
 
