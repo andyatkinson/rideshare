@@ -1,5 +1,4 @@
 # Active Record Multiple Databases Part 1
-
 Now we have `db01` and `db02` running. Let's create the Rideshare DB, and configure it.
 
 We'll work with `db01`, which is mapped to local port 54321.

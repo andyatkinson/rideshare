@@ -1,5 +1,4 @@
 # Macro Query Optimization Part 2
-
 In this section, we'll begin to work with multiple PostgreSQL instances.
 
 Remember this hierarchy:
@@ -77,7 +76,7 @@ sh reset_docker_instances.sh
 ```
 
 Let's walk through the highlights:
-- Replaced postgresql.conf config file on db01
+- Replaced `postgresql.conf` config file on db01
 - Created replication slot on primary db01
 - Created `replication_user` user on db01 with a unique password and permissions
 - Created `pg_hba.conf` on db01 to allow access
@@ -115,7 +114,6 @@ Instead, this file is a reference of individual commands. Copy and paste each on
 💻 Do that now!
 
 After running the main `pg_basebackup` command as demonstrated, a success message looks like this:
-
 ```sh
 pg_basebackup: base backup completed
 ```

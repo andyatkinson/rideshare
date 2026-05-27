@@ -138,6 +138,10 @@ Notes:
 - High average rows returned could be an opportunity to fetch smaller results on average, leading to faster execution time
 - We also want to look at the IO impact which we can do using blocks information, but that may be at the end given time
 
+NOTE: Important caveat!
+- PGSS only tracks successfully executed queries
+- If queries are cancelled due to exceeding an allowed time (`statement_timeout`) then they will not be tracked in PGSS, we'll have to find those in the `postgresql.log`
+
 PGSS tracks all executions of "same group" (with params removed) types of queries.
 We can now at least identify our slowest average execution time queries.
 
