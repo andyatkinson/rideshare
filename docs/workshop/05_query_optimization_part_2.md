@@ -162,4 +162,4 @@ We have throughly optimized this query.
 Now we realize our application has literally thousands of queries with tons of variants. How do we work on the queries with the most optimization return on investment (ROI)?
 
 ## What's Next?
-Visit [6 - Macro Query Optimization Part 1](/docs/workshop/6_macro_overview_part_1.md) to continue.
+Visit [6 - Macro Query Optimization Part 1](/docs/workshop/06_macro_overview_part_1.md) to continue.

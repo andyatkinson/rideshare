@@ -118,3 +118,6 @@ We've now seen how to use multiple PostgreSQL databases to distribute the databa
 Scaling read traffic separately is part of building High Performance Active Record apps.
 
 Beyond write/read role switching, for even more advanced scalability options, Active Record supports Horizontal Sharding, which has a similar pattern to what you've done here for "shard switching."
+
+## What's Next?
+Visit [10 - Active Record Schema Migrations](/docs/workshop/10_active_record_schema_migrations.md) to continue.

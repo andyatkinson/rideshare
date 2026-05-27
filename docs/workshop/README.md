@@ -102,4 +102,4 @@ If your team needs help, please visit my [Consulting page](http://andyatkinson.c
 ## Let's Get Started
 In each section, you'll find links at the bottom to the next topic.
 
-Click the [0 - Introduction](/docs/workshop/0_introduction.md) to get started.
+Click the [0 - Introduction](/docs/workshop/00_introduction.md) to get started.

@@ -24,4 +24,4 @@ psql $DATABASE_URL
 ```
 
 ## What's Next?
-Visit [2 - Shell Scripts](/docs/workshop/2_shell_scripts.md) to continue.
+Visit [2 - Shell Scripts](/docs/workshop/02_shell_scripts.md) to continue.

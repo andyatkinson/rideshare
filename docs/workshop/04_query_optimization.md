@@ -129,4 +129,4 @@ PostgreSQL still needs to access more fields (`SELECT *`) from the heap/table st
 Can we do better?
 
 ## What's Next?
-Visit [5 - Query Optimization Part 2](/docs/workshop/5_query_optimization_part_2.md) to continue.
+Visit [5 - Query Optimization Part 2](/docs/workshop/05_query_optimization_part_2.md) to continue.

@@ -35,4 +35,4 @@ With millions of records loaded, we will begin to "feel" slower queries now. In 
 The goal is to get a basic simulation of a production environment that can have 10s or 100s of millions, or billions of records.
 
 ## What's Next?
-Visit [3 - Query Planning](/docs/workshop/3_query_planning.md) to continue.
+Visit [3 - Query Planning](/docs/workshop/03_query_planning.md) to continue.

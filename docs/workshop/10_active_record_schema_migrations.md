@@ -66,4 +66,15 @@ select * from schema_migrations;
 ```
 
 ## Strong Migrations
-Ensuring safety in migrations
+Ruby on Rails does not try and enforce which migrations are "unsafe" to perform on busy production tables.
+
+Enter "Strong Migrations" which tries to detect unsafe patterns and prevent them.
+<https://github.com/ankane/strong_migrations>
+
+There is also a mechanism to "opt out" by wrapping in a Ruby block:
+```rb
+safety_assured do
+end
+```
+
+Let's review examples of unsafe DDL changes on busy tables, and briefly introduce lock types.

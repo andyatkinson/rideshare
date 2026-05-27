@@ -30,4 +30,4 @@ If any of these aren't completed, go back to the main [Workshop README](/docs/wo
 - Move read only queries to a read replica
 
 ## What's Next?
-Visit [1 - Psql Basics](/docs/workshop/1_psql_basics.md) to continue.
+Visit [1 - Psql Basics](/docs/workshop/01_psql_basics.md) to continue.

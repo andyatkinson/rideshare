@@ -122,4 +122,4 @@ SELECT FLOOR((147671 * 1) + (10020300 * 0.01)) AS estimated_cost;
 Now we understand some planner information about the plan type, the cost, the width, plan nodes, let's continue on with query optimization.
 
 ## What's Next?
-Visit [4 - Query Optimization](/docs/workshop/4_query_optimization.md) to continue.
+Visit [4 - Query Optimization](/docs/workshop/04_query_optimization.md) to continue.
