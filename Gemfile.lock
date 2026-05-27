@@ -385,7 +385,6 @@ DEPENDENCIES
   importmap-rails (~> 1.2)
   json (~> 2.1)
   jwt (~> 2.7)
-  minitest (~> 5.25)
   pg (~> 1.5)
   pg_query (~> 6.1)
   pg_search (~> 2.3)
