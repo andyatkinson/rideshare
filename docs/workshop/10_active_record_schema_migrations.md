@@ -66,7 +66,7 @@ select * from schema_migrations;
 ```
 
 ## Strong Migrations
-Ruby on Rails does not try and enforce which migrations are "unsafe" to perform on busy production tables.
+Ruby on Rails does not try to enforce which migrations are "unsafe" to perform on busy production tables.
 
 Enter "Strong Migrations" which tries to detect unsafe patterns and prevent them.
 <https://github.com/ankane/strong_migrations>

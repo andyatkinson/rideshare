@@ -6,6 +6,7 @@ Let's review what's set up to get started:
 - Migrations have ran on the instance (`docker compose exec -it app bin/rails db:migrate`)
 - `rails console` works (`docker compose exec -it app bin/rails console`)
 - DB data creation scripts have ran e.g. `Trip.count` (from `rails console`) returns 1000 records
+- Let's check out the ERD: <https://github.com/andyatkinson/rideshare/blob/main/erd.pdf>
 
 If you're missing any of these, go back to the main [Workshop README](/docs/workshop/README.md) and review the Dev Env setup steps first.
 
