@@ -1,6 +1,12 @@
 # Workshop
 Hello! This is a 2-3 hour workshop on Postgres and Ruby on Rails database features, facilitated by Andrew Atkinson.
 
+## Workshop (PG Data 2026)
+3 hours in total, each section is 1 hour.
+1. Training: SQL Performance Basics
+1. Training: Active Record ORM and Schema Evolution
+1. Training: Scaling with Multiple Databases
+
 The workshop uses content from my book ["High Performance PostgreSQL for Rails"](https://andyatkinson.com/pgrailsbook).
 
 For book references, check Chapters "7 - Query Performance &  8 - Optimized Indexes for Fast Retrieval" for the first half of the workshop (original RailsConf 2024 version).
@@ -32,14 +38,6 @@ ea5e643b688d   postgres:18.4   "docker-entrypoint.s…"   3 hours ago   Up 3 hou
 a506f74a11d3   rideshare-app   "bash -c 'rm -f tmp/…"   3 hours ago   Up 2 seconds   0.0.0.0:3000->3000/tcp, [::]:3000->3000/tcp     rideshare-app-1
 24a4749934c1   postgres:18.4   "docker-entrypoint.s…"   3 hours ago   Up 3 seconds   0.0.0.0:5432->5432/tcp, [::]:5432->5432/tcp     rideshare-db-1
 ```
-
-This workshop is revised for PG Data Chicago 2026, adding a third section.
-
-## Workshop (PG Data 2026)
-3 hours in total, each section is 1 hour.
-1. Training: SQL Performance Basics
-1. Training: ActiveRecord ORM and Schema Evolution
-1. Training: Scaling with Multiple Databases
 
 ## Workshop Structure (Original 2024 RailsConf version)
 - Two 1 hr. halves, with a short break

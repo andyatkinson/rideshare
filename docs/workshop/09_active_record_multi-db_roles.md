@@ -120,4 +120,8 @@ Scaling read traffic separately is part of building High Performance Active Reco
 Beyond write/read role switching, for even more advanced scalability options, Active Record supports Horizontal Sharding, which has a similar pattern to what you've done here for "shard switching."
 
 ## What's Next?
-Visit [10 - Active Record Schema Migrations](/docs/workshop/10_active_record_schema_migrations.md) to continue.
+Let's imagine our application is maturing and we need more capacity.
+
+Let's look at scaling out to multiple databases.
+
+Visit [8 - Active Record Multi-DB Part 1](/docs/workshop/08_active_record_multi-db_prep_part_1.md) to continue.

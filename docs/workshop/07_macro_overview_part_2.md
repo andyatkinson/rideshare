@@ -243,4 +243,8 @@ rm -rf docker-postgres
 Start over from the beginning.
 
 ## What's Next?
-Visit [8 - Active Record Multi-DB Part 1](/docs/workshop/08_active_record_multi-db_prep_part_1.md) to continue.
+Switching gears into schema changes.
+
+How do we manage them and keep all environments consistent?
+
+Visit [10 - Active Record Schema Migrations](/docs/workshop/10_active_record_schema_migrations.md) to continue.
