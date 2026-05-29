@@ -4,7 +4,7 @@
 #
 docker run \
   --name db03 \
-  --volume ./pg18_db03_data:/var/lib/postgresql \
+  --volume ./pg18_db03_data:/var/lib/postgresql/18/docker \
   --publish 54323:5432 \
   --env POSTGRES_USER=postgres \
   --env POSTGRES_PASSWORD=postgres \

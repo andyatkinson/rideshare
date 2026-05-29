@@ -18,7 +18,8 @@ I recommend working with 3 Terminal windows. I use a terminal multiplexer [Tmux]
 
 Besides the Dev Env, download/run the docker containers for the multi-DB sections. These are 3 additional instances (db01, db02, db03) that will be used as a primary and replicas. From the Rideshare root:
 ```sh
-sh docker/setup_docker_workshop.sh
+cd docker
+sh setup_docker_workshop.sh
 ```
 
 When everything above is up and running, you should be able to run `docker ps -a` and see something like:

@@ -5,7 +5,7 @@
 # network: "rideshare-net"
 docker run \
   --name db02 \
-  --volume ./pg18_db02_data:/var/lib/postgresql \
+  --volume ./pg18_db02_data:/var/lib/postgresql/18/docker \
   --publish 54322:5432 \
   --env POSTGRES_USER=postgres \
   --env POSTGRES_PASSWORD=postgres \

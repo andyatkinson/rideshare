@@ -11,7 +11,7 @@ If you're missing any of these, go back to the main [Workshop README](/docs/work
 
 ## Setup
 What we're going to do:
-- Run shell scripts from Rideshare root directory, e.g. `sh docker/setup_docker_workshop.sh`
+- Run shell scripts in Rideshare (in root or `./docker` directories), e.g. `sh setup_docker_workshop.sh`
 - Run SQL commands from the psql client, running within Docker
 - Create indexes without Active Record and learn to use Active Record Migrations (if they're new to you)
 

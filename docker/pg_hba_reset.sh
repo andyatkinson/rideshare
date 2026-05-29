@@ -7,7 +7,7 @@ echo "Getting IP address for db02..."
 ip_address=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' db02)
 echo "$ip_address"
 
-entry="host    replication     replication_user $ip_address/32               md5"
+entry="host    replication     replication_user $ip_address/32               scram-sha-256"
 
 echo "Generating pg_hba.conf file"
 cat <<EOF >> pg_hba.conf
