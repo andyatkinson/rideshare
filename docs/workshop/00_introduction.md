@@ -25,15 +25,19 @@ What we consider performance:
 
 This is only a part of managing critical CPU, Memory, and IOPS resources, but it's a good start.
 
-# Micro Optimization
+## Micro Optimization
 - Benefit: Learn to read query execution plans and optimize a query
 - Query planning insights, key data to study
 - Index design basics, supporting a query
 - More advanced index design
 
-# Macro Optimization
+## Macro Optimization
 - Benefit: Reduce system load, add headroom, improve reliability, distribute load to more instances
 - Find worst performing queries
+
+## Schema Change Management
+- Using Active Record Migrations
+- Safe and unsafe changes
 
 ## What's Next?
 Visit [1 - Psql Basics](/docs/workshop/01_psql_basics.md) to continue.
