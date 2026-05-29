@@ -135,6 +135,8 @@ SELECT * FROM users WHERE first_name = 'Alphonso';
 We can get a query from [`andyatkinson/pg_scripts`](https://github.com/andyatkinson/pg_scripts) for PGSS,
 adapting the 10 worst performers, to get the single worst one.
 
+We can also use PgHero to explore query statistics: <http://localhost:3000/pghero>
+
 Run this:
 ```sql
 SELECT
