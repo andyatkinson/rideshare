@@ -1,14 +1,18 @@
 # Introduction
 
-## Intro Checklist
+## Rideshare Intro Checklist
 Let's review what's set up to get started:
 - `rideshare_development` database is reachable (recommended setup is via Docker)
 - Migrations have ran on the instance (`docker compose exec -it app bin/rails db:migrate`)
 - `rails console` works (`docker compose exec -it app bin/rails console`)
 - DB data creation scripts have ran e.g. `Trip.count` (from `rails console`) returns 1000 records
-- Let's check out the ERD: <https://github.com/andyatkinson/rideshare/blob/main/erd.pdf>
-- [Rails + Postgres Architecture #1 Primary](https://github.com/andyatkinson/rideshare/blob/main/docs/rideshare_rails_postgres_architecture_1.svg)
-- [Rails + Postgres Architecture #2 Primary + Replica](https://github.com/andyatkinson/rideshare/blob/main/docs/rideshare_rails_postgres_architecture_2.svg)
+
+## Rideshare Postgres Intro
+- All tables created in custom schema `rideshare`
+- Various users `owner`, `app`, `app_readonly` and custom grants (`db/setup.sh`) (We'll use `owner` and `postgres` here)
+- Let's check out the Entity Resource Diagram: <https://github.com/andyatkinson/rideshare/blob/main/erd.pdf>
+- [Rails + Postgres Diagram #1 Primary](https://github.com/andyatkinson/rideshare/blob/main/docs/rideshare_rails_postgres_architecture_1.svg)
+- [Rails + Postgres Diagram #2 Primary + Replica](https://github.com/andyatkinson/rideshare/blob/main/docs/rideshare_rails_postgres_architecture_2.svg)
 
 If you're missing any of these, go back to the main [Workshop README](/docs/workshop/README.md) and review the Dev Env setup steps first.
 
