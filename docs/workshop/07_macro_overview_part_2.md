@@ -49,7 +49,7 @@ export DOCKER_CLI_HINTS=false
 - `db01` and `db02` are now running. Review the network, host names, basics of connection to each instance.
 
 ```sh
-docker ps
+docker ps -a
 ```
 
 - We're running two instances of Postgres in containers, simulating two different hosts
@@ -60,8 +60,8 @@ If you're missing `postgresql.conf`, you'll be prompted to create it.
 
 
 ```sh
+cd rideshare
 cd docker
-
 sh reset_docker_instances.sh
 ```
 

@@ -25,4 +25,4 @@ cat pg_hba.conf
 echo
 
 echo "Copy pg_hba.conf to db01"
-docker cp pg_hba.conf db01:/var/lib/postgresql/data/.
+docker cp pg_hba.conf db01:/var/lib/postgresql/18/docker/.

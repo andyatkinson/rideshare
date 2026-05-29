@@ -84,9 +84,30 @@ WHERE pg_database.datname = 'rideshare_development';
 
 Filter in `pg_stat_statements` on `dbid` and the `owner` `userid`:
 
-```sql
-\x -- vertical presentation
+## Improve psql formatting
+Run these in psql:
+```sh
+\x off
+\a
+\t
+\pset pager off
+\f ' | '
+\pset linestyle unicode
+\pset recordsep '\n'
+```
 
+Reset:
+```sh
+docker container exec -it rideshare-db-1 psql -U postgres -d rideshare_development
+SELECT rideshare.pg_stat_statements_reset();
+```
+
+Optional:
+```
+\pset recordsep '\n'
+```
+
+```sql
 WITH mydb AS (
     SELECT pg_database.oid AS mydbid
     FROM pg_database
@@ -97,7 +118,7 @@ me AS (
     FROM pg_roles
     WHERE rolname = 'owner'
 )
-SELECT * FROM pg_stat_statements
+SELECT query, calls FROM pg_stat_statements
 JOIN mydb ON dbid = mydb.mydbid
 JOIN me ON userid = me.myuserid;
 ```

@@ -1,14 +1,21 @@
 # Query Planning
-We'll use psql (or run `rails db`).
+We'll use psql (or run `rails db`) going forward.
 
 ```sql
 psql $DATABASE_URL
 ```
 
-Tip to clear: `\! clear`.
+## Psql Quick Tips
+Backslash commands:
+- `\q` to quit!
+- clear: `\! clear`
+- `\x` vertically format output, easier to read
+
 
 ## Section 1: We need a query
-We need a query. Let's get all users that have a certain **first** name. Let's find one from the existing rows.
+We need a query. We just loaded 10 million users.
+
+Let's get all users that have a certain **first** name. Let's find one from the existing rows.
 
 ```sql
 SELECT first_name FROM users ORDER BY id ASC LIMIT 1;

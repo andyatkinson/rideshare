@@ -1,33 +1,36 @@
 # Introduction
 
-## Prerequisites Checklist
-You have Rideshare running:
-- `rideshare_development` database is reachable
-- Migrations ran (`rails db:migrate`)
-- `rails console` works
-- DB data creation scripts ran e.g. `Trip.count` returns 1000 records
+## Intro Checklist
+Let's review what's set up to get started:
+- `rideshare_development` database is reachable (recommended setup is via Docker)
+- Migrations have ran on the instance (`docker compose exec -it app bin/rails db:migrate`)
+- `rails console` works (`docker compose exec -it app bin/rails console`)
+- DB data creation scripts have ran e.g. `Trip.count` (from `rails console`) returns 1000 records
 
-If any of these aren't completed, go back to the main [Workshop README](/docs/workshop/README.md)
+If you're missing any of these, go back to the main [Workshop README](/docs/workshop/README.md) and review the Dev Env setup steps first.
 
 ## Setup
-- Run shell scripts from Rideshare root directory
-- Learn to add psql to your `rails console` command-line tools
-- Create indexes without Active Record
+What we're going to do:
+- Run shell scripts from Rideshare root directory, e.g. `sh docker/setup_docker_workshop.sh`
+- Run SQL commands from the psql client, running within Docker
+- Create indexes without Active Record and learn to use Active Record Migrations (if they're new to you)
 
-## Database Performance
-- Individual query optimization (micro)
-- Macro query optimization, reduce system load
+## Postgres Database Performance
+What we consider performance:
+- We're going to start with individual query optimization, micro analysis
+- We're going to expand to macro analysis of the system, and look to reduce system load
+
+This is only a part of managing critical CPU, Memory, and IOPS resources, but it's a good start.
 
 # Micro Optimization
-- Benefit: Lessen load on server
-- Query planning basics
-- Index design basics
-- Index design more advanced
+- Benefit: Learn to read query execution plans and optimize a query
+- Query planning insights, key data to study
+- Index design basics, supporting a query
+- More advanced index design
 
 # Macro Optimization
-- Benefit: Lessen load, distribute load
+- Benefit: Reduce system load, add headroom, improve reliability, distribute load to more instances
 - Find worst performing queries
-- Move read only queries to a read replica
 
 ## What's Next?
 Visit [1 - Psql Basics](/docs/workshop/01_psql_basics.md) to continue.
