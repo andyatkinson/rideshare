@@ -14,9 +14,12 @@ You'll work in this app/repo, Rideshare. Follow the instructions for the [Docker
 
 For that you'll use Docker & Docker Compose, running `docker compose up` to bring up the app and DB. You'll set up the schema, run migrations, enable `pg_stat_statements`, and populate data.
 
+I recommend working with 3 Terminal windows. I use a terminal multiplexer [Tmux](https://github.com/tmux/tmux/wiki) and Vim for my text editor, but neither are required.
+
 Besides the Dev Env, download/run the docker containers for the multi-DB sections. These are 3 additional instances (db01, db02, db03) that will be used as a primary and replicas. From the Rideshare root:
 ```sh
-sh docker/setup_docker_workshop.sh
+cd docker
+sh setup_docker_workshop.sh
 ```
 
 When everything above is up and running, you should be able to run `docker ps -a` and see something like:

@@ -7,7 +7,7 @@ if [ -e "$conf_file" ]; then
 else
     echo "File '$conf_file' does not exist. Run:"
     echo
-    echo "docker cp db01:/var/lib/postgresql/data/$conf_file ."
+    echo "docker cp db01:/var/lib/postgresql/18/docker/$conf_file ."
     echo
     echo "Then try again."
     exit 1
@@ -23,7 +23,7 @@ sleep 1
 sh run_db_db01_primary.sh
 sh run_db_db02_replica.sh
 echo "Started containers"
-docker ps
+docker ps -a
 sleep 1
 sh pg_hba_reset.sh
 echo "Restart db01 received new file"
@@ -37,7 +37,7 @@ echo "Configure replication_user"
 sh db01_create_replication_user.sh
 
 echo "Copy existing postgresql.conf to db01"
-docker cp postgresql.conf db01:/var/lib/postgresql/data/.
+docker cp postgresql.conf db01:/var/lib/postgresql/18/docker/.
 
 echo "restart db01"
 docker restart db01
