@@ -7,6 +7,8 @@ Let's review what's set up to get started:
 - `rails console` works (`docker compose exec -it app bin/rails console`)
 - DB data creation scripts have ran e.g. `Trip.count` (from `rails console`) returns 1000 records
 - Let's check out the ERD: <https://github.com/andyatkinson/rideshare/blob/main/erd.pdf>
+- Rails + Postgres Architecture #1 <https://github.com/andyatkinson/rideshare/blob/main/docs/rideshare_rails_postgres_architecture_1.svg>
+- Rails + Postgres Architecture #2 <https://github.com/andyatkinson/rideshare/blob/main/docs/rideshare_rails_postgres_architecture_2.svg>
 
 If you're missing any of these, go back to the main [Workshop README](/docs/workshop/README.md) and review the Dev Env setup steps first.
 
