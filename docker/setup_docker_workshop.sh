@@ -1,3 +1,7 @@
+#
+# Everything runs in rideshare-net network:
+# docker ps --format "table {{.Names}}\t{{.Networks}}"
+#
 docker network inspect rideshare-net >/dev/null 2>&1 || docker network create rideshare-net
 
 docker stop db01 >/dev/null 2>&1 || true

@@ -1,6 +1,8 @@
 services:
   db:
     image: postgres:18.4
+    networks:
+      - rideshare-net
     restart: always
     environment:
       POSTGRES_USER: postgres
@@ -22,16 +24,25 @@ services:
     depends_on:
       - db
     environment:
-      DATABASE_URL: postgres://owner:@db:5432/rideshare_development
       RAILS_ENV: development
       RIDESHARE_DB_PASSWORD: HSnDDgFtyW9fyFI
       DB_URL: postgres://postgres:postgres@db:5432/postgres
+      DATABASE_URL: postgres://owner:@db:5432/rideshare_development
+      DATABASE_URL_PRIMARY: postgres://owner:HSnDDgFtyW9fyFI@db01:5432/rideshare_development
+      DATABASE_URL_REPLICA: postgres://owner:HSnDDgFtyW9fyFI@db02:5432/rideshare_development
     ports:
       - "3000:3000"
     volumes:
       - .:/app
       - bundle_cache:/usr/local/bundle
+    networks:
+      - rideshare-net
 
 volumes:
   pg18_rideshare_db_data:
   bundle_cache:
+
+networks:
+  rideshare-net:
+    name: rideshare-net
+    external: true

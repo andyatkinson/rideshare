@@ -1,20 +1,20 @@
 # Active Record Multiple Databases - Part 2
-With multiple databases configured, we're ready to leverage Active Record Multiple Databases.
+Let's further explore Active Record Multiple Databases configuration.
 
-We can move things up to a higher layer of abstraction, by configuring model code, then making different calls to the primary or replica instance by "role".
+We can now connect application code via parent models that are configured to work with a DB. Each DB can have "roles" for writing and reading.
 
-What are roles?
+What are Active Record Multiple Databases roles?
 
-## Section 1 - Roles
+## Section 1 - Active Record DB Roles
 Let's change the main application model that classes inherit from.
 
 We'll specify "writing" and "reading" roles we can connect to.
 
-- Writing role: db01
-- Reading role: db02
+- Writing role: `db01`
+- Reading role: `db02`
 
 ## Section 2 - Configuration
-Edit `app/models/application_record.rb` to uncomment the `connects_to` code.
+Edit `app/models/application_record.rb` and uncomment `connects_to` code.
 
 ```rb
 connects_to database: {
@@ -25,39 +25,51 @@ connects_to database: {
 
 Let's try out that new configuration.
 
-Use the rails console now instead of db:
+To make this work, we set `DATABASE_URL_PRIMARY` and `DATABASE_URL_REPLICA` in docker-compose.yml to connect to db01 and db02.
+
+Use the rails console:
 ```sh
-bin/rails console
+docker compose exec -it app bin/rails console
 ```
 
 From there, we can establish connections to one role or the other.
 
-Try out queries to each:
+Try queries to each. Thanks to replication, these are in sync.
+
+You're running running queries on two different instances, switching at the application level:
 ```rb
 ActiveRecord::Base.connected_to(role: :writing) { Driver.first }
 ActiveRecord::Base.connected_to(role: :reading) { Driver.first }
 ```
 
-⚠️ Let's try an update to the reader. This won't work because it's running in read-only mode.
+To verify that in psql we can use `\conninfo`, but from Active Record we can compare host IPs or check if "in recovery" (which is true for the replica):
 ```rb
-ActiveRecord::Base.connected_to(role: :reading) do
-  Driver.first.update_attribute(:first_name, "Andrew")
-end
+ActiveRecord::Base.connected_to(role: :writing) { ApplicationRecord.connection.select_value("SELECT inet_server_addr()") }
+ActiveRecord::Base.connected_to(role: :reading) { ApplicationRecord.connection.select_value("SELECT inet_server_addr()") }
+```
+```rb
+ActiveRecord::Base.connected_to(role: :reading) { ApplicationRecord.connection.select_value("SELECT pg_is_in_recovery();") }
+ActiveRecord::Base.connected_to(role: :writing) { ApplicationRecord.connection.select_value("SELECT pg_is_in_recovery();") }
 ```
 
-We get an error like:
+⚠️ Let's try an update to the reader. This won't work because it's running in read-only mode.
+```rb
+ActiveRecord::Base.connected_to(role: :reading) { Driver.first.update_attribute(:first_name, "Andrew") }
 ```
-Write query attempted while in readonly mode
+
+We should get an error like this:
+```
+  Driver Load (2.8ms)  SELECT "users".* FROM "users" WHERE "users"."type" = $1 ORDER BY "users"."id" ASC LIMIT $2  [["type", "Driver"], ["LIMIT", 1]]
+(rideshare):19:in `block in <top (required)>': Write query attempted while in readonly mode: UPDATE "users" SET "first_name" = $1, "updated_at" = $2 WHERE "users"."id" = $3 (ActiveRecord::ReadOnlyError)
+        from (rideshare):19:in `<top (required)>'
 ```
 
 Let's send that to the writer:
 ```rb
-ActiveRecord::Base.connected_to(role: :writing) do
-  Driver.first.update_attribute(:first_name, "Andrew")
-end
+ActiveRecord::Base.connected_to(role: :writing) { Driver.first.update_attribute(:first_name, "Andrew") }
 ```
 
-Great! If that committed, in a few moments it will be replicated.
+This works! Great! Once that committed, in a few moments it will be replicated.
 
 Let's make sure it's replicated:
 ```rb
@@ -67,14 +79,13 @@ ActiveRecord::Base.connected_to(role: :reading) { Driver.first.first_name }
 That should have returned "Andrew".
 
 ## Section 3 - Role Switching
-
-What you saw earlier was "manual" role switching.
+What you saw earlier is called "manual role switching" in Active Record lingo.
 
 Active Record also supports [Automatic Role Switching](https://guides.rubyonrails.org/active_record_multiple_databases.html#activating-automatic-role-switching) based on the HTTP request and other factors.
 
-Let's try that out.
-
+Let's try that out. We'd apply these changes:
 ```sh
+docker compose exec -it app bash
 bin/rails g active_record:multi_db
 ```
 
@@ -88,7 +99,6 @@ config.active_record.database_resolver_context = ActiveRecord::Middleware::Datab
 Let's log all queries. We'd like to verify that sending a GET request runs on db02, although we make this change on db01:
 ```sh
 docker exec --user postgres -it db01 psql
-
 ALTER DATABASE rideshare_development SET log_statement = 'all';
 ```
 
@@ -98,30 +108,37 @@ docker logs -f db01
 docker logs -f db02
 ```
 
-Start up the rails server:
-```sh
-bin/rails server
-```
+Make sure rails server is running in Docker.
 
 Send a GET request:
 ```sh
 curl localhost:3000/api/trips
 ```
 
-💥 Boom. We don't see any queries logged on db01, and we see `SELECT * FROM trips;` logged on db02.
+Where did the query run? On the primary (db01) or the replica (db02)? 
 
-The query is automatically sent to the replica. It's working!
+Well, Active Record uses the request verb (GET) to determine it's safe to run this query on the replica.
+
+It *automatically* routes this query to the replica, meaning the DB resources needed for it are on the replica, not the primary.
+
+We don't see any queries logged on db01, and we *do* see `SELECT * FROM trips;` logged on db02!
+
+💥 Boom. You've just scaled part of your workload automatically across multiple Postgres instances.
 
 ## Wrap Up
 We've now seen how to use multiple PostgreSQL databases to distribute the database work, splitting up writes and read queries.
 
-Scaling read traffic separately is part of building High Performance Active Record apps.
+Leveraging replicas for read queries when possible is part of building High Performance Active Record and Postgres apps that distribute work among multiple instances.
 
 Beyond write/read role switching, for even more advanced scalability options, Active Record supports Horizontal Sharding, which has a similar pattern to what you've done here for "shard switching."
 
-## What's Next?
-Let's imagine our application is maturing and we need more capacity.
+[Horizontal Sharding with Active Record](https://guides.rubyonrails.org/active_record_multiple_databases.html#horizontal-sharding)
 
-Let's look at scaling out to multiple databases.
+We can also:
+- Create a `ShardRecord` parent class
+- Manually connect to shards
+- Automatically connect to shards using a "Shard Resolver"
 
-Visit [8 - Active Record Multi-DB Part 1](/docs/workshop/08_active_record_multi-db_prep_part_1.md) to continue.
+This will be beyond the scope of this workshop, but if there is time we can talk through some of the details.
+
+Thank you!

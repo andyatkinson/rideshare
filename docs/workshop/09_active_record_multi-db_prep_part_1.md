@@ -45,7 +45,6 @@ To prepare, let's configure new env vars. These are in the `.env` for Rideshare.
 
 ```sh
 export DATABASE_URL_PRIMARY="postgres://owner:@localhost:54321/rideshare_development"
-
 export DATABASE_URL_REPLICA="postgres://owner:@localhost:54322/rideshare_development"
 ```
 
@@ -83,21 +82,19 @@ With data on both instances, we're ready to move back to the client application,
 ## Section 2: Database config multiple databases
 In this section, we're going to move to a multi-DB configuration.
 
-Copy and paste the contents from the file below, replacing the current contents of `db/config.yml`:
-
+Copy and paste the contents from the file below, replacing the current contents of `config/database.yml`:
 ```sh
-config/database-multiple.sample.yml
+cd rideshare
+mv config/database-multiple.sample.yml config/database.yml
 ```
-
-Replace the contents of `config/database.yml` with the file contents above.
 
 Take note of:
 - These reference the env vars you set earlier: `DATABASE_URL_PRIMARY` and `DATABASE_URL_REPLICA`
-- "Named" configurations for both: `rideshare` (db01) and `rideshare_replica` (db02)
-- Database names are `rideshare_development` for both instances
-- db02 has `replica: true` config
+- "Named" configurations exist for `rideshare` (db01) and `rideshare_replica` (db02)
+- Database names are `rideshare_development` for both instances (identical because of replication)
+- db02 config has `replica: true` because it's a replica
 - `schema_search_path` is set to `rideshare` for both
-- `database_tasks: false` for db02, we don't want to run migrations there
+- `database_tasks: false` for db02, we don't want to run migrations there!
 
 Now we can try these out!
 
