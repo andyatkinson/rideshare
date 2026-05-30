@@ -25,7 +25,7 @@ We need to enable it using a superuser, for the `rideshare_development` database
 
 ⚠️ This part won't be included in the workshop due to time, or can be a self-study opportunity. Presenter will demo.
 
-NOTE: this is for the original RailsConf 2024 version, and for host OS installed Postgres 16. We'll configure the Postgres 18 Docker version for 2026 to have pgss ready to go.
+NOTE: this is for the original RailsConf 2024 version, and for host OS installed Postgres 16. We'll configure the Postgres 18 Docker version for 2026 to have PGSS ready to go.
 ```sh
 vim "/Users/andy/Library/Application Support/Postgres/var-16/postgresql.conf"
 
@@ -73,15 +73,6 @@ Now we're ready to view the PGSS data.
 
 Let's connect in psql and then look for the `rideshare_development` DB:
 
-```sql
-SELECT pg_database.oid
-FROM pg_database
-WHERE pg_database.datname = 'rideshare_development';
-   oid
----------
- 1462704
-```
-
 Filter in `pg_stat_statements` on `dbid` and the `owner` `userid`:
 
 ## Improve psql formatting
@@ -100,11 +91,6 @@ Reset:
 ```sh
 docker container exec -it rideshare-db-1 psql -U postgres -d rideshare_development
 SELECT rideshare.pg_stat_statements_reset();
-```
-
-Optional:
-```
-\pset recordsep '\n'
 ```
 
 ```sql
@@ -154,16 +140,16 @@ LIMIT 1;
 ```
 
 Notes:
-- Get a generic plan on 16+ with `EXPLAIN (GENERIC_PLAN) SELECT * FROM users WHERE first_name = $1;`
 - Re-run the query a few times and observe the growth of "calls" and "rows" (cumulative until reset)
-- We get averages but not percentiles. We can approximate percentiles (may cover that at the end of there is time)
-- High call volume (e.g. calls/minute) is a great focus area!
+- We get averages but not percentiles. We can only approximate percentiles.
+- High call volume (e.g. calls/minute) is a great focus area! We'd need to capture calls each minute.
 - High average rows returned could be an opportunity to fetch smaller results on average, leading to faster execution time
-- We also want to look at the IO impact which we can do using blocks information, but that may be at the end given time
+- We also want to look at the IO impact which we can do using PGSS blocks information (beyond the scope)
+- Get a generic plan on 16+ with `EXPLAIN (GENERIC_PLAN) SELECT * FROM users WHERE first_name = $1;`
 
 NOTE: Important caveat!
 - PGSS only tracks successfully executed queries
-- If queries are cancelled due to exceeding an allowed time (`statement_timeout`) then they will not be tracked in PGSS, we'll have to find those in the `postgresql.log`
+- If queries are cancelled, e.g. due to exceeding allowed time (with a `statement_timeout` set) they will not be tracked. We can find query cancellations in the `postgresql.log`
 
 PGSS tracks all executions of "same group" (with params removed) types of queries.
 We can now at least identify our slowest average execution time queries.
