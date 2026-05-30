@@ -29,5 +29,5 @@ pg_basebackup --host db01 \
 # replaced data directory
 docker start db02
 
-# Review live logs
+# Review live logs, should see "starting streaming WAL..."
 docker logs -f db02

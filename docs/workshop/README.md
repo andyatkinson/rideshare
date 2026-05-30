@@ -39,6 +39,8 @@ a506f74a11d3   rideshare-app   "bash -c 'rm -f tmp/…"   3 hours ago   Up 2 sec
 24a4749934c1   postgres:18.4   "docker-entrypoint.s…"   3 hours ago   Up 3 seconds   0.0.0.0:5432->5432/tcp, [::]:5432->5432/tcp     rideshare-db-1
 ```
 
+A local Postgres installation, for the `psql` client! (on MacOS I recommend [Postgres.app](https://postgresapp.com)).
+
 ## Workshop Structure (Original 2024 RailsConf version)
 - Two 1 hr. halves, with a short break
 - Numbered files from 0 through 9, with "Sections" in the files

@@ -3,7 +3,9 @@ Now we have `db01` and `db02` running (`docker ps`). Let's create the Rideshare 
 
 We'll work with `db01`, which is mapped to local port 54321.
 
-We'll set `DB_URL` and `RIDESHARE_DB_PASSWORD`.
+We'll set env vars `DB_URL` and `RIDESHARE_DB_PASSWORD`. In Rideshare we have a custom schema, user, etc. but for db01 and db02 we will use the superuser as its only a demonstration.
+
+We'll copy all the content in.
 
 ## Section 1: Primary and Secondary DB config
 We use `postgres/postgres`, and connect to `postgres` on port 54321 (db01).
@@ -23,11 +25,12 @@ vim db01_output.log
 Now let's connect as the owner role using a single-DB config:
 ```sh
 export DATABASE_URL="postgres://owner:@localhost:54321/rideshare_development"
+psql $DATABASE_URL
 ```
 
-Verify port 54321 is listed. There should be no tables here: `\dt`. We should see the `rideshare` schema: `\dn`.
+Verify you're connecting to port 54321 (`psql $DATABASE_URL`). There should be no tables here: `\dt`. We should see the `rideshare` schema: `\dn`.
 
-Now we're ready to run migrations on db01:
+Now we're ready to run migrations on db01, creating the schema (We learned about how this is managed earlier):
 ```sh
 rails db:migrate
 ```
