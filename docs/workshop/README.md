@@ -9,20 +9,17 @@ Hello! This is a 2-3 hour workshop on Postgres and Ruby on Rails database featur
 
 The workshop uses content from my book ["High Performance PostgreSQL for Rails"](https://andyatkinson.com/pgrailsbook).
 
-For book references, check Chapters "7 - Query Performance &  8 - Optimized Indexes for Fast Retrieval" for the first half of the workshop (original RailsConf 2024 version).
-
-Check Chapter "13 - Scaling with Replication and Sharding" for the second half of the workshop. (original RailsConf 2024 version)
+For book references, check Chapters "7 - Query Performance &  8 - Optimized Indexes for Fast Retrieval" and Chapter "13 - Scaling with Replication and Sharding."
 
 ## Prerequisites
-You'll need Docker. Ideally you're on Mac OS although other platforms that support Docker may work.
+- You'll need Docker. Ideally you're on Mac OS although other platforms that support Docker may work.
+- A local Postgres for the `psql` client! (on MacOS I recommend [Postgres.app](https://postgresapp.com))
+- You'll work in this app/repo, Rideshare. Follow the instructions for the [Docker Dev Env](https://github.com/andyatkinson/rideshare/blob/main/README.md#docker-dev-env) in the main [Rideshare README.md](/README.md).
+- For Docker & Docker Compose, run `docker compose up` to bring up the app and DB. You'll set up the schema, run migrations, enable `pg_stat_statements`, and populate data.
 
-You'll work in this app/repo, Rideshare. Follow the instructions for the [Docker Dev Env](https://github.com/andyatkinson/rideshare/blob/main/README.md#docker-dev-env) in the main [Rideshare README.md](/README.md).
+I recommend working with 3 Terminal windows. I use a terminal multiplexer [Tmux](https://github.com/tmux/tmux/wiki) and Vim for my text editor, but use whatever you're comfortable with.
 
-For that you'll use Docker & Docker Compose, running `docker compose up` to bring up the app and DB. You'll set up the schema, run migrations, enable `pg_stat_statements`, and populate data.
-
-I recommend working with 3 Terminal windows. I use a terminal multiplexer [Tmux](https://github.com/tmux/tmux/wiki) and Vim for my text editor, but neither are required.
-
-Besides the Dev Env, download/run the docker containers for the multi-DB sections. These are 3 additional instances (db01, db02, db03) that will be used as a primary and replicas. From the Rideshare root:
+Besides the Dev Env, download/run the docker containers for the multi-DB sections. These are 2 additional instances (db01, db02) used. A third db03 is not used in the workshop.
 ```sh
 cd docker
 sh setup_docker_workshop.sh
@@ -39,8 +36,6 @@ a506f74a11d3   rideshare-app   "bash -c 'rm -f tmp/…"   3 hours ago   Up 2 sec
 24a4749934c1   postgres:18.4   "docker-entrypoint.s…"   3 hours ago   Up 3 seconds   0.0.0.0:5432->5432/tcp, [::]:5432->5432/tcp     rideshare-db-1
 ```
 
-A local Postgres installation, for the `psql` client! (on MacOS I recommend [Postgres.app](https://postgresapp.com)).
-
 ## Workshop Structure (Original 2024 RailsConf version)
 - Two 1 hr. halves, with a short break
 - Numbered files from 0 through 9, with "Sections" in the files
@@ -49,9 +44,7 @@ A local Postgres installation, for the `psql` client! (on MacOS I recommend [Pos
 ## Support
 As an independent consultant, your support is very meaningful!
 
-If you'd like to support me financially, please consider [buying my book](https://andyatkinson.com/pgrailsbook) and telling your colleagues about it!
-
-To get a discount, ask me about codes. Usually there are active discounts during events like conferences.
+If you'd like to support me financially, please consider [buying my book](https://andyatkinson.com/pgrailsbook), telling your colleagues about it!
 
 If your team needs help, please visit my [Consulting page](http://andyatkinson.com/consulting), where you can find information about what I offer and how to hire me.
 
