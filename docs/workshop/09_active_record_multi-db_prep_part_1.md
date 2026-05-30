@@ -125,4 +125,4 @@ ALTER DATABASE rideshare_development SET log_statement = 'all';
 ```
 
 ## What's Next?
-Visit [9 - Active Record Multi-DB Part 2](/docs/workshop/09_active_record_multi-db_roles.md) to continue.
+Visit [10 - Active Record Multi-DB Part 2](/docs/workshop/10_active_record_multi-db_roles.md) to continue.

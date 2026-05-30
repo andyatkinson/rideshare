@@ -1,4 +1,4 @@
-# Macro Query Optimization Part 2
+# Macro Query Optimization Part 2 - Multiple Instances
 In this section, we'll begin to work with multiple PostgreSQL instances.
 - [Rails + Postgres Diagram #2 Primary + Replica](https://github.com/andyatkinson/rideshare/blob/main/docs/rideshare_rails_postgres_architecture_2.svg)
 
@@ -230,4 +230,4 @@ Switching gears into schema changes.
 
 How do we manage them and keep all environments consistent?
 
-Visit [10 - Active Record Schema Migrations](/docs/workshop/10_active_record_schema_migrations.md) to continue.
+Visit [09 - Active Record Multi-DB](/docs/workshop/09_active_record_multi-db_prep_part_1.md) to continue.

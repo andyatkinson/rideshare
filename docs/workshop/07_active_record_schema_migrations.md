@@ -78,3 +78,7 @@ end
 ```
 
 Let's review examples of unsafe DDL changes on busy tables, and briefly introduce lock types.
+
+
+## Scaling With Multiple Instances
+Visit [08 - Multiple Instances Macro Overview #2](/docs/workshop/08_macro_overview_part_2.md) to continue.

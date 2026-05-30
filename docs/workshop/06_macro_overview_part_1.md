@@ -155,4 +155,4 @@ PGSS tracks all executions of "same group" (with params removed) types of querie
 We can now at least identify our slowest average execution time queries.
 
 ## What's Next?
-Visit [7 - Macro Query Optimization Part 2](/docs/workshop/07_macro_overview_part_2.md) to continue.
+Visit [07 - Active Record Schema Migrations](/docs/workshop/07_active_record_schema_migrations.md) to continue.
