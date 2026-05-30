@@ -1,5 +1,6 @@
 # Macro Query Optimization Part 2
 In this section, we'll begin to work with multiple PostgreSQL instances.
+- [Rails + Postgres Diagram #2 Primary + Replica](https://github.com/andyatkinson/rideshare/blob/main/docs/rideshare_rails_postgres_architecture_2.svg)
 
 Remember this hierarchy:
 ```
@@ -19,26 +20,11 @@ __________________________________________________________________
 We'll run these using Docker. Start up Docker.
 
 ## Part 1: Docker PostgreSQL Containers
-- Boot up Docker. There may be zero containers running. (`docker ps`)
+- `docker ps -a` (check if db01 and db02 are running)
 - Docker containers are in `docker` directory. Read README: <https://github.com/andyatkinson/rideshare/blob/main/docker/README.md>
-- Create a docker network (`rideshare-net`) the containers can use
-- Run the script to start the `db01` container
-- Run the script to start the `db02` container
-- Verify they're running with `docker ps`
-
-```sh
-# Clean-up from past runs:
-cd docker
-rm postgresql.conf
-rm -rf postgres-docker/
-
-# Starting point:
-docker network create rideshare-net
-sh run_db_db01_primary.sh
-sh run_db_db02_replica.sh
-```
-
-Let's configure them.
+- (created by script) Create a docker network (`rideshare-net`) the containers can use
+- (created by script) Run the script to start the `db01` container
+- (created by script) Run the script to start the `db02` container
 
 ## Part 2: Enabling Physical Replication
 Prep: Remove annoying Docker messages:
@@ -57,28 +43,16 @@ docker ps -a
 Go to the `docker` directory and run `sh reset_docker_instances.sh`.
 
 If you're missing `postgresql.conf`, you'll be prompted to create it.
-
-
 ```sh
 cd rideshare
 cd docker
 sh reset_docker_instances.sh
 ```
 
-Follow the commands to copy down `postgresql.conf`.
-
-Edit the settings `wal_level = logical` and save the changes. The script copies postgresql.conf to db01.
-
-Run the command again to do that:
-
-```sh
-sh reset_docker_instances.sh
-```
-
 Let's walk through the highlights:
 - Replaced `postgresql.conf` config file on db01
 - Created replication slot on primary db01
-- Created `replication_user` user on db01 with a unique password and permissions
+- Created `replication_user` user on db01 with a unique password (scram encryption) and permissions
 - Created `pg_hba.conf` on db01 to allow access
 - Placed password in `.pgpass` and copied to db01 and db02 for `replication_user`
 - Restarted db01
@@ -208,10 +182,19 @@ And on db02, something like this:
 2024-05-01 02:07:18.648 UTC [31] LOG:  started streaming WAL from primary at 0/7000000 on timeline 1
 ```
 
-## Conclusion
-That concludes the basics of setting up a replica instance.
+Now the system identifiers will be the same. db02 is a byte-for-byte-copy of db01.
+```sh
+docker exec --user postgres -it db01 \
+    psql -c "SELECT system_identifier FROM pg_control_system();"
 
-In the next section we'll continue with adding content, then layer on application-level configuration.
+docker exec --user postgres -it db02 \
+    psql -c "SELECT system_identifier FROM pg_control_system();"
+```
+
+## Conclusion
+That concludes the basics of setting up a replica instance. You're now working with two instances, one as a primary, and the other in "ready only" "recovery" mode replaying changes from the primary.
+
+In the next section we'll continue with using more instances, adding application-level configuration.
 
 
 ## Appendix: Debugging and Troubleshooting
