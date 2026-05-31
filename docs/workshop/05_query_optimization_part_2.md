@@ -17,7 +17,6 @@ Let's explore our data and look for opportunities.
 We store different `type` values in this table, so let's `COUNT()` by type for first name "Alphonso".
 
 This finds Drivers and Riders, both stored in `users` table that are named Alphonso.
-
 ```sql
 SELECT type, COUNT(*) FROM users
 WHERE first_name = 'Alphonso'
@@ -54,7 +53,6 @@ How can we make our index more efficient and contain only the needed data?
 
 We can limit our index to just Drivers. Let's drop our current index, and add it back with the same name, but add
 an additional condition. This works just like a `WHERE` clause for a query, but it's a `WHERE` clause for the index.
-
 ```sql
 -- Drop existing index
 DROP INDEX IF EXISTS idx_first_name;
@@ -66,7 +64,6 @@ WHERE (type = 'Driver'); -- <-- we're adding this!!
 Let's run: `\di+ idx_first_name;` again and this time we see the index is half the size at 151MB vs. 301MB.
 
 Let's run our query again:
-
 ```sql
 EXPLAIN (ANALYZE)
 SELECT * FROM users

@@ -1,4 +1,5 @@
 #!/bin/bash
+# Run from Rideshare root
 #
 # Drop slots
 # - my_subscription
@@ -22,9 +23,18 @@ docker exec -it db01 \
   -c "DROP USER IF EXISTS replication_user"
 
 echo "Stop everything if needed"
-docker stop db01 && docker rm db01
-docker stop db02 && docker rm db02
-docker stop db03 && docker rm db03
+docker stop db01 >/dev/null 2>&1 || true
+docker rm -f db01 >/dev/null 2>&1 || true
 
-echo "Removing local postgres-docker directory"
+docker stop db02 >/dev/null 2>&1 || true
+docker rm -f db02 >/dev/null 2>&1 || true
+
+docker stop db03 >/dev/null 2>&1 || true
+docker rm -f db03 >/dev/null 2>&1 || true
+
+echo "Removing docker directories"
 rm -rf postgres-docker
+rm -rf pg18_db01_data
+rm -rf pg18_db02_data
+rm -rf pg18_db03_data
+
