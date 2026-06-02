@@ -1,0 +1,7 @@
+# PostgreSQL
+libpq-dev
+postgresql-client-16
+postgresql-contrib
+
+# Additional packages
+graphviz
