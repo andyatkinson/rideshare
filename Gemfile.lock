@@ -230,7 +230,7 @@ GEM
     psych (5.2.6)
       date
       stringio
-    puma (6.6.1)
+    puma (7.2.1)
       nio4r (~> 2.0)
     racc (1.8.1)
     rack (3.2.6)
@@ -392,7 +392,7 @@ DEPENDENCIES
   pgslice!
   prosopite (~> 1.4)
   pry (~> 0.15)
-  puma (~> 6.4)
+  puma (~> 7.2)
   rails (~> 7.2, >= 7.2)
   rails-erd (~> 1.7)
   rails-pg-extras (~> 5.6)
