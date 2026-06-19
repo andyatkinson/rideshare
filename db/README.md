@@ -178,6 +178,11 @@ Run the tool from your terminal:
 database_consistency
 ```
 
+
+## postgresql-hll and active_hll
+
+Instructions TBD
+
 ## rails-pg-extras
 Specify a custom schema for table_cache_hit
 
