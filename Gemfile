@@ -34,7 +34,7 @@ group :development, :test do
   gem 'benchmark-memory', '~> 0.2'
   gem 'database_consistency', '~> 2.0'
   gem 'dotenv-rails', '~> 3.1' # Manage .env
-  gem 'faraday', '~> 2.13'
+  gem 'faraday', '~> 2.14'
   gem 'json', '~> 2.1'
   gem 'pry', '~> 0.15'
   gem 'rails_best_practices', '~> 1.23'
