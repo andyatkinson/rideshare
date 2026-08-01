@@ -1,11 +1,11 @@
 # Database Setup
 
 ## PostgreSQL Version
-Make sure you're running PostgreSQL 16 or newer.
+Make sure you're running PostgreSQL 18 or newer.
 
 We recommend Postgres.app, however Homebrew is popular. Make sure you've used this formula:
 
-<https://formulae.brew.sh/formula/postgresql@16>
+<https://formulae.brew.sh/formula/postgresql@18>
 
 ## Fake data
 Fake data generated from Ruby, using the Faker gem, may be generated using the following commands.

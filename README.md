@@ -34,10 +34,10 @@ brew install rbenv
 ```
 
 ## PostgreSQL
-PostgreSQL 16 or greater is required. Installation may be via Homebrew, although the recommended method is [Postgres.app](https://postgresapp.com)
+PostgreSQL 18 or greater is required. `db/structure.sql` sets `transaction_timeout`, which was added in PostgreSQL 17, so earlier versions fail to load the schema. Installation may be via Homebrew, although the recommended method is [Postgres.app](https://postgresapp.com)
 
 ### PostgresApp
-- Once installed, from the Menu Bar app, choose "Open Postgres" then click the "+" icon to create a new PostgreSQL 16 server
+- Once installed, from the Menu Bar app, choose "Open Postgres" then click the "+" icon to create a new PostgreSQL 18 server
 
 
 ## Ruby
@@ -68,7 +68,7 @@ bundle install
 ```
 
 ## Rideshare Development Database
-⚠️  This scripts expects PostgreSQL version 16. If you see syntax errors with underscore numbers like `10_000`, it's probably from using an older version that doesn't support that number style.
+⚠️  This scripts expects PostgreSQL version 18. If you see syntax errors with underscore numbers like `10_000`, it's probably from using an older version that doesn't support that number style.
 
 ⚠️   Normally in Ruby on Rails applications, you'd run `bin/rails db:create` to create the development and test databases. Don't do that here. Rideshare uses a custom script.
 

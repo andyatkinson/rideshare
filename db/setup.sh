@@ -13,7 +13,7 @@
 # Later, you'll create the special password file ~/.pgpass, and
 # place your generated password in it.
 #
-# COMPATIBILITY: Requires PostgreSQL 16+
+# COMPATIBILITY: Requires PostgreSQL 18+
 # ENV VARS: [DB_URL, RIDESHARE_DB_PASSWORD]
 
 # Make sure password is set
