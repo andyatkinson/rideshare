@@ -1,0 +1,6 @@
+.git
+.env
+.env.*
+log
+tmp
+docker/*_data

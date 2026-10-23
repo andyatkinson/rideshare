@@ -1,0 +1,62 @@
+[general]
+host = "0.0.0.0"
+port = 6432
+
+# Explicit local-demo credentials for PgDog's PostgreSQL-protocol admin console.
+[admin]
+name = "admin"
+user = "admin"
+password = "pgdog"
+
+[[databases]]
+name = "rideshare_dev_sharded"
+host = "shard_0"
+database_name = "rideshare_dev_sharded"
+role = "primary"
+shard = 0
+
+[[databases]]
+name = "rideshare_dev_sharded"
+host = "shard_1"
+database_name = "rideshare_dev_sharded"
+role = "primary"
+shard = 1
+
+[[sharded_tables]]
+database = "rideshare_dev_sharded"
+name = "trip_positions"
+column = "trip_id"
+data_type = "bigint"
+
+[[databases]]
+name = "rideshare_test_sharded"
+host = "shard_0"
+database_name = "rideshare_test_sharded"
+role = "primary"
+shard = 0
+
+[[databases]]
+name = "rideshare_test_sharded"
+host = "shard_1"
+database_name = "rideshare_test_sharded"
+role = "primary"
+shard = 1
+
+[[sharded_tables]]
+database = "rideshare_test_sharded"
+name = "trip_positions"
+column = "trip_id"
+data_type = "bigint"
+
+# Rails create/drop/test preparation connects to the PostgreSQL maintenance DB.
+[[databases]]
+name = "postgres"
+host = "shard_0"
+role = "primary"
+shard = 0
+
+[[databases]]
+name = "postgres"
+host = "shard_1"
+role = "primary"
+shard = 1

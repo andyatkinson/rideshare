@@ -221,9 +221,8 @@ namespace :data_generators do
 
   desc 'Run ANALYZE on all involved tables'
   task analyze_tables: :environment do |_t, _args|
-    %w[ users trips trip_requests trip_positions
-        locations vehicles vehicle_reservations ].each do |table_name|
-      ActiveRecord::Base.connection.execute("ANALYZE #{table_name}")
+    [User, Trip, TripRequest, TripPosition, Location, Vehicle, VehicleReservation].each do |model|
+      model.connection.execute("ANALYZE #{model.quoted_table_name}")
     end
   end
 
