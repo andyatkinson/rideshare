@@ -1,10 +1,11 @@
-# The test environment is used exclusively to run your application's
-# test suite. You never need to work with it otherwise. Remember that
-# your test database is "scratch space" for the test suite and is wiped
-# and recreated between test runs. Don't rely on the data there!
+# Primary fixtures use rideshare_test. PgDog shares its database with development,
+# so tests check migrations without automatically purging or reloading schemas.
 
 Rails.application.configure do # Settings specified here will take precedence over those in config/application.rb.
   config.cache_classes = false
+
+  # PgDog is shared with development: check migrations without rebuilding it.
+  config.active_record.maintain_test_schema = false
 
   # Do not eager load code on boot. This avoids loading your whole application
   # just for the purpose of running a single test. If you are using a tool that

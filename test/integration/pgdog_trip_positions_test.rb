@@ -2,7 +2,7 @@ require 'test_helper'
 
 class PgdogTripPositionsTest < ActiveSupport::TestCase
   setup do
-    skip 'Set PGDOG_TEST_DATABASE_URL to run the PgDog integration tests' unless ENV['PGDOG_TEST_DATABASE_URL']
+    skip 'Set PGDOG_DATABASE_URL to run the PgDog integration tests' if ENV['PGDOG_DATABASE_URL'].blank?
   end
 
   test 'position writes route through PgDog while trip associations use primary' do

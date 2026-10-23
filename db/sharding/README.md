@@ -2,7 +2,7 @@
 
 This local demo shards only `rideshare.trip_positions` by bigint `trip_id` using
 [PgDog](https://github.com/pgdogdev/pgdog). Two PostgreSQL instances each run the
-same [DDL](../../docker/pgdog/setup.sql) in database `rideshare_sharded`, but own
+same [Rails migrations](../pgdog_migrate) in database `rideshare_dev_sharded`, but own
 different rows. Position samples can grow many times faster than trips because
 each ride records multiple positions.
 
@@ -13,8 +13,8 @@ reads without the key query both shards and combine results.
 flowchart TD
     Client["TripPosition / psql"] --> PgDog["PgDog :6432"]
     PgDog -->|"Write / keyed read: hash trip_id, choose one"| Route{"Shard"}
-    Route --> S0["shard_0 / host :5433<br/>rideshare_sharded<br/>rideshare.trip_positions"]
-    Route --> S1["shard_1 / host :5434<br/>rideshare_sharded<br/>rideshare.trip_positions"]
+    Route --> S0["shard_0 / host :5433<br/>rideshare_dev_sharded<br/>rideshare.trip_positions"]
+    Route --> S1["shard_1 / host :5434<br/>rideshare_dev_sharded<br/>rideshare.trip_positions"]
     PgDog -->|"Unkeyed read: both shards"| S0
     PgDog -->|"Unkeyed read: both shards"| S1
     S0 --> Results["PgDog returns / combines read results"]
@@ -28,6 +28,8 @@ From the repository root:
 
 ```sh
 docker compose -p rideshare-pgdog -f docker-compose.pgdog.yml up -d --build
+docker compose -f docker-compose.yml -f docker-compose.pgdog-app.yml up -d --build
+docker compose -f docker-compose.yml -f docker-compose.pgdog-app.yml exec app bin/rails db:migrate:pgdog
 docker compose -p rideshare-pgdog -f docker-compose.pgdog.yml run --rm --build demo
 ```
 
@@ -35,20 +37,34 @@ The demo checks inserts, keyed reads, physical row placement, trip locality, and
 cross-shard counts, then removes its own rows. All services share a Docker
 network; volumes and ports are separate from the normal development stack.
 
-For the full app and tests, connect the normal stack to the demo network:
+Run tests against the same PgDog database:
 
 ```sh
-docker compose -f docker-compose.yml -f docker-compose.pgdog-app.yml up -d --build
 docker compose -f docker-compose.yml -f docker-compose.pgdog-app.yml exec -e RAILS_ENV=test app bin/rails test
 ```
 
-Tests use `rideshare_test` for primary data and `rideshare_sharded_test` on the
-same two shards for positions. PgDog integration tests run when
-`PGDOG_TEST_DATABASE_URL` is set (the app override sets it); otherwise they skip.
-New volumes initialize both shard databases.
-For existing volumes without the test database, run once per shard:
-`docker compose -p rideshare-pgdog -f docker-compose.pgdog.yml exec shard_0 sh /docker-entrypoint-initdb.d/setup-test.sh`
-(and repeat for `shard_1`).
+Development and test share `rideshare_dev_sharded`, including its rows and schema.
+The primary test database remains `rideshare_test`. Tests check pending migrations
+without automatically rebuilding databases. Run primary setup/migrations separately;
+PgDog integration tests run when `PGDOG_DATABASE_URL` is set.
+
+## Migrations
+
+`config/database.yml` uses `db/pgdog_migrate` for PgDog. Create migrations with
+`bin/rails generate migration AddAccuracyToTripPositions accuracy:float --database pgdog`.
+Use `db:migrate:pgdog` to evolve both shards through the proxy; Rails dumps SQL to
+`db/pgdog_structure.sql`. The initial migration also adopts tables from earlier
+local demo volumes. Bootstrap SQL creates only the namespace.
+
+```sh
+docker compose -f docker-compose.yml -f docker-compose.pgdog-app.yml exec app bin/rails db:migrate:pgdog
+docker compose -f docker-compose.yml -f docker-compose.pgdog-app.yml exec app bin/rails db:rollback:pgdog STEP=1
+docker compose -f docker-compose.yml -f docker-compose.pgdog-app.yml exec app bin/rails db:schema:dump:pgdog
+```
+
+Use development for the shared database's migrations; the test environment's
+existing setting suppresses automatic dumps, so use the explicit dump task there.
+Avoid database-wide reset/purge tasks against the shared development/test database.
 
 For a Rails console (requires existing trips in the normal development DB):
 
@@ -65,12 +81,12 @@ TripPosition.where(trip_id: sample.trip_id, id: sample.id).delete_all
 For SQL through PgDog from the host:
 
 ```sh
-PGPASSWORD=postgres psql -h 127.0.0.1 -p 6432 -U postgres -d rideshare_sharded
+PGPASSWORD=postgres psql -h 127.0.0.1 -p 6432 -U postgres -d rideshare_dev_sharded
 ```
 
 Direct shard connections use the same credentials/database on host ports 5433
 and 5434. Inside Docker use `shard_0:5432`, `shard_1:5432`, and `pgdog:6432`.
-Init scripts run only for empty volumes; apply subsequent DDL to both shards.
+Init scripts run only for empty volumes; use Rails migrations for subsequent DDL.
 Stop with `docker compose -p rideshare-pgdog -f docker-compose.pgdog.yml down`.
 
 ## PgDog admin console
@@ -105,14 +121,11 @@ Rebuild PgDog after changing its baked-in configuration:
 ## Scope
 
 `TripPosition < PgdogRecord` keeps its validations and `belongs_to :trip`.
-`config/database.yml` defines `primary`, `pgdog`, and `pgdog_readonly` connections.
-`PgdogRecord` maps the Rails `writing`/`reading` roles to the PgDog connections;
-both reach the same two primary shards. Use `PgdogRecord.connected_to(role:
-:reading)` for reads. PgDog, not Rails, chooses the physical shard.
-
-Override `PGDOG_DATABASE_URL` and optionally `PGDOG_READING_DATABASE_URL` for
-development; tests use `TEST_DATABASE_URL` and `PGDOG_TEST_DATABASE_URL`. PgDog
-connections disable Rails database tasks; shared DDL is managed directly on shards.
+`config/database.yml` defines `primary` and `pgdog` connections.
+`PgdogRecord` maps both Rails `writing`/`reading` roles to the single `pgdog`
+configuration. Development and test inherit the same `PGDOG_DATABASE_URL`;
+`TEST_DATABASE_URL` configures only the primary test database. Rails migration and
+schema dump tasks are enabled for PgDog. PgDog chooses the physical shard.
 
 Supply `trip_id` for writes and targeted reads/updates. UUID position IDs avoid
 independent bigint sequence collisions; `(trip_id, created_at)` indexes support
@@ -125,7 +138,7 @@ or fail on bigint/UUID comparisons. Transactions on the primary do not cover
 position writes.
 
 Existing position rows need a deliberate backfill/cutover and ID migration;
-the old primary table is not removed automatically. Normal Rails migrations and
-fixtures must not target PgDog. Demo routing samples use synthetic trip IDs and
-skip parent validation; real application writes retain validation.
+the old primary table is not removed automatically. Keep primary migrations and
+fixtures separate from PgDog migrations. Demo routing samples use synthetic trip
+IDs and skip parent validation; real application writes retain validation.
 Passwords and superuser access are for local development; ports bind to loopback.

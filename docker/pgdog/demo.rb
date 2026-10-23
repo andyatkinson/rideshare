@@ -16,7 +16,7 @@ begin
     end
   end
   shards = %w[shard_0 shard_1].map do |host|
-    PG.connect(host: host, dbname: 'rideshare_sharded', user: 'postgres', password: 'postgres')
+    PG.connect(host: host, dbname: 'rideshare_dev_sharded', user: 'postgres', password: 'postgres')
   end
   counts = [0, 0]
   placement = {}

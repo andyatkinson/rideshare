@@ -24,21 +24,12 @@ development:
       idle_in_transaction_session_timeout: 300000
   pgdog: &pgdog
     <<: *default
-    url: <%= ENV.fetch('PGDOG_DATABASE_URL', 'postgresql://postgres:postgres@localhost:6432/rideshare_sharded') %>
-    database_tasks: false
-    schema_dump: false
-  pgdog_readonly:
-    <<: *pgdog
-    url: <%= ENV.fetch('PGDOG_READING_DATABASE_URL', ENV.fetch('PGDOG_DATABASE_URL', 'postgresql://postgres:postgres@localhost:6432/rideshare_sharded')) %>
-    replica: true
+    url: <%= ENV.fetch('PGDOG_DATABASE_URL', 'postgresql://postgres:postgres@localhost:6432/rideshare_dev_sharded') %>
+    migrations_paths: db/pgdog_migrate
 
 test:
   primary:
     <<: *default
     url: <%= ENV.fetch('TEST_DATABASE_URL', 'postgresql://postgres:@localhost/rideshare_test') %>
-  pgdog: &pgdog_test
+  pgdog:
     <<: *pgdog
-    url: <%= ENV.fetch('PGDOG_TEST_DATABASE_URL', 'postgresql://postgres:postgres@localhost:6432/rideshare_sharded_test') %>
-  pgdog_readonly:
-    <<: *pgdog_test
-    replica: true

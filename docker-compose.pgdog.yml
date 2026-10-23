@@ -3,10 +3,10 @@ x-shard: &shard
   image: postgres:18.4
   environment:
     POSTGRES_PASSWORD: postgres
-    POSTGRES_DB: rideshare_sharded
+    POSTGRES_DB: rideshare_dev_sharded
   networks: [pgdog]
   healthcheck:
-    test: ["CMD-SHELL", "pg_isready -U postgres -d rideshare_sharded"]
+    test: ["CMD-SHELL", "pg_isready -U postgres -d rideshare_dev_sharded"]
     interval: 2s
     timeout: 3s
     retries: 30
@@ -18,14 +18,12 @@ services:
     volumes:
       - shard_0_data:/var/lib/postgresql
       - ./docker/pgdog/setup.sql:/docker-entrypoint-initdb.d/setup.sql:ro
-      - ./docker/pgdog/setup-test.sh:/docker-entrypoint-initdb.d/setup-test.sh:ro
   shard_1:
     <<: *shard
     ports: ["127.0.0.1:5434:5432"]
     volumes:
       - shard_1_data:/var/lib/postgresql
       - ./docker/pgdog/setup.sql:/docker-entrypoint-initdb.d/setup.sql:ro
-      - ./docker/pgdog/setup-test.sh:/docker-entrypoint-initdb.d/setup-test.sh:ro
   pgdog:
     build:
       context: .
@@ -42,7 +40,7 @@ services:
       target: pgdog-demo
     environment:
       RAILS_ENV: development
-      PGDOG_DATABASE_URL: postgresql://postgres:postgres@pgdog:6432/rideshare_sharded
+      PGDOG_DATABASE_URL: postgresql://postgres:postgres@pgdog:6432/rideshare_dev_sharded
     networks: [pgdog]
     depends_on:
       pgdog: {condition: service_started}
