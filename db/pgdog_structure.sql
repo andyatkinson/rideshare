@@ -102,4 +102,3 @@ SET search_path TO rideshare;
 
 INSERT INTO "schema_migrations" (version) VALUES
 ('20261023210000');
-
