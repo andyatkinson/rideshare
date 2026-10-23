@@ -9,21 +9,21 @@ user = "admin"
 password = "pgdog"
 
 [[databases]]
-name = "rideshare_positions"
+name = "rideshare_sharded"
 host = "shard_0"
-database_name = "rideshare_positions"
+database_name = "rideshare_sharded"
 role = "primary"
 shard = 0
 
 [[databases]]
-name = "rideshare_positions"
+name = "rideshare_sharded"
 host = "shard_1"
-database_name = "rideshare_positions"
+database_name = "rideshare_sharded"
 role = "primary"
 shard = 1
 
 [[sharded_tables]]
-database = "rideshare_positions"
+database = "rideshare_sharded"
 name = "trip_positions"
 column = "trip_id"
 data_type = "bigint"

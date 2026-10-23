@@ -3,10 +3,10 @@ x-shard: &shard
   image: postgres:18.4
   environment:
     POSTGRES_PASSWORD: postgres
-    POSTGRES_DB: rideshare_positions
+    POSTGRES_DB: rideshare_sharded
   networks: [pgdog]
   healthcheck:
-    test: ["CMD-SHELL", "pg_isready -U postgres -d rideshare_positions"]
+    test: ["CMD-SHELL", "pg_isready -U postgres -d rideshare_sharded"]
     interval: 2s
     timeout: 3s
     retries: 30
@@ -40,7 +40,7 @@ services:
       target: pgdog-demo
     environment:
       RAILS_ENV: development
-      PGDOG_DATABASE_URL: postgresql://postgres:postgres@pgdog:6432/rideshare_positions
+      PGDOG_DATABASE_URL: postgresql://postgres:postgres@pgdog:6432/rideshare_sharded
     networks: [pgdog]
     depends_on:
       pgdog: {condition: service_started}
