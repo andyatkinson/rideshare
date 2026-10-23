@@ -1,14 +1,5 @@
 ENV['RAILS_ENV'] ||= 'test'
 require_relative '../config/environment'
-# Fail on pending migrations without db:test:prepare purging the shared PgDog DB.
-ActiveRecord::Base.configurations.configs_for(env_name: 'test').each do |db_config|
-  next if db_config.name == 'pgdog' && ENV['PGDOG_DATABASE_URL'].blank?
-
-  ActiveRecord::Tasks::DatabaseTasks.with_temporary_pool_for_each(env: 'test', name: db_config.name) do |pool|
-    pending = pool.migration_context.open.pending_migrations
-    raise ActiveRecord::PendingMigrationError.new(pending_migrations: pending) if pending.any?
-  end
-end
 require 'rails/test_help'
 
 class ActiveSupport::TestCase

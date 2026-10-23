@@ -37,16 +37,23 @@ The demo checks inserts, keyed reads, physical row placement, trip locality, and
 cross-shard counts, then removes its own rows. All services share a Docker
 network; volumes and ports are separate from the normal development stack.
 
-Run tests against the same PgDog database:
+Run tests against the separate test databases:
 
 ```sh
 docker compose -f docker-compose.yml -f docker-compose.pgdog-app.yml exec -e RAILS_ENV=test app bin/rails test
 ```
 
-Development and test share `rideshare_dev_sharded`, including its rows and schema.
-The primary test database remains `rideshare_test`. Tests check pending migrations
-without automatically rebuilding databases. Run primary setup/migrations separately;
-PgDog integration tests run when `PGDOG_DATABASE_URL` is set.
+| Rails environment | Primary database | PgDog database |
+| --- | --- | --- |
+| development | `rideshare_development` | `rideshare_dev_sharded` |
+| test | `rideshare_test` | `rideshare_test_sharded` |
+
+Both PgDog databases live on the same two shard instances. Each environment maps
+both Rails roles to one `pgdog` connection; there are no replica configurations.
+Data generators use development databases by default. Tests use separate data and
+Rails' normal schema maintenance. PgDog purge resets the configured schema because
+pooled backend connections prevent dropping an active database. PgDog must be
+running for the test suite.
 
 ## Migrations
 
@@ -62,9 +69,11 @@ docker compose -f docker-compose.yml -f docker-compose.pgdog-app.yml exec app bi
 docker compose -f docker-compose.yml -f docker-compose.pgdog-app.yml exec app bin/rails db:schema:dump:pgdog
 ```
 
-Use development for the shared database's migrations; the test environment's
-existing setting suppresses automatic dumps, so use the explicit dump task there.
-Avoid database-wide reset/purge tasks against the shared development/test database.
+Run `RAILS_ENV=test bin/rails db:migrate:pgdog` for test migrations. The test
+environment suppresses automatic dumps; use the explicit dump task there.
+Bootstrap creates both database namespaces; on existing volumes, apply
+`docker/pgdog/setup.sql` to each shard's development database to create a missing
+test database.
 
 For a Rails console (requires existing trips in the normal development DB):
 
@@ -123,9 +132,10 @@ Rebuild PgDog after changing its baked-in configuration:
 `TripPosition < PgdogRecord` keeps its validations and `belongs_to :trip`.
 `config/database.yml` defines `primary` and `pgdog` connections.
 `PgdogRecord` maps both Rails `writing`/`reading` roles to the single `pgdog`
-configuration. Development and test inherit the same `PGDOG_DATABASE_URL`;
-`TEST_DATABASE_URL` configures only the primary test database. Rails migration and
-schema dump tasks are enabled for PgDog. PgDog chooses the physical shard.
+configuration in their respective environment. `PGDOG_DATABASE_URL` configures
+development; `PGDOG_TEST_DATABASE_URL` configures test. `TEST_DATABASE_URL` sets
+the primary test database. Both PgDog connections use `db/pgdog_migrate`, with
+migration and schema dump tasks enabled. PgDog chooses the physical shard.
 
 Supply `trip_id` for writes and targeted reads/updates. UUID position IDs avoid
 independent bigint sequence collisions; `(trip_id, created_at)` indexes support

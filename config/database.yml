@@ -33,3 +33,4 @@ test:
     url: <%= ENV.fetch('TEST_DATABASE_URL', 'postgresql://postgres:@localhost/rideshare_test') %>
   pgdog:
     <<: *pgdog
+    url: <%= ENV.fetch('PGDOG_TEST_DATABASE_URL', 'postgresql://postgres:postgres@localhost:6432/rideshare_test_sharded') %>

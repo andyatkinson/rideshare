@@ -1,10 +1,6 @@
 require 'test_helper'
 
 class PgdogTripPositionsTest < ActiveSupport::TestCase
-  setup do
-    skip 'Set PGDOG_DATABASE_URL to run the PgDog integration tests' if ENV['PGDOG_DATABASE_URL'].blank?
-  end
-
   test 'position writes route through PgDog while trip associations use primary' do
     trip = trips(:completed_trip)
     position = trip.trip_positions.create!(position: '(1,2)')
