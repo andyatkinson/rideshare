@@ -110,7 +110,7 @@ GEM
     coderay (1.1.3)
     concurrent-ruby (1.3.8)
     connection_pool (3.0.2)
-    crass (1.0.7)
+    crass (1.0.8)
     csv (3.3.5)
     database_consistency (2.0.8)
       activerecord (>= 3.2)
