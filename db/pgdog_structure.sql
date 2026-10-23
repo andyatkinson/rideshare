@@ -101,5 +101,4 @@ CREATE INDEX trip_positions_trip_id_created_at_idx ON rideshare.trip_positions U
 SET search_path TO rideshare;
 
 INSERT INTO "schema_migrations" (version) VALUES
-('20261023220000'),
 ('20261023210000');

@@ -55,13 +55,23 @@ Rails' normal schema maintenance. PgDog purge resets the configured schema becau
 pooled backend connections prevent dropping an active database. PgDog must be
 running for the test suite.
 
+Populate development data (requires the normal development database setup):
+
+```sh
+docker compose -f docker-compose.yml -f docker-compose.pgdog-app.yml exec app bin/rails data_generators:generate_all
+```
+
+Users, trips and related records go to the primary development database;
+position history goes through PgDog to the development shards. The task analyzes
+each table using its model's connection.
+
 ## Migrations
 
 `config/database.yml` uses `db/pgdog_migrate` for PgDog. Create migrations with
 `bin/rails generate migration AddAccuracyToTripPositions accuracy:float --database pgdog`.
 Use `db:migrate:pgdog` to evolve both shards through the proxy; Rails dumps SQL to
-`db/pgdog_structure.sql`. The initial migration also adopts tables from earlier
-local demo volumes. Bootstrap SQL creates only the namespace.
+`db/pgdog_structure.sql`. The initial migration creates UUIDv7 position IDs. Bootstrap SQL creates only the
+namespaces.
 
 ```sh
 docker compose -f docker-compose.yml -f docker-compose.pgdog-app.yml exec app bin/rails db:migrate:pgdog
@@ -139,7 +149,7 @@ migration and schema dump tasks enabled. PgDog chooses the physical shard.
 
 New UUID keys and UUID value columns default to PostgreSQL 18 `uuidv7()`.
 Explicit defaults (including `nil`) are preserved; UUID references do not generate
-IDs. Existing UUID values are unchanged by the default migration.
+IDs.
 
 Supply `trip_id` for writes and targeted reads/updates. UUID position IDs avoid
 independent bigint sequence collisions; `(trip_id, created_at)` indexes support
