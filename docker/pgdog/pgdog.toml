@@ -2,6 +2,12 @@
 host = "0.0.0.0"
 port = 6432
 
+# Explicit local-demo credentials for PgDog's PostgreSQL-protocol admin console.
+[admin]
+name = "admin"
+user = "admin"
+password = "pgdog"
+
 [[databases]]
 name = "rideshare_positions"
 host = "shard_0"

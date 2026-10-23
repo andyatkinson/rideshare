@@ -4,6 +4,7 @@ This standalone local experiment uses PgDog v0.1.62 and two PostgreSQL 18.4
 primaries. Each runs the exact same `docker/pgdog/setup.sql`, but owns a different subset of
 `rideshare.trip_positions`. All services share a Compose network. It uses separate
 volumes and ports from the normal development stack.
+See [PgDog admin console](#pgdog-admin-console) for credentials and admin commands.
 
 ## Routing writes and reads
 
@@ -128,6 +129,57 @@ Stop without removing data:
 ```sh
 docker compose -p rideshare-pgdog -f docker-compose.pgdog.yml down
 ```
+
+## PgDog admin console
+
+PgDog provides a PostgreSQL-protocol admin console, similar to PgBouncer's admin
+database. Use `psql` for admin commands. See the upstream
+[administration guide](https://docs.pgdog.dev/administration/) and
+[admin credentials configuration](https://docs.pgdog.dev/configuration/pgdog.toml/admin/).
+
+By default the admin database and user are both `admin`, but the password is
+randomly generated, restricting access until explicitly configured. This demo
+sets `[admin]` in `docker/pgdog/pgdog.toml` to database `admin`, user `admin`, and
+password `pgdog`. These are separate from the `postgres` application credentials
+in `users.toml`; no PostgreSQL admin role/database needs to be created on shards.
+
+After changing the baked-in configuration, rebuild/recreate PgDog:
+
+```sh
+docker compose -p rideshare-pgdog -f docker-compose.pgdog.yml up -d --build pgdog
+```
+
+Open an interactive admin session using the PostgreSQL client already available
+in the shard container:
+
+```sh
+docker compose -p rideshare-pgdog -f docker-compose.pgdog.yml exec -e PGPASSWORD=pgdog shard_0 psql -X -h pgdog -p 6432 -U admin -d admin
+```
+
+Or connect from the host through the loopback port:
+
+```sh
+PGPASSWORD=pgdog psql -X -h 127.0.0.1 -p 6432 -U admin -d admin
+```
+
+Useful commands:
+
+```sql
+SHOW POOLS;
+SHOW STATS;
+SHOW SERVERS;
+SHOW CLIENTS;
+```
+
+For a noninteractive reachability check:
+
+```sh
+docker compose -p rideshare-pgdog -f docker-compose.pgdog.yml exec -T -e PGPASSWORD=pgdog shard_0 psql -X -v ON_ERROR_STOP=1 -h pgdog -p 6432 -U admin -d admin -c 'SHOW POOLS'
+```
+
+Verified against the running demo: all four commands above succeed from Docker;
+`SHOW POOLS` also succeeds from the host and reports two healthy primary pools,
+for `shard_0` and `shard_1` in transaction pooling mode.
 
 ## Verified locally
 
