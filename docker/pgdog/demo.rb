@@ -2,13 +2,15 @@
 # both backends to prove each row exists on exactly one shard.
 require 'pg'
 Rails.logger.level = Logger::WARN
-model = PgdogDemo::TripPosition
+model = TripPosition
 rows = []
 shards = []
 begin
   (1..32).each do |trip_id|
     2.times do
-      row = model.create!(trip_id: trip_id, position: '(1,2)')
+      # Synthetic IDs isolate routing from parent-trip validation.
+      row = model.new(trip_id: trip_id, position: '(1,2)')
+      row.save!(validate: false)
       rows << row
       raise "Routed lookup failed" unless model.for_trip(trip_id).find(row.id).trip_id == trip_id
     end

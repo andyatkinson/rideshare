@@ -18,12 +18,14 @@ services:
     volumes:
       - shard_0_data:/var/lib/postgresql
       - ./docker/pgdog/setup.sql:/docker-entrypoint-initdb.d/setup.sql:ro
+      - ./docker/pgdog/setup-test.sh:/docker-entrypoint-initdb.d/setup-test.sh:ro
   shard_1:
     <<: *shard
     ports: ["127.0.0.1:5434:5432"]
     volumes:
       - shard_1_data:/var/lib/postgresql
       - ./docker/pgdog/setup.sql:/docker-entrypoint-initdb.d/setup.sql:ro
+      - ./docker/pgdog/setup-test.sh:/docker-entrypoint-initdb.d/setup-test.sh:ro
   pgdog:
     build:
       context: .

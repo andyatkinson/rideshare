@@ -1,0 +1,17 @@
+# Start the standalone PgDog stack first, then layer this onto docker-compose.yml.
+services:
+  db:
+    networks: [rideshare-net, pgdog]
+  app:
+    build:
+      target: pgdog-demo
+    networks: [rideshare-net, pgdog]
+    environment:
+      PGDOG_DATABASE_URL: postgresql://postgres:postgres@pgdog:6432/rideshare_sharded
+      TEST_DATABASE_URL: postgresql://postgres:postgres@db:5432/rideshare_test
+      PGDOG_TEST_DATABASE_URL: postgresql://postgres:postgres@pgdog:6432/rideshare_sharded_test
+      PGPASSWORD: ${RIDESHARE_DB_PASSWORD:-HSnDDgFtyW9fyFI}
+networks:
+  pgdog:
+    external: true
+    name: rideshare-pgdog_pgdog

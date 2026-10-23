@@ -3,3 +3,8 @@
 name = "postgres"
 database = "rideshare_sharded"
 password = "postgres"
+
+[[users]]
+name = "postgres"
+database = "rideshare_sharded_test"
+password = "postgres"

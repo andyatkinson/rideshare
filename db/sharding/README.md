@@ -11,7 +11,7 @@ reads without the key query both shards and combine results.
 
 ```mermaid
 flowchart TD
-    Client["Rails / psql"] --> PgDog["PgDog :6432"]
+    Client["TripPosition / psql"] --> PgDog["PgDog :6432"]
     PgDog -->|"Write / keyed read: hash trip_id, choose one"| Route{"Shard"}
     Route --> S0["shard_0 / host :5433<br/>rideshare_sharded<br/>rideshare.trip_positions"]
     Route --> S1["shard_1 / host :5434<br/>rideshare_sharded<br/>rideshare.trip_positions"]
@@ -35,16 +35,31 @@ The demo checks inserts, keyed reads, physical row placement, trip locality, and
 cross-shard counts, then removes its own rows. All services share a Docker
 network; volumes and ports are separate from the normal development stack.
 
-For a Rails console:
+For the full app and tests, connect the normal stack to the demo network:
 
 ```sh
-docker compose -p rideshare-pgdog -f docker-compose.pgdog.yml run --rm demo bin/rails console
+docker compose -f docker-compose.yml -f docker-compose.pgdog-app.yml up -d --build
+docker compose -f docker-compose.yml -f docker-compose.pgdog-app.yml exec -e RAILS_ENV=test app bin/rails test
+```
+
+Tests use `rideshare_test` for primary data and `rideshare_sharded_test` on the
+same two shards for positions. PgDog integration tests run when
+`PGDOG_TEST_DATABASE_URL` is set (the app override sets it); otherwise they skip.
+New volumes initialize both shard databases.
+For existing volumes without the test database, run once per shard:
+`docker compose -p rideshare-pgdog -f docker-compose.pgdog.yml exec shard_0 sh /docker-entrypoint-initdb.d/setup-test.sh`
+(and repeat for `shard_1`).
+
+For a Rails console (requires existing trips in the normal development DB):
+
+```sh
+docker compose -f docker-compose.yml -f docker-compose.pgdog-app.yml exec app bin/rails console
 ```
 
 ```ruby
-sample = PgdogDemo::TripPosition.create!(trip_id: 42, position: '(1,2)')
-PgdogDemo::TripPosition.for_trip(42).to_a
-PgdogDemo::TripPosition.where(trip_id: 42, id: sample.id).delete_all
+sample = Trip.first!.trip_positions.create!(position: '(1,2)')
+TripPosition.for_trip(sample.trip_id).to_a
+TripPosition.where(trip_id: sample.trip_id, id: sample.id).delete_all
 ```
 
 For SQL through PgDog from the host:
@@ -89,12 +104,28 @@ Rebuild PgDog after changing its baked-in configuration:
 
 ## Scope
 
-`PgdogDemo::TripPosition` uses its own connection; the original models/API remain
-unchanged. Supply `trip_id` for writes and targeted reads/updates. UUID position
-IDs avoid independent bigint sequence collisions; `(trip_id, created_at)` indexes
-support timeline reads. Shards have no foreign key to the original `trips` table.
+`TripPosition < PgdogRecord` keeps its validations and `belongs_to :trip`.
+`config/database.yml` defines `primary`, `pgdog`, and `pgdog_readonly` connections.
+`PgdogRecord` maps the Rails `writing`/`reading` roles to the PgDog connections;
+both reach the same two primary shards. Use `PgdogRecord.connected_to(role:
+:reading)` for reads. PgDog, not Rails, chooses the physical shard.
 
-Real integration requires a backfill/cutover, an ID migration strategy, and
-application handling of parent existence and writes across separate databases.
-Normal Rails migrations/fixtures must not target this single-table demo.
+Override `PGDOG_DATABASE_URL` and optionally `PGDOG_READING_DATABASE_URL` for
+development; tests use `TEST_DATABASE_URL` and `PGDOG_TEST_DATABASE_URL`. PgDog
+connections disable Rails database tasks; shared DDL is managed directly on shards.
+
+Supply `trip_id` for writes and targeted reads/updates. UUID position IDs avoid
+independent bigint sequence collisions; `(trip_id, created_at)` indexes support
+timeline reads. There is no foreign key to the original `trips` table. Ordinary
+association reads use separate queries; SQL joins across these databases are not
+supported. Use `preload(:trip_positions)` for separate association queries;
+`includes` with position conditions can turn into an unsupported join. Joins
+starting from `Trip` still query the old primary table and can return stale data
+or fail on bigint/UUID comparisons. Transactions on the primary do not cover
+position writes.
+
+Existing position rows need a deliberate backfill/cutover and ID migration;
+the old primary table is not removed automatically. Normal Rails migrations and
+fixtures must not target PgDog. Demo routing samples use synthetic trip IDs and
+skip parent validation; real application writes retain validation.
 Passwords and superuser access are for local development; ports bind to loopback.

@@ -1,6 +1,6 @@
 -- This exact DDL is applied independently to both shards on first startup.
 CREATE SCHEMA rideshare;
-ALTER ROLE postgres IN DATABASE rideshare_sharded SET search_path TO rideshare;
+SELECT format('ALTER ROLE postgres IN DATABASE %I SET search_path TO rideshare', current_database()) \gexec
 
 CREATE TABLE rideshare.trip_positions (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
