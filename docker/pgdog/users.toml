@@ -1,0 +1,5 @@
+# Local demo credentials only.
+[[users]]
+name = "postgres"
+database = "rideshare_positions"
+password = "postgres"

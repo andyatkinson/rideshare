@@ -1,0 +1,53 @@
+# Standalone demo: docker compose -p rideshare-pgdog -f docker-compose.pgdog.yml up -d --build
+x-shard: &shard
+  image: postgres:18.4
+  environment:
+    POSTGRES_PASSWORD: postgres
+    POSTGRES_DB: rideshare_positions
+  networks: [pgdog]
+  healthcheck:
+    test: ["CMD-SHELL", "pg_isready -U postgres -d rideshare_positions"]
+    interval: 2s
+    timeout: 3s
+    retries: 30
+
+services:
+  shard_0:
+    <<: *shard
+    ports: ["127.0.0.1:5433:5432"]
+    volumes:
+      - shard_0_data:/var/lib/postgresql
+      - ./docker/pgdog/setup.sql:/docker-entrypoint-initdb.d/setup.sql:ro
+  shard_1:
+    <<: *shard
+    ports: ["127.0.0.1:5434:5432"]
+    volumes:
+      - shard_1_data:/var/lib/postgresql
+      - ./docker/pgdog/setup.sql:/docker-entrypoint-initdb.d/setup.sql:ro
+  pgdog:
+    build:
+      context: .
+      target: pgdog
+    ports: ["127.0.0.1:6432:6432"]
+    networks: [pgdog]
+    depends_on:
+      shard_0: {condition: service_healthy}
+      shard_1: {condition: service_healthy}
+  demo:
+    profiles: [tools]
+    build:
+      context: .
+      target: pgdog-demo
+    environment:
+      RAILS_ENV: development
+      PGDOG_DATABASE_URL: postgresql://postgres:postgres@pgdog:6432/rideshare_positions
+    networks: [pgdog]
+    depends_on:
+      pgdog: {condition: service_started}
+    command: ["bin/rails", "runner", "docker/pgdog/demo.rb"]
+
+volumes:
+  shard_0_data:
+  shard_1_data:
+networks:
+  pgdog:

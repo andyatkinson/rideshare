@@ -1,0 +1,23 @@
+[general]
+host = "0.0.0.0"
+port = 6432
+
+[[databases]]
+name = "rideshare_positions"
+host = "shard_0"
+database_name = "rideshare_positions"
+role = "primary"
+shard = 0
+
+[[databases]]
+name = "rideshare_positions"
+host = "shard_1"
+database_name = "rideshare_positions"
+role = "primary"
+shard = 1
+
+[[sharded_tables]]
+database = "rideshare_positions"
+name = "trip_positions"
+column = "trip_id"
+data_type = "bigint"

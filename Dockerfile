@@ -1,4 +1,7 @@
-# syntax=docker/dockerfile:1
+# PgDog runs as its own service, with its own pinned runtime image.
+ARG PGDOG_IMAGE=ghcr.io/pgdogdev/pgdog:v0.1.62
+FROM ${PGDOG_IMAGE} AS pgdog
+COPY docker/pgdog/pgdog.toml docker/pgdog/users.toml /pgdog/
 
 FROM ruby:3.2.2-bookworm AS base
 
@@ -28,5 +31,11 @@ COPY Gemfile Gemfile.lock ./
 RUN bundle config set without 'development test' && \
     bundle install --jobs=4 --retry=3
 
-# ---- App code ----
+# Optional Rails client for the standalone sharding demonstration.
+FROM base AS pgdog-demo
+RUN bundle config unset --local without && bundle install --jobs=4 --retry=3
+COPY . .
+
+# Preserve the normal application as the default build target.
+FROM base AS app
 COPY . .
