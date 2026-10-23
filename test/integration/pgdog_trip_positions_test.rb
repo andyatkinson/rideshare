@@ -17,6 +17,41 @@ class PgdogTripPositionsTest < ActiveSupport::TestCase
     TripPosition.where(trip_id: trip.id, id: position.id).delete_all if position&.persisted?
   end
 
+  test 'trip filtering uses two SELECTs because joining trips on PgDog fails' do
+    completed = trips(:completed_trip)
+    rated = trips(:rated_trip)
+    incomplete = trips(:incomplete_trip)
+    positions = [completed, rated, incomplete].map do |trip|
+      trip.trip_positions.create!(position: '(1,2)')
+    end
+
+    # Isolate the deliberately invalid SQL from Rails' fixture transactions.
+    join_sql = TripPosition.joins(:trip).where(trip_id: completed.id).to_sql
+    PG.connect(PgdogRecord.connection_db_config.url) do |connection|
+      error = assert_raises(PG::UndefinedTable) { connection.exec(join_sql) }
+      assert_match(/relation "trips" does not exist/, error.message)
+    end
+
+    queries = []
+    subscriber = lambda do |*args|
+      event = args.last
+      queries << event[:sql] if event[:sql].match?(/\ASELECT .*FROM "(?:trips|trip_positions)"/m)
+    end
+    result = ActiveSupport::Notifications.subscribed(subscriber, 'sql.active_record') do
+      TripPosition.for_trips(Trip.completed.where(id: [completed.id, rated.id, incomplete.id])).to_a
+    end
+
+    assert_equal positions.first(2).map(&:id), result.map(&:id)
+    assert_equal 2, queries.size
+    assert_match(/FROM "trips"/, queries.first)
+    assert_match(/FROM "trip_positions"/, queries.last)
+    assert_no_match(/JOIN|SELECT.*SELECT/m, queries.last)
+  ensure
+    positions&.each do |position|
+      TripPosition.where(trip_id: position.trip_id, id: position.id).delete_all
+    end
+  end
+
   test 'reading role rejects position writes' do
     PgdogRecord.connected_to(role: :reading) do
       assert_raises(ActiveRecord::ReadOnlyError) do

@@ -151,6 +151,19 @@ starting from `Trip` still query the old primary table and can return stale data
 or fail on bigint/UUID comparisons. Transactions on the primary do not cover
 position writes.
 
+Filter positions by trips with two queries:
+
+```ruby
+trips = Trip.completed.where(driver_id: driver.id)
+positions = TripPosition.for_trips(trips).to_a
+# Equivalent: trip_ids = trips.pluck(:id); TripPosition.where(trip_id: trip_ids)
+```
+
+`pluck` executes on the primary; the materialized IDs become an `IN` filter on
+PgDog. Passing `trips.select(:id)` directly would generate a cross-database SQL
+subquery. Paginate or batch the trip selection for large results. These queries
+do not share a transaction snapshot across databases.
+
 Existing position rows need a deliberate backfill/cutover and ID migration;
 the old primary table is not removed automatically. Keep primary migrations and
 fixtures separate from PgDog migrations. Demo routing samples use synthetic trip
