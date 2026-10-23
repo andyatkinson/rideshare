@@ -7,7 +7,7 @@ class PgdogTripPositionsTest < ActiveSupport::TestCase
 
     assert_equal trip, position.reload.trip
     assert_includes trip.trip_positions.reload.map(&:id), position.id
-    assert_match(/\A[0-9a-f-]{36}\z/, position.id)
+    assert_match(/\A[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\z/, position.id)
     assert_includes Trip.preload(:trip_positions).find(trip.id).trip_positions.map(&:id), position.id
 
     PgdogRecord.connected_to(role: :reading) do

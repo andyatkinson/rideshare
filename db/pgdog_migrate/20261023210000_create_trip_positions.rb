@@ -1,7 +1,7 @@
 class CreateTripPositions < ActiveRecord::Migration[7.2]
   def change
     # Adopt the identical table from earlier demo volumes without losing rows.
-    create_table :trip_positions, id: :uuid, default: -> { 'gen_random_uuid()' }, if_not_exists: true do |t|
+    create_table :trip_positions, id: :uuid, if_not_exists: true do |t|
       t.point :position, null: false
       t.bigint :trip_id, null: false
       t.timestamps

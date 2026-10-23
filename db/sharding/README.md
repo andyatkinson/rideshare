@@ -137,6 +137,10 @@ development; `PGDOG_TEST_DATABASE_URL` configures test. `TEST_DATABASE_URL` sets
 the primary test database. Both PgDog connections use `db/pgdog_migrate`, with
 migration and schema dump tasks enabled. PgDog chooses the physical shard.
 
+New UUID keys and UUID value columns default to PostgreSQL 18 `uuidv7()`.
+Explicit defaults (including `nil`) are preserved; UUID references do not generate
+IDs. Existing UUID values are unchanged by the default migration.
+
 Supply `trip_id` for writes and targeted reads/updates. UUID position IDs avoid
 independent bigint sequence collisions; `(trip_id, created_at)` indexes support
 timeline reads. There is no foreign key to the original `trips` table. Ordinary

@@ -12,6 +12,7 @@ begin
       row = model.new(trip_id: trip_id, position: '(1,2)')
       row.save!(validate: false)
       rows << row
+      raise "Expected a PostgreSQL UUIDv7 ID" unless row.id[14] == '7'
       raise "Routed lookup failed" unless model.for_trip(trip_id).find(row.id).trip_id == trip_id
     end
   end
