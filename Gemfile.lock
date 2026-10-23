@@ -154,7 +154,7 @@ GEM
       rake (~> 13.3)
     google-protobuf (4.36.2-x86_64-linux-gnu)
       bigdecimal
-      rake (>= 13)
+      rake (~> 13.3)
     i18n (1.15.2)
       concurrent-ruby (~> 1.0)
     importmap-rails (1.2.3)
