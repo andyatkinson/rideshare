@@ -73,11 +73,11 @@
     <form method="dialog"><button>Close</button></form>
     <h2 id="instructions-title">Run the simulator</h2>
     <p>From the repository directory, run in another terminal:</p>
-    <pre>docker compose exec -e SIM_SAMPLES=13 -e SIM_INTERVAL=30 app sh -c 'export PGPASSWORD="$RIDESHARE_DB_PASSWORD"; bin/rails "simulate:app_activity[100]"'</pre>
+    <pre>docker compose exec -e SIM_SAMPLES=37 -e SIM_INTERVAL=10 app sh -c 'export PGPASSWORD="$RIDESHARE_DB_PASSWORD"; bin/rails "simulate:app_activity[100]"'</pre>
     <p>For Rails running directly on your machine:</p>
-    <pre>SIM_SAMPLES=13 SIM_INTERVAL=30 bin/rails 'simulate:app_activity[100]'</pre>
-    <p class="muted">Click Run 10 trips to launch a background Rails task on this server. Five drivers share up to two concurrent rides; 10 six-minute trips take about 30 minutes. Repeated clicks cannot start overlapping runs. Logs are in log/simulator.log.
-    </p><p class="muted">Default rides last six minutes: 13 positions, including pickup and arrival, sampled every 30 seconds. For a quick preview use SIM_INTERVAL=0.5. Positions follow saved street geometry; timing is synthetic.</p>
+    <pre>SIM_SAMPLES=37 SIM_INTERVAL=10 bin/rails 'simulate:app_activity[100]'</pre>
+    <p class="muted">Click Run 10 trips to launch a background Rails task on this server. Five drivers share up to two concurrent rides in opposite directions; 10 six-minute trips take about 30 minutes. Repeated clicks cannot start overlapping runs. Logs are in log/simulator.log.
+    </p><p class="muted">Default rides last six minutes: 37 positions, including pickup and arrival, sampled every 10 seconds. For a quick preview use SIM_INTERVAL=0.5. Positions follow saved street geometry; timing is synthetic.</p>
     <p class="muted">Click a completed trip number to inspect its recorded pins; Back to live restores active trips. Completed trips disappear from the live map automatically.</p>
     <p class="muted">Use the same development database as this server. At most two rides run concurrently; positions update during each ride. Yellow drivers are idle; green drivers are on a trip.</p>
     <p class="muted">The page polls every second (five seconds in the background). Counts cover the whole database; growth is measured since opening this page. Actor and location pools are reused while requests, trips and positions accumulate.</p>
@@ -130,6 +130,11 @@
           const color = history ? (tripColors.get(trip.id) || '#1d4ed8') : colorForTrip(trip.id);
           const left = !history && palette.indexOf(color) % 2 === 0;
           const positions = trip.positions || [];
+          if (positions.length > 1) {
+            L.polyline(positions.map(position => [position.lat, position.lng]), {
+              color, weight: 3, opacity: 0.75, interactive: false
+            }).addTo(pins);
+          }
           positions.forEach((position, index) => {
             const label = document.createElement('span');
             label.textContent = `Trip #${trip.id} · sample ${index + 1} · ${new Date(position.recorded_at).toLocaleTimeString()}`;

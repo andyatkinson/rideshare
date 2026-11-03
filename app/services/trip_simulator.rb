@@ -4,7 +4,7 @@ class TripSimulator
   class CapacityReached < StandardError; end
   class NoAvailableRider < StandardError; end
 
-  def initialize(drivers:, riders:, locations:, samples: 13, interval: 30,
+  def initialize(drivers:, riders:, locations:, samples: 37, interval: 10,
                  random: Random.new, sleeper: Kernel.method(:sleep), on_event: ->(*) {})
     @driver_ids = drivers.map(&:id)
     @rider_ids = riders.map(&:id)
@@ -58,7 +58,8 @@ class TripSimulator
       # Serialize only assignment, never the journey. Also covers other CLI runs.
       TripRequest.connection.execute('SELECT pg_advisory_xact_lock(72493021)')
       driver_ids = Driver.where('email ~ ?', '^sim-driver-[0-9]+@rideshare[.]test$').pluck(:id) | @driver_ids
-      if Trip.where(driver_id: driver_ids, completed_at: nil).count >= 2
+      active_trips = Trip.where(driver_id: driver_ids, completed_at: nil)
+      if active_trips.count >= 2
         raise CapacityReached, 'Two simulator trips are already active'
       end
       driver = Driver.idle.where(id: @driver_ids).order(:id).to_a.sample(random: @random)
@@ -68,7 +69,15 @@ class TripSimulator
       rider = Rider.where(id: @rider_ids).where.not(id: active_riders).order(:id).to_a.sample(random: @random)
       raise NoAvailableRider, 'No idle rider in the simulator pool' unless rider
 
-      start_location, end_location = @locations.sample(2, random: @random)
+      location_ids = @locations.map(&:id)
+      other_request = TripRequest.where(id: active_trips.select(:trip_request_id),
+                                        start_location_id: location_ids, end_location_id: location_ids).first
+      start_location, end_location = if other_request
+                                       [@locations.find { |location| location.id == other_request.end_location_id },
+                                        @locations.find { |location| location.id == other_request.start_location_id }]
+                                     else
+                                       @locations.sample(2, random: @random)
+                                     end
       request = TripRequest.create!(rider: rider, start_location: start_location, end_location: end_location)
       trip = TripCreator.new(trip_request_id: request.id, driver_ids: [driver.id]).create_trip!
       emit(:requested, trip)

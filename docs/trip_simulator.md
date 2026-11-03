@@ -20,9 +20,9 @@ field. Completed drivers return to the idle pool. Existing locations and trips
 are preserved; new rides and dashboard history use only these two Cambridge
 endpoints and simulator drivers 1–5. Database-wide counts still include old data.
 
-Defaults are 13 positions at 30-second intervals: pickup at time zero, arrival at
+Defaults are 37 positions at 10-second intervals: pickup at time zero, arrival at
 six minutes, then immediate completion. Runs default to two concurrent rides, generating about 20 trips
-and 260 position records per hour. Adjust `SIM_SAMPLES` and `SIM_INTERVAL` (seconds);
+and 740 position records per hour. Adjust `SIM_SAMPLES` and `SIM_INTERVAL` (seconds);
 ride duration is `(SIM_SAMPLES - 1) * SIM_INTERVAL`. Zero interval skips sleeping.
 For a fast preview:
 
@@ -46,7 +46,8 @@ existing convention: PostgreSQL point x is latitude, y is longitude. Caller-supp
 locations outside this pair retain straight-line interpolation.
 
 Rides run through real model writes and `TripCreator`; the CLI task uses up to
-two threads. A database assignment lock enforces a maximum of two unfinished
+two threads. Concurrent rides take opposite directions: a new ride reverses the other active
+ride’s endpoints. A database assignment lock enforces a maximum of two unfinished
 simulator trips across runs. No HTTP server or worker service is needed to generate data. Assignment locks prevent duplicate use of
 a driver. Busy pools fail before creating a request. Position updates and
 completion commit separately; interruptions leave a real unfinished trip and busy
@@ -57,7 +58,7 @@ driver. Requests, trips, and positions accumulate; fixed actor pools are reused.
 Start the Rails server and open `/simulator` in development. **Run 10 trips**
 starts the same Rails task as a detached process inside the server's environment
 (in the app container when using Docker). It uses five drivers, 30 riders, two
-Cambridge endpoints, 13 samples, 30-second intervals, and two concurrent rides;
+Cambridge endpoints, 37 samples, 10-second intervals, and two concurrent rides;
 a batch takes about 30 minutes. No Docker socket or external job worker is needed.
 A process-held file lock prevents duplicate runs from the UI or CLI. The button
 disables while a batch runs; output and failures go to `log/simulator.log`.
@@ -69,7 +70,8 @@ in their terminal.
 The page polls every second (five seconds when hidden). Yellow drivers are idle; green
 are active. The [Leaflet](https://leafletjs.com/) map starts framed around both
 squares. Distinct colors and trip-number labels identify recorded positions for each
-active trip; pins disappear on completion. Matching colored borders identify
+active trip, with a matching line connecting its recorded pins; both pins and
+line disappear on completion. Matching colored borders identify
 the active ride cards below the wide map, and active drivers sort before idle
 drivers. Marker icons and labels are slightly offset to distinguish overlapping
 trips; stored coordinates are unchanged. Click a completed trip number for its saved blue position pins;

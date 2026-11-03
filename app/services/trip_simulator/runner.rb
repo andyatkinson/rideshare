@@ -25,7 +25,7 @@ class TripSimulator
         end
         lock.close_on_exec = false
         environment = { 'SIM_LOCK_FD' => lock.fileno.to_s, 'SIM_DRIVERS' => '5',
-                        'SIM_SAMPLES' => '13', 'SIM_INTERVAL' => '30', 'SIM_CONCURRENCY' => '2' }
+                        'SIM_SAMPLES' => '37', 'SIM_INTERVAL' => '10', 'SIM_CONCURRENCY' => '2' }
         pid = Process.spawn(environment, RbConfig.ruby, Rails.root.join('bin/rails').to_s,
                             'simulate:app_activity[10]', lock.fileno => lock,
                             chdir: Rails.root.to_s, in: File::NULL, out: [LOG_PATH.to_s, 'a'],

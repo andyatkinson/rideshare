@@ -24,6 +24,9 @@ class TripSimulatorConcurrencyTest < ActiveSupport::TestCase
     2.times { release << true }
     results = worker.value
     assert_equal 2, results.size
+    first, second = results.map(&:trip_request)
+    assert_equal first.start_location_id, second.end_location_id
+    assert_equal first.end_location_id, second.start_location_id
     assert_equal 2, results.map(&:driver_id).uniq.size
     assert results.all?(&:completed_at)
     assert_equal 0, TripSimulator::Snapshot.trips.where(completed_at: nil).count
