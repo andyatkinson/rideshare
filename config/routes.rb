@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
   if Rails.env.development? || Rails.env.test?
     get '/simulator', to: 'simulator#index'
+    get '/simulator/trips/:id/positions', to: 'simulator#positions'
     get '/simulator/snapshot', to: 'simulator#snapshot'
   end
 

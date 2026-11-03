@@ -1,48 +1,66 @@
 # Trip activity simulator
 
-Run against the single, unpartitioned development database:
+Run against the single, unpartitioned development database. In Docker:
+
+```sh
+docker compose exec app sh -c 'export PGPASSWORD="$RIDESHARE_DB_PASSWORD"; bin/rails "simulate:app_activity[10]"'
+```
+
+For Rails running directly on your machine with the same database configuration:
 
 ```sh
 bin/rails 'simulate:app_activity[10]'
 ```
 
-The task reuses 10 simulator drivers, 30 riders, and four predefined locations.
-It creates a request, assigns an idle driver, records pickup and interpolated
-position samples, completes the ride, then assigns a random rating from 1 to 5.
-The existing rating field has no separate rating-author column. A completed
-driver returns to the idle pool. Requests, trips and position history accumulate;
-the actor roster does not grow on repeated runs.
+The task reuses 10 simulator drivers, 30 riders, and two locations: Kendall Square
+(42.36242, -71.08572) and Central Square (42.36507, -71.10310), Cambridge, MA.
+Each ride chooses a direction, assigns an idle driver, records positions, completes,
+and receives a random trip rating from 1 to 5. The rating has no separate author
+field. Completed drivers return to the idle pool. Existing locations and trips
+are preserved; only new simulator rides use these endpoints.
+
+Defaults are 13 positions at 30-second intervals: pickup at time zero, arrival at
+six minutes, then immediate completion. Sequential runs generate about 10 trips
+and 130 position records per hour. Adjust `SIM_SAMPLES` and `SIM_INTERVAL` (seconds);
+ride duration is `(SIM_SAMPLES - 1) * SIM_INTERVAL`. Zero interval skips sleeping.
+For a fast preview:
 
 ```sh
-SIM_DRIVERS=2 SIM_RIDERS=5 SIM_SAMPLES=10 SIM_INTERVAL=0.1 SIM_SEED=42 \
-  bin/rails 'simulate:app_activity[20]'
+docker compose exec -e SIM_INTERVAL=0.5 app sh -c 'export PGPASSWORD="$RIDESHARE_DB_PASSWORD"; bin/rails "simulate:app_activity[10]"'
 ```
 
-`SIM_INTERVAL` is seconds between position samples; zero runs without sleeping.
-`SIM_SEED` controls participant, route and rating choices. Set `SIM_SQL_LOG=1`
-to include SQL logs alongside lifecycle events. Routes are straight
-lines between stored coordinates, without geocoding or a map service.
+`SIM_DRIVERS` and `SIM_RIDERS` control roster sizes; `SIM_SEED` makes participant,
+direction, and rating choices reproducible. `SIM_SQL_LOG=1` includes SQL logs.
 
-The service runs sequential rides through real Active Record writes and
-`TripCreator`; it does not require an HTTP server, UI or background worker.
-Idle means no trip with a null `completed_at`. Assignment locks the request and
-an idle driver, preventing duplicate assignment and simultaneous use of a driver.
-A busy simulator pool raises an error without creating another request. Existing
-unrelated users and trips are never added to the simulator pool.
+## Route and records
 
-Trip creation is transactional; position updates and completion are separate
-commits so the activity can be observed. An interrupted or failed ride remains
-unfinished and its driver stays busy; the task does not pretend it completed.
-The simulator is development-only. Tests exercise the lifecycle in the test DB.
+`db/simulator_routes.json` stores independently routed driving geometry in both
+directions, approximately 1.56 km each, from [OSRM](https://project-osrm.org/)
+and [OpenStreetMap](https://www.openstreetmap.org/copyright). Positions interpolate
+by distance along street segments at a constant simulated speed. These are
+synthetic GPS samples, not measured traffic or recorded journeys. No geocoding or
+routing API is called during simulation. Coordinate order follows the app's
+existing convention: PostgreSQL point x is latitude, y is longitude. Caller-supplied
+locations outside this pair retain straight-line interpolation.
+
+Rides run sequentially through real model writes and `TripCreator`; no HTTP server
+or worker is needed to generate data. Assignment locks prevent duplicate use of
+a driver. Busy pools fail before creating a request. Position updates and
+completion commit separately; interruptions leave a real unfinished trip and busy
+driver. Requests, trips, and positions accumulate; fixed actor pools are reused.
 
 ## Live dashboard
 
-Start the Rails server and open `/simulator` in development. The dashboard polls
-committed database state every second and does not create records. Run the task
-in a separate terminal; use `SIM_SAMPLES=20 SIM_INTERVAL=0.5` for visible rides.
-It shows simulator drivers, up to 50 active rides, the latest 15 completed rides
-and trip ratings, plus exact database-wide counts and growth since page opening.
-Counts include unrelated application data; frequent exact counts add database
-load as tables grow. Polling can miss immediate pickup/completion transitions;
-completed rides and ratings remain visible. Position counts indicate activity,
-not a percentage or a map. Reloading resets the count baseline.
+Start the Rails server and open `/simulator` in development. The read-only page
+polls every second (five seconds when hidden). Yellow drivers are idle; green
+are active. The [Leaflet](https://leafletjs.com/) map starts framed around both
+squares. Green pins show every recorded position for active trips and disappear
+on completion. Click a completed trip number for its saved blue position pins;
+**Back to live** restores active trips. Pin pop-ups show trip, sample, and time.
+
+The page shows up to 50 active trips and the latest 15 completed trips (three
+initially, with expandable history). Exact database-wide counts include unrelated
+data and add read load as tables grow. Growth resets when the page reloads.
+Leaflet assets load from unpkg and tiles from OpenStreetMap, requiring internet
+access, with attribution displayed. No API key or paid map account is required.
+The dashboard is development-only; tests exercise it against the test database.

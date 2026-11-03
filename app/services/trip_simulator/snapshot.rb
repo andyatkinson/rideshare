@@ -3,7 +3,7 @@ class TripSimulator
   class Snapshot
     def call
       drivers = Driver.where('email ~ ?', '^sim-driver-[0-9]+@rideshare[.]test$').order(:id)
-      trips = Trip.where(driver_id: drivers.select(:id))
+      trips = self.class.trips
       active = trips.where(completed_at: nil).order(:id).limit(50).to_a
       recent = trips.completed.order(completed_at: :desc).limit(15).to_a
       rows = active + recent
@@ -11,15 +11,24 @@ class TripSimulator
         records: rows, associations: [:driver, { trip_request: %i[rider start_location end_location] }]
       ).call
       samples = TripPosition.where(trip_id: rows.map(&:id)).group(:trip_id).count
+      positions = TripPosition.where(trip_id: active.map(&:id)).order(:created_at, :id).group_by(&:trip_id)
       busy = trips.where(completed_at: nil).pluck(:driver_id)
       {
         captured_at: Time.current.iso8601,
         counts: { drivers: Driver.count, riders: Rider.count, locations: Location.count,
                   requests: TripRequest.count, trips: Trip.count, positions: TripPosition.count },
         drivers: drivers.map { |driver| { id: driver.id, name: name(driver), busy: busy.include?(driver.id) } },
-        active: active.map { |trip| serialize(trip, samples) },
+        active: active.map { |trip| serialize(trip, samples).merge(positions: positions.fetch(trip.id, []).map { |position| self.class.position(position) }) },
         recent: recent.map { |trip| serialize(trip, samples) }
       }
+    end
+
+    def self.trips
+      Trip.where(driver_id: Driver.where('email ~ ?', '^sim-driver-[0-9]+@rideshare[.]test$').select(:id))
+    end
+
+    def self.position(record)
+      { id: record.id, lat: record.position.x, lng: record.position.y, recorded_at: record.created_at.iso8601 }
     end
 
     private

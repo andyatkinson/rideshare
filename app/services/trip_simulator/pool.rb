@@ -1,10 +1,8 @@
 class TripSimulator
   class Pool
     LOCATIONS = [
-      ['Boston, MA', 'MA', [42.361145, -71.057083]],
-      ['New York, NY', 'NY', [40.7143528, -74.0059731]],
-      ['Cambridge, MA', 'MA', [42.3736, -71.1097]],
-      ['Somerville, MA', 'MA', [42.3876, -71.0995]]
+      ['Kendall Square, Cambridge, MA', 'MA', [42.36242, -71.08572]],
+      ['Central Square, Cambridge, MA', 'MA', [42.36507, -71.10310]]
     ].freeze
 
     attr_reader :drivers, :riders, :locations

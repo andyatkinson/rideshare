@@ -10,6 +10,12 @@ class SimulatorController < ApplicationController
     render json: TripSimulator::Snapshot.new.call
   end
 
+  def positions
+    trip = TripSimulator::Snapshot.trips.find(params[:id])
+    response.headers['Cache-Control'] = 'no-store'
+    render json: { id: trip.id, positions: trip.trip_positions.order(:created_at, :id).map { |record| TripSimulator::Snapshot.position(record) } }
+  end
+
   private
 
   def require_development

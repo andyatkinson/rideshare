@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Rideshare simulator</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <style>
     * { box-sizing: border-box }
     body { margin: 0 auto; padding: 18px 22px; max-width: 1500px; background: #f3f5f8; color: #17243a; font: 14px system-ui, sans-serif }
@@ -20,6 +21,13 @@
     .driver { border: 1px solid #d9b942; border-radius: 6px; padding: 5px 8px; background: #fff3ba; color: #654e00; font-size: 12px }
     .driver.busy { border-color: #69ae80; background: #d9f4e2; color: #145c30 }
     .columns { display: grid; grid-template-columns: minmax(240px, 0.8fr) minmax(0, 1.7fr); gap: 12px; align-items: start }
+    #map { height: clamp(220px, 32vh, 340px); border-radius: 7px; background: #e8eef3; margin-bottom: 8px }
+    .map-heading { display: flex; justify-content: space-between; align-items: center; gap: 8px }
+    #map-status { font-size: 12px; margin-bottom: 8px } #live-map { padding: 4px 8px; font-size: 12px }
+    .position-pin { background: #167640; border: 2px solid white; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); width: 16px; height: 16px; box-shadow: 0 1px 4px #17243a77 }
+    .position-pin.history { background: #275dc3 }
+    .trip-link { padding: 0; border: 0; background: none; color: #245caf; text-decoration: underline; font: inherit }
+    .trip-link[aria-pressed="true"] { font-weight: 700; color: #17243a }
     .ride { border: 1px solid #c9e3d1; background: #f3fbf6; border-radius: 7px; padding: 10px; margin-top: 8px; font-size: 13px }
     .ride p { margin: 5px 0 } .badge { display: block; color: #176443; font-size: 11px; margin-bottom: 4px }
     table { width: 100%; border-collapse: collapse; font-size: 12px } th, td { text-align: left; padding: 7px 6px; border-bottom: 1px solid #e3e8f0; vertical-align: top; overflow-wrap: anywhere }
@@ -43,6 +51,9 @@
   </section>
   <main class="columns">
     <section class="panel">
+      <div class="map-heading"><h2>Trip positions</h2><button id="live-map" type="button" hidden>Back to live</button></div>
+      <p id="map-status" role="status">Live positions · Kendall Square ↔ Central Square</p>
+      <div id="map" role="region" aria-label="Trip position map"></div>
       <h2>Active rides</h2>
       <div id="active"></div>
     </section>
@@ -60,15 +71,68 @@
     <form method="dialog"><button>Close</button></form>
     <h2 id="instructions-title">Run the simulator</h2>
     <p>From the repository directory, run in another terminal:</p>
-    <pre>docker compose exec -e SIM_SAMPLES=20 -e SIM_INTERVAL=0.5 app sh -c 'export PGPASSWORD="$RIDESHARE_DB_PASSWORD"; bin/rails "simulate:app_activity[100]"'</pre>
+    <pre>docker compose exec -e SIM_SAMPLES=13 -e SIM_INTERVAL=30 app sh -c 'export PGPASSWORD="$RIDESHARE_DB_PASSWORD"; bin/rails "simulate:app_activity[100]"'</pre>
     <p>For Rails running directly on your machine:</p>
-    <pre>SIM_SAMPLES=20 SIM_INTERVAL=0.5 bin/rails 'simulate:app_activity[100]'</pre>
+    <pre>SIM_SAMPLES=13 SIM_INTERVAL=30 bin/rails 'simulate:app_activity[100]'</pre>
+    <p class="muted">Default rides last six minutes: 13 positions, including pickup and arrival, sampled every 30 seconds. For a quick preview use SIM_INTERVAL=0.5. Positions follow saved street geometry; timing is synthetic.</p>
+    <p class="muted">Click a completed trip number to inspect its recorded pins; Back to live restores active trips. Completed trips disappear from the live map automatically.</p>
     <p class="muted">Use the same development database as this server. Rides run sequentially; positions update during each ride. Yellow drivers are idle; green drivers are on a trip.</p>
     <p class="muted">The page polls every second (five seconds in the background). Counts cover the whole database; growth is measured since opening this page. Actor and location pools are reused while requests, trips and positions accumulate.</p>
   </dialog>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
     (() => {
-      let baseline;
+      let baseline, map, pins, selectedTrip = null, selectionVersion = 0, liveTrips = [];
+      const bounds = [[42.36242, -71.10310], [42.36507, -71.08572]];
+      const mapStatus = document.getElementById('map-status');
+      if (window.L) {
+        map = L.map('map').fitBounds(bounds, { padding: [30, 30] });
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map).on('tileerror', () => { mapStatus.textContent = 'Map tiles unavailable; recorded pins still shown. Internet access is required for tiles.'; });
+        pins = L.layerGroup().addTo(map);
+      } else {
+        mapStatus.textContent = 'Map library unavailable. Check your internet connection and reload; activity below still updates.';
+      }
+      function drawTrips(trips, history = false) {
+        if (!map) return;
+        pins.clearLayers();
+        trips.forEach(trip => {
+          const positions = trip.positions || [];
+          positions.forEach((position, index) => {
+            const label = document.createElement('span');
+            label.textContent = `Trip #${trip.id} · sample ${index + 1} · ${new Date(position.recorded_at).toLocaleTimeString()}`;
+            L.marker([position.lat, position.lng], { title: label.textContent, alt: label.textContent, icon: L.divIcon({
+              className: '', html: `<div class="position-pin${history ? ' history' : ''}"></div>`, iconSize: [16, 16], iconAnchor: [8, 16]
+            }) }).bindPopup(label).addTo(pins);
+          });
+        });
+        mapStatus.textContent = history ? `Trip #${selectedTrip} · ${trips[0].positions.length} recorded positions` : `Live · ${trips.length} active rides · green pins clear on completion`;
+      }
+      document.getElementById('live-map').addEventListener('click', () => {
+        selectionVersion++;
+        selectedTrip = null;
+        document.getElementById('live-map').hidden = true;
+        if (map) map.fitBounds(bounds, { padding: [30, 30] });
+        drawTrips(liveTrips);
+      });
+      async function selectTrip(id) {
+        const version = ++selectionVersion;
+        selectedTrip = id;
+        document.getElementById('live-map').hidden = false;
+        if (pins) pins.clearLayers();
+        mapStatus.textContent = `Loading trip #${id}…`;
+        try {
+          const response = await fetch(`/simulator/trips/${id}/positions`, { cache: 'no-store' });
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          const trip = await response.json();
+          if (version !== selectionVersion) return;
+          drawTrips([trip], true);
+          if (map && trip.positions.length) map.fitBounds(L.latLngBounds(trip.positions.map(position => [position.lat, position.lng])), { padding: [30, 30], maxZoom: 16 });
+        } catch (error) {
+          if (version === selectionVersion) mapStatus.textContent = `Cannot load trip #${id}: ${error.message}`;
+        }
+      }
       document.getElementById('show-instructions').addEventListener('click', () => document.getElementById('instructions').showModal());
       const element = (tag, text, className) => {
         const node = document.createElement(tag);
@@ -83,6 +147,8 @@
           if (!response.ok) throw new Error(`HTTP ${response.status}`);
           const data = await response.json();
           baseline ||= data.counts;
+          liveTrips = data.active;
+          if (selectedTrip === null) drawTrips(liveTrips);
           replace('counts', Object.entries(data.counts).map(([label, count]) => {
             const card = element('div', undefined, 'counter');
             const delta = count - baseline[label];
@@ -98,7 +164,15 @@
           }) : [element('p', 'No active rides. Drivers are ready for the next request.', 'muted')]);
           const rideRows = trips => trips.map(trip => {
             const row = element('tr');
-            [trip.id, `🛞 ${trip.driver} / 🙋 ${trip.rider}`, `${trip.origin} → ${trip.destination}`, trip.samples, trip.rating ? `${'★'.repeat(trip.rating)} (${trip.rating}/5)` : 'Awaiting rating'].forEach(value => row.append(element('td', value)));
+            const tripCell = element('td');
+            const link = element('button', `#${trip.id}`, 'trip-link');
+            link.type = 'button';
+            link.setAttribute('aria-label', `Show positions for trip ${trip.id}`);
+            link.setAttribute('aria-pressed', String(selectedTrip === trip.id));
+            link.addEventListener('click', () => selectTrip(trip.id));
+            tripCell.append(link);
+            row.append(tripCell);
+            [`🛞 ${trip.driver} / 🙋 ${trip.rider}`, `${trip.origin} → ${trip.destination}`, trip.samples, trip.rating ? `${'★'.repeat(trip.rating)} (${trip.rating}/5)` : 'Awaiting rating'].forEach(value => row.append(element('td', value)));
             return row;
           });
           replace('recent', rideRows(data.recent.slice(0, 3)));

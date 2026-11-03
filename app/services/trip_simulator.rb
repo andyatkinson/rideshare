@@ -3,7 +3,7 @@
 class TripSimulator
   class NoAvailableRider < StandardError; end
 
-  def initialize(drivers:, riders:, locations:, samples: 5, interval: 0.2,
+  def initialize(drivers:, riders:, locations:, samples: 13, interval: 30,
                  random: Random.new, sleeper: Kernel.method(:sleep), on_event: ->(*) {})
     @driver_ids = drivers.map(&:id)
     @rider_ids = riders.map(&:id)
@@ -47,14 +47,13 @@ class TripSimulator
 
   def fulfill(trip)
     emit(:pickup, trip)
-    start = trip.trip_request.start_location.position
-    finish = trip.trip_request.end_location.position
+    start = trip.trip_request.start_location
+    finish = trip.trip_request.end_location
     @samples.times do |index|
       fraction = index.fdiv(@samples - 1)
-      trip.trip_positions.create!(position: [start.x + (finish.x - start.x) * fraction,
-                                            start.y + (finish.y - start.y) * fraction])
+      @sleeper.call(@interval) if index.positive? && @interval.positive?
+      trip.trip_positions.create!(position: Route.point(start, finish, fraction))
       emit(:position, trip)
-      @sleeper.call(@interval) if @interval.positive?
     end
     trip.update!(completed_at: Time.current)
     emit(:completed, trip)

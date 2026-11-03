@@ -15,7 +15,7 @@ namespace :simulate do
     puts "Simulator pool: #{pool.drivers.size} drivers, #{pool.riders.size} riders, #{pool.locations.size} locations"
     TripSimulator.new(
       drivers: pool.drivers, riders: pool.riders, locations: pool.locations,
-      samples: ENV.fetch('SIM_SAMPLES', 5), interval: ENV.fetch('SIM_INTERVAL', 0.2),
+      samples: ENV.fetch('SIM_SAMPLES', 13), interval: ENV.fetch('SIM_INTERVAL', 30),
       random: Random.new(Integer(ENV.fetch('SIM_SEED', Random.new_seed))),
       on_event: ->(event, trip) { puts "[#{event}] trip=#{trip.id} rider=#{trip.rider.id} driver=#{trip.driver_id} rating=#{trip.rating.inspect}" }
     ).run(iterations: iterations)
