@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <%= csrf_meta_tags %>
   <title>Rideshare simulator</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <style>
@@ -10,7 +11,7 @@
     body { margin: 0 auto; padding: 18px 22px; max-width: 1500px; background: #f3f5f8; color: #17243a; font: 14px system-ui, sans-serif }
     header { display: flex; align-items: center; gap: 16px; margin-bottom: 12px }
     h1 { font-size: 23px; margin: 0 } h2 { font-size: 16px; margin: 0 0 10px } p { margin: 6px 0 }
-    header button { margin-left: auto } button, summary { cursor: pointer } button { padding: 7px 12px; border: 1px solid #bac7d8; border-radius: 7px; background: white; color: inherit; font: inherit }
+    header .controls { margin-left: auto; display: flex; gap: 6px; align-items: center } #run-status { font-size: 11px; color: #526078 } #start-simulation { background: #176443; color: white; border-color: #176443 } button:disabled { opacity: 0.6; cursor: default } button, summary { cursor: pointer } button { padding: 7px 12px; border: 1px solid #bac7d8; border-radius: 7px; background: white; color: inherit; font: inherit }
     .muted { color: #526078 } .error { color: #a72d24 } #status { font-size: 12px }
     #counts { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; margin-bottom: 12px }
     .counter { background: white; border: 1px solid #d5ddea; border-radius: 7px; padding: 8px 12px }
@@ -42,7 +43,7 @@
   <header>
     <h1>Rideshare activity</h1>
     <span id="status" role="status">Connecting…</span>
-    <button id="show-instructions" type="button">How to run</button>
+    <div class="controls"><span id="run-status" role="status">Ready</span><button id="start-simulation" type="button">Run 10 trips</button><button id="show-instructions" type="button">How to run</button></div>
   </header>
   <section aria-label="Database counts" id="counts"></section>
   <section class="panel pool">
@@ -74,14 +75,33 @@
     <pre>docker compose exec -e SIM_SAMPLES=13 -e SIM_INTERVAL=30 app sh -c 'export PGPASSWORD="$RIDESHARE_DB_PASSWORD"; bin/rails "simulate:app_activity[100]"'</pre>
     <p>For Rails running directly on your machine:</p>
     <pre>SIM_SAMPLES=13 SIM_INTERVAL=30 bin/rails 'simulate:app_activity[100]'</pre>
-    <p class="muted">Default rides last six minutes: 13 positions, including pickup and arrival, sampled every 30 seconds. For a quick preview use SIM_INTERVAL=0.5. Positions follow saved street geometry; timing is synthetic.</p>
+    <p class="muted">Click Run 10 trips to launch a background Rails task on this server. Five drivers share up to two concurrent rides; 10 six-minute trips take about 30 minutes. Repeated clicks cannot start overlapping runs. Logs are in log/simulator.log.
+    </p><p class="muted">Default rides last six minutes: 13 positions, including pickup and arrival, sampled every 30 seconds. For a quick preview use SIM_INTERVAL=0.5. Positions follow saved street geometry; timing is synthetic.</p>
     <p class="muted">Click a completed trip number to inspect its recorded pins; Back to live restores active trips. Completed trips disappear from the live map automatically.</p>
-    <p class="muted">Use the same development database as this server. Rides run sequentially; positions update during each ride. Yellow drivers are idle; green drivers are on a trip.</p>
+    <p class="muted">Use the same development database as this server. At most two rides run concurrently; positions update during each ride. Yellow drivers are idle; green drivers are on a trip.</p>
     <p class="muted">The page polls every second (five seconds in the background). Counts cover the whole database; growth is measured since opening this page. Actor and location pools are reused while requests, trips and positions accumulate.</p>
   </dialog>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
     (() => {
+      let starting = false;
+      const startButton = document.getElementById('start-simulation');
+      const runStatus = document.getElementById('run-status');
+      startButton.addEventListener('click', async () => {
+        starting = true;
+        startButton.disabled = true;
+        runStatus.textContent = 'Starting…';
+        try {
+          const response = await fetch('/simulator/start', { method: 'POST', headers: { 'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content, 'Accept': 'application/json' } });
+          const result = await response.json();
+          if (!response.ok) throw new Error(result.error || `HTTP ${response.status}`);
+          runStatus.textContent = 'Running · max 2 rides';
+        } catch (error) {
+          runStatus.textContent = error.message;
+        } finally {
+          starting = false;
+        }
+      });
       let baseline, map, pins, selectedTrip = null, selectionVersion = 0, liveTrips = [];
       const bounds = [[42.36242, -71.10310], [42.36507, -71.08572]];
       const mapStatus = document.getElementById('map-status');
@@ -147,6 +167,12 @@
           if (!response.ok) throw new Error(`HTTP ${response.status}`);
           const data = await response.json();
           baseline ||= data.counts;
+          if (!starting) {
+            startButton.disabled = data.runner.running;
+            startButton.textContent = data.runner.running ? 'Running…' : 'Run 10 trips';
+            if (data.runner.running) runStatus.textContent = 'Background run · max 2 rides';
+            else if (runStatus.textContent === 'Background run · max 2 rides' || runStatus.textContent === 'Running · max 2 rides') runStatus.textContent = 'Stopped · see log/simulator.log';
+          }
           liveTrips = data.active;
           if (selectedTrip === null) drawTrips(liveTrips);
           replace('counts', Object.entries(data.counts).map(([label, count]) => {

@@ -7,8 +7,24 @@ class SimulatorDashboardTest < ActionDispatch::IntegrationTest
     assert_response :not_found
     get '/simulator/snapshot'
     assert_response :not_found
+    post '/simulator/start'
+    assert_response :not_found
     get '/simulator/trips/1/positions'
     assert_response :not_found
+  end
+
+  test 'start returns accepted and repeated starts return conflict' do
+    Rails.env.stub(:development?, true) do
+      TripSimulator::Runner.stub(:start, { running: true }) do
+        post '/simulator/start'
+        assert_response :accepted
+        assert response.parsed_body['running']
+      end
+      TripSimulator::Runner.stub(:start, -> { raise TripSimulator::Runner::AlreadyRunning, 'Already running' }) do
+        post '/simulator/start'
+        assert_response :conflict
+      end
+    end
   end
 
   test 'dashboard observes lifecycle without adding records' do

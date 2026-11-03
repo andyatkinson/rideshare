@@ -2,7 +2,7 @@ class TripSimulator
   # Read committed database state; never prepare a pool or create records here.
   class Snapshot
     def call
-      drivers = Driver.where('email ~ ?', '^sim-driver-[0-9]+@rideshare[.]test$').order(:id)
+      drivers = Pool.drivers
       trips = self.class.trips
       active = trips.where(completed_at: nil).order(:id).limit(50).to_a
       recent = trips.completed.order(completed_at: :desc).limit(15).to_a
@@ -14,7 +14,7 @@ class TripSimulator
       positions = TripPosition.where(trip_id: active.map(&:id)).order(:created_at, :id).group_by(&:trip_id)
       busy = trips.where(completed_at: nil).pluck(:driver_id)
       {
-        captured_at: Time.current.iso8601,
+        captured_at: Time.current.iso8601, runner: Runner.status,
         counts: { drivers: Driver.count, riders: Rider.count, locations: Location.count,
                   requests: TripRequest.count, trips: Trip.count, positions: TripPosition.count },
         drivers: drivers.map { |driver| { id: driver.id, name: name(driver), busy: busy.include?(driver.id) } },
@@ -24,7 +24,9 @@ class TripSimulator
     end
 
     def self.trips
-      Trip.where(driver_id: Driver.where('email ~ ?', '^sim-driver-[0-9]+@rideshare[.]test$').select(:id))
+      locations = Location.where(address: Pool::LOCATIONS.map(&:first)).select(:id)
+      requests = TripRequest.where(start_location_id: locations, end_location_id: locations).select(:id)
+      Trip.where(driver_id: Pool.drivers.select(:id), trip_request_id: requests)
     end
 
     def self.position(record)

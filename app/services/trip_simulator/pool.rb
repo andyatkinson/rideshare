@@ -7,9 +7,9 @@ class TripSimulator
 
     attr_reader :drivers, :riders, :locations
 
-    def initialize(driver_count: 10, rider_count: 30)
+    def initialize(driver_count: 5, rider_count: 30)
       @driver_count, @rider_count = Integer(driver_count), Integer(rider_count)
-      raise ArgumentError, 'Pool sizes must be positive' unless @driver_count.positive? && @rider_count.positive?
+      raise ArgumentError, 'Use 1 to 5 drivers and at least one rider' unless (1..5).cover?(@driver_count) && @rider_count.positive?
     end
 
     def prepare!
@@ -23,6 +23,10 @@ class TripSimulator
         end
       end
       self
+    end
+
+    def self.drivers
+      Driver.where(email: (1..5).map { |number| "sim-driver-#{number}@rideshare.test" }).order(:id)
     end
 
     private

@@ -1,6 +1,7 @@
 # A bounded, single-process development workload. All state transitions are
 # real model writes; actor pools are fixed while requests/trips/positions grow.
 class TripSimulator
+  class CapacityReached < StandardError; end
   class NoAvailableRider < StandardError; end
 
   def initialize(drivers:, riders:, locations:, samples: 13, interval: 30,
@@ -18,26 +19,56 @@ class TripSimulator
     @random, @sleeper, @on_event = random, sleeper, on_event
   end
 
-  def run(iterations: 1)
+  def run(iterations: 1, concurrency: 1)
     count = Integer(iterations)
+    workers = Integer(concurrency)
     raise ArgumentError, 'iterations must be positive' unless count.positive?
+    raise ArgumentError, 'concurrency must be 1 or 2' unless (1..2).cover?(workers)
+    return Array.new(count) { fulfill(request_trip!) } if workers == 1
 
-    Array.new(count) { fulfill(request_trip!) }
+    queue = Queue.new
+    count.times { |index| queue << index }
+    results, errors = Array.new(count), Queue.new
+    threads = Array.new([workers, count].min) do
+      Thread.new do
+        ActiveRecord::Base.connection_pool.with_connection do
+          loop do
+            index = begin
+              queue.pop(true)
+            rescue ThreadError
+              break
+            end
+            results[index] = fulfill(request_trip!)
+          end
+        end
+      rescue StandardError => error
+        errors << error
+      end
+    end
+    threads.each(&:join)
+    raise errors.pop unless errors.empty?
+
+    results
   end
 
   private
 
   def request_trip!
-    # Refuse a new request before writing anything if our fixed pool is busy.
-    driver = Driver.idle.where(id: @driver_ids).order(:id).to_a.sample(random: @random)
-    raise TripCreator::NoAvailableDriver, 'No idle driver in the simulator pool' unless driver
-
-    active_riders = TripRequest.joins(:trip).where(trips: { completed_at: nil }).select(:rider_id)
-    rider = Rider.where(id: @rider_ids).where.not(id: active_riders).order(:id).to_a.sample(random: @random)
-    raise NoAvailableRider, 'No idle rider in the simulator pool' unless rider
-
-    start_location, end_location = @locations.sample(2, random: @random)
     TripRequest.transaction do
+      # Serialize only assignment, never the journey. Also covers other CLI runs.
+      TripRequest.connection.execute('SELECT pg_advisory_xact_lock(72493021)')
+      driver_ids = Driver.where('email ~ ?', '^sim-driver-[0-9]+@rideshare[.]test$').pluck(:id) | @driver_ids
+      if Trip.where(driver_id: driver_ids, completed_at: nil).count >= 2
+        raise CapacityReached, 'Two simulator trips are already active'
+      end
+      driver = Driver.idle.where(id: @driver_ids).order(:id).to_a.sample(random: @random)
+      raise TripCreator::NoAvailableDriver, 'No idle driver in the simulator pool' unless driver
+
+      active_riders = TripRequest.joins(:trip).where(trips: { completed_at: nil }).select(:rider_id)
+      rider = Rider.where(id: @rider_ids).where.not(id: active_riders).order(:id).to_a.sample(random: @random)
+      raise NoAvailableRider, 'No idle rider in the simulator pool' unless rider
+
+      start_location, end_location = @locations.sample(2, random: @random)
       request = TripRequest.create!(rider: rider, start_location: start_location, end_location: end_location)
       trip = TripCreator.new(trip_request_id: request.id, driver_ids: [driver.id]).create_trip!
       emit(:requested, trip)
