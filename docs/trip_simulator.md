@@ -68,8 +68,11 @@ in their terminal.
 
 The page polls every second (five seconds when hidden). Yellow drivers are idle; green
 are active. The [Leaflet](https://leafletjs.com/) map starts framed around both
-squares. Green pins show every recorded position for active trips and disappear
-on completion. Click a completed trip number for its saved blue position pins;
+squares. Distinct colors and trip-number labels identify recorded positions for each
+active trip; pins disappear on completion. Matching colored borders identify
+the active ride cards below the wide map, and active drivers sort before idle
+drivers. Marker icons and labels are slightly offset to distinguish overlapping
+trips; stored coordinates are unchanged. Click a completed trip number for its saved blue position pins;
 **Back to live** restores active trips. Pin pop-ups show trip, sample, and time.
 
 The page shows up to 50 active trips and the latest 15 completed trips (three
