@@ -73,14 +73,14 @@
     <form method="dialog"><button>Close</button></form>
     <h2 id="instructions-title">Run the simulator</h2>
     <p>From the repository directory, run in another terminal:</p>
-    <pre>docker compose exec -e SIM_SAMPLES=37 -e SIM_INTERVAL=10 app sh -c 'export PGPASSWORD="$RIDESHARE_DB_PASSWORD"; bin/rails "simulate:app_activity[100]"'</pre>
+    <pre>docker compose exec -e SIM_SAMPLES=73 -e SIM_INTERVAL=5 app sh -c 'export PGPASSWORD="$RIDESHARE_DB_PASSWORD"; bin/rails "simulate:app_activity[100]"'</pre>
     <p>For Rails running directly on your machine:</p>
-    <pre>SIM_SAMPLES=37 SIM_INTERVAL=10 bin/rails 'simulate:app_activity[100]'</pre>
-    <p class="muted">Click Run 10 trips to launch a background Rails task on this server. Five drivers share up to two concurrent rides in opposite directions; 10 six-minute trips take about 30 minutes. Repeated clicks cannot start overlapping runs. Logs are in log/simulator.log.
-    </p><p class="muted">Default rides last six minutes: 37 positions, including pickup and arrival, sampled every 10 seconds. For a quick preview use SIM_INTERVAL=0.5. Positions follow saved street geometry; timing is synthetic.</p>
+    <pre>SIM_SAMPLES=73 SIM_INTERVAL=5 bin/rails 'simulate:app_activity[100]'</pre>
+    <p class="muted">Click Run 10 trips to launch a background Rails task on this server. Five drivers share one active ride at a time, alternating directions; 10 six-minute trips take about one hour. Repeated clicks cannot start overlapping runs. Logs are in log/simulator.log.
+    </p><p class="muted">Default rides last six minutes: 73 positions, including pickup and arrival, sampled every five seconds. For a quick preview use SIM_INTERVAL=0.5. Positions follow saved street geometry; timing is synthetic.</p>
     <p class="muted">Reset stops the background or managed CLI task, removes unfinished simulator trips and their requests/positions, and frees drivers. Completed trips and ratings are kept. The count-growth baseline resets.</p>
     <p class="muted">Click a completed trip number to inspect its recorded pins; Back to live restores active trips. Completed trips disappear from the live map automatically.</p>
-    <p class="muted">Use the same development database as this server. At most two rides run concurrently; positions update during each ride. Yellow drivers are idle; green drivers are on a trip.</p>
+    <p class="muted">Use the same development database as this server. Only one ride runs at a time; positions update during each ride. Yellow drivers are idle; green drivers are on a trip.</p>
     <p class="muted">The page polls every second (five seconds in the background). Counts cover the whole database; growth is measured since opening this page. Actor and location pools are reused while requests, trips and positions accumulate.</p>
   </dialog>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -123,7 +123,7 @@
           const response = await fetch('/simulator/start', { method: 'POST', headers: { 'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content, 'Accept': 'application/json' } });
           const result = await response.json();
           if (!response.ok) throw new Error(result.error || `HTTP ${response.status}`);
-          runStatus.textContent = 'Running · max 2 rides';
+          runStatus.textContent = 'Running · max 1';
         } catch (error) {
           runStatus.textContent = error.message;
         } finally {
@@ -214,8 +214,8 @@
           if (!starting) {
             startButton.disabled = data.runner.running;
             startButton.textContent = data.runner.running ? 'Running…' : 'Run 10 trips';
-            if (data.runner.running) runStatus.textContent = 'Running · max 2';
-            else if (runStatus.textContent === 'Running · max 2' || runStatus.textContent === 'Running · max 2 rides') runStatus.textContent = 'Stopped · see log/simulator.log';
+            if (data.runner.running) runStatus.textContent = 'Running · max 1';
+            else if (runStatus.textContent === 'Running · max 1') runStatus.textContent = 'Stopped · see log/simulator.log';
           }
           liveTrips = data.active;
           const activeIds = new Set(liveTrips.map(trip => trip.id));

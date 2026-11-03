@@ -42,7 +42,7 @@ class TripSimulatorTest < ActiveSupport::TestCase
     runner = TripSimulator.new(drivers: [drivers(:jack)], riders: [riders(:jessica)],
                               locations: [locations(:bos), locations(:nyc)], interval: 0)
     assert_no_difference -> { TripRequest.count } do
-      assert_raises(TripCreator::NoAvailableDriver) { runner.run }
+      assert_raises(TripSimulator::CapacityReached) { runner.run }
     end
   end
 
@@ -68,13 +68,13 @@ class TripSimulatorTest < ActiveSupport::TestCase
     trip = TripSimulator.new(drivers: pool.drivers, riders: pool.riders, locations: pool.locations,
                             sleeper: ->(seconds) { waits << seconds }).run.first
     points = trip.trip_positions.order(:id).map { |record| [record.position.x, record.position.y] }
-    assert_equal 37, points.size
-    assert_equal [10.0] * 36, waits
+    assert_equal 73, points.size
+    assert_equal [5.0] * 72, waits
     assert_equal [trip.trip_request.start_location.position.x, trip.trip_request.start_location.position.y], points.first
     assert_equal [trip.trip_request.end_location.position.x, trip.trip_request.end_location.position.y], points.last
     assert points.all? { |lat, lng| (42.35..42.38).cover?(lat) && (-71.11..-71.08).cover?(lng) }
     # Street geometry bends away from the straight endpoint interpolation.
-    midpoint = points[18]
+    midpoint = points[36]
     straight = points.first.zip(points.last).map { |a, b| (a + b) / 2 }
     assert_operator (midpoint[0] - straight[0]).abs + (midpoint[1] - straight[1]).abs, :>, 0.0001
   end

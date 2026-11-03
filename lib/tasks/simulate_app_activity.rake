@@ -17,10 +17,10 @@ namespace :simulate do
       puts "Simulator pool: #{pool.drivers.size} drivers, #{pool.riders.size} riders, #{pool.locations.size} locations"
       TripSimulator.new(
         drivers: pool.drivers, riders: pool.riders, locations: pool.locations,
-        samples: ENV.fetch('SIM_SAMPLES', 37), interval: ENV.fetch('SIM_INTERVAL', 10),
+        samples: ENV.fetch('SIM_SAMPLES', 73), interval: ENV.fetch('SIM_INTERVAL', 5),
         random: Random.new(Integer(ENV.fetch('SIM_SEED', Random.new_seed))),
         on_event: ->(event, trip) { puts "[#{event}] trip=#{trip.id} rider=#{trip.rider.id} driver=#{trip.driver_id} rating=#{trip.rating.inspect}" }
-      ).run(iterations: iterations, concurrency: Integer(ENV.fetch('SIM_CONCURRENCY', 2)))
+      ).run(iterations: iterations)
     end
     puts "Completed #{iterations} trips; drivers returned to the idle pool."
   end

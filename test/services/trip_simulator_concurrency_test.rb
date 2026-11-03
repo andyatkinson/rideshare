@@ -3,7 +3,7 @@ require 'test_helper'
 class TripSimulatorConcurrencyTest < ActiveSupport::TestCase
   self.use_transactional_tests = false
 
-  test 'two trips run concurrently and a third cannot start' do
+  test 'only one trip can be active and subsequent trips reverse direction' do
     pool = TripSimulator::Pool.new.prepare!
     ready, release = Queue.new, Queue.new
     observer = lambda do |event, _trip|
@@ -14,24 +14,25 @@ class TripSimulatorConcurrencyTest < ActiveSupport::TestCase
     end
     simulator = TripSimulator.new(drivers: pool.drivers, riders: pool.riders, locations: pool.locations,
                                   samples: 2, interval: 0, on_event: observer)
-    worker = Thread.new { simulator.run(iterations: 2, concurrency: 2) }
-    Timeout.timeout(10) { 2.times { ready.pop } }
-    assert_equal 2, TripSimulator::Snapshot.trips.where(completed_at: nil).count
+    worker = Thread.new { simulator.run }
+    Timeout.timeout(10) { ready.pop }
+    assert_equal 1, TripSimulator::Snapshot.trips.where(completed_at: nil).count
     assert_equal 5, TripSimulator::Pool.drivers.count
     assert_no_difference -> { TripRequest.count } do
       assert_raises(TripSimulator::CapacityReached) { simulator.run }
     end
-    2.times { release << true }
-    results = worker.value
-    assert_equal 2, results.size
-    first, second = results.map(&:trip_request)
+    release << true
+    first_trip = worker.value.first
+    second_trip = TripSimulator.new(drivers: pool.drivers, riders: pool.riders, locations: pool.locations,
+                                    samples: 2, interval: 0).run.first
+    first, second = [first_trip, second_trip].map(&:trip_request)
     assert_equal first.start_location_id, second.end_location_id
     assert_equal first.end_location_id, second.start_location_id
-    assert_equal 2, results.map(&:driver_id).uniq.size
-    assert results.all?(&:completed_at)
+    assert first_trip.completed_at
+    assert second_trip.completed_at
     assert_equal 0, TripSimulator::Snapshot.trips.where(completed_at: nil).count
   ensure
-    2.times { release << true } if release
+    release << true if release
     worker&.join
     if pool
       trips = Trip.where(driver_id: pool.drivers.map(&:id))

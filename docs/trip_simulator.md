@@ -20,9 +20,9 @@ field. Completed drivers return to the idle pool. Existing locations and trips
 are preserved; new rides and dashboard history use only these two Cambridge
 endpoints and simulator drivers 1–5. Database-wide counts still include old data.
 
-Defaults are 37 positions at 10-second intervals: pickup at time zero, arrival at
-six minutes, then immediate completion. Runs default to two concurrent rides, generating about 20 trips
-and 740 position records per hour. Adjust `SIM_SAMPLES` and `SIM_INTERVAL` (seconds);
+Defaults are 73 positions at five-second intervals: pickup at time zero, arrival at
+six minutes, then immediate completion. Runs are sequential, generating about 10 trips
+and 730 position records per hour. Adjust `SIM_SAMPLES` and `SIM_INTERVAL` (seconds);
 ride duration is `(SIM_SAMPLES - 1) * SIM_INTERVAL`. Zero interval skips sleeping.
 For a fast preview:
 
@@ -30,9 +30,8 @@ For a fast preview:
 docker compose exec -e SIM_INTERVAL=0.5 app sh -c 'export PGPASSWORD="$RIDESHARE_DB_PASSWORD"; bin/rails "simulate:app_activity[10]"'
 ```
 
-`SIM_DRIVERS` (1–5) and `SIM_RIDERS` control roster sizes. `SIM_CONCURRENCY`
-is 1 or 2 (default 2). `SIM_SEED` seeds random choices; use one worker for
-reproducible ordering. `SIM_SQL_LOG=1` includes SQL logs.
+`SIM_DRIVERS` (1–5) and `SIM_RIDERS` control roster sizes. `SIM_SEED` seeds
+random choices for reproducible ordering. `SIM_SQL_LOG=1` includes SQL logs.
 
 ## Route and records
 
@@ -45,9 +44,8 @@ routing API is called during simulation. Coordinate order follows the app's
 existing convention: PostgreSQL point x is latitude, y is longitude. Caller-supplied
 locations outside this pair retain straight-line interpolation.
 
-Rides run through real model writes and `TripCreator`; the CLI task uses up to
-two threads. Concurrent rides take opposite directions: a new ride reverses the other active
-ride’s endpoints. A database assignment lock enforces a maximum of two unfinished
+Rides run sequentially through real model writes and `TripCreator`. Each ride
+reverses the previous ride's endpoints. A database assignment lock allows only one unfinished
 simulator trips across runs. No HTTP server or worker service is needed to generate data. Assignment locks prevent duplicate use of
 a driver. Busy pools fail before creating a request. Position updates and
 completion commit separately; interruptions leave a real unfinished trip and busy
@@ -58,8 +56,8 @@ driver. Requests, trips, and positions accumulate; fixed actor pools are reused.
 Start the Rails server and open `/simulator` in development. **Run 10 trips**
 starts the same Rails task as a detached process inside the server's environment
 (in the app container when using Docker). It uses five drivers, 30 riders, two
-Cambridge endpoints, 37 samples, 10-second intervals, and two concurrent rides;
-a batch takes about 30 minutes. No Docker socket or external job worker is needed.
+Cambridge endpoints, 73 samples, five-second intervals, and one active ride;
+a batch takes about one hour. No Docker socket or external job worker is needed.
 A process-held file lock prevents duplicate runs from the UI or CLI. The button
 disables while a batch runs; output and failures go to `log/simulator.log`.
 An existing unfinished simulator ride must finish before starting a new UI batch.
