@@ -5,31 +5,71 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Rideshare simulator</title>
   <style>
-    * { box-sizing: border-box } body { margin: 0 auto; padding: 28px; max-width: 1200px; background: #f3f5f8; color: #17243a; font: 16px system-ui, sans-serif }
-    h1 { margin-bottom: 8px } h2 { font-size: 20px } code { background: #e2e8f0; padding: 3px 6px } .muted { color: #526078 }
-    #counts, #drivers { display: flex; flex-wrap: wrap; gap: 10px } .counter, .driver, .ride { background: white; border: 1px solid #cdd6e3; border-radius: 9px; padding: 14px }
-    .counter { flex: 1; min-width: 140px } .counter strong { display: block; font-size: 26px } .delta { color: #176443; font-size: 14px }
-    .driver { border-left: 5px solid #26845b } .driver.busy { border-left-color: #d18212; background: #fff7e8 }
-    .ride { margin: 10px 0 } .ride p { margin: 7px 0 } .badge { float: right; color: #176443 } #status { min-height: 24px } .error { color: #a72d24 }
-    table { width: 100%; border-collapse: collapse; background: white } th, td { text-align: left; padding: 12px; border-bottom: 1px solid #dce2eb } .table-wrap { overflow-x: auto }
+    * { box-sizing: border-box }
+    body { margin: 0 auto; padding: 18px 22px; max-width: 1500px; background: #f3f5f8; color: #17243a; font: 14px system-ui, sans-serif }
+    header { display: flex; align-items: center; gap: 16px; margin-bottom: 12px }
+    h1 { font-size: 23px; margin: 0 } h2 { font-size: 16px; margin: 0 0 10px } p { margin: 6px 0 }
+    header button { margin-left: auto } button, summary { cursor: pointer } button { padding: 7px 12px; border: 1px solid #bac7d8; border-radius: 7px; background: white; color: inherit; font: inherit }
+    .muted { color: #526078 } .error { color: #a72d24 } #status { font-size: 12px }
+    #counts { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; margin-bottom: 12px }
+    .counter { background: white; border: 1px solid #d5ddea; border-radius: 7px; padding: 8px 12px }
+    .counter strong { display: inline-block; font-size: 21px; margin-right: 8px } .counter > span:first-child { display: block; text-transform: capitalize; font-size: 12px; color: #526078 }
+    .delta { color: #176443; font-size: 11px; white-space: nowrap }
+    .panel { background: white; border: 1px solid #d5ddea; border-radius: 9px; padding: 12px; min-width: 0 }
+    .pool { margin-bottom: 12px } #drivers { display: flex; flex-wrap: wrap; gap: 6px }
+    .driver { border: 1px solid #d9b942; border-radius: 6px; padding: 5px 8px; background: #fff3ba; color: #654e00; font-size: 12px }
+    .driver.busy { border-color: #69ae80; background: #d9f4e2; color: #145c30 }
+    .columns { display: grid; grid-template-columns: minmax(240px, 0.8fr) minmax(0, 1.7fr); gap: 12px; align-items: start }
+    .ride { border: 1px solid #c9e3d1; background: #f3fbf6; border-radius: 7px; padding: 10px; margin-top: 8px; font-size: 13px }
+    .ride p { margin: 5px 0 } .badge { display: block; color: #176443; font-size: 11px; margin-bottom: 4px }
+    table { width: 100%; border-collapse: collapse; font-size: 12px } th, td { text-align: left; padding: 7px 6px; border-bottom: 1px solid #e3e8f0; vertical-align: top; overflow-wrap: anywhere }
+    th { color: #526078; font-weight: 500 } td:last-child { white-space: nowrap } .table-wrap { overflow-x: auto }
+    details { margin-top: 10px } summary { color: #345681; font-size: 12px } .note { font-size: 11px; margin-top: 8px }
+    dialog { max-width: 640px; width: calc(100% - 32px); border: 1px solid #bac7d8; border-radius: 12px; padding: 22px; color: inherit }
+    dialog::backdrop { background: #17243a77 } dialog button { float: right } pre { padding: 12px; background: #eef2f7; white-space: pre-wrap; overflow-wrap: anywhere; font-size: 12px }
+    @media (max-width: 800px) { body { padding: 12px } header { flex-wrap: wrap; gap: 8px } #counts { grid-template-columns: repeat(3, 1fr) } .columns { grid-template-columns: 1fr } }
   </style>
 </head>
 <body>
-  <h1>Rideshare activity</h1>
-  <p class="muted">Live database view · fixed actor pool · sequential rides · refreshes every second</p>
-  <p>Run in another terminal: <code>SIM_SAMPLES=20 SIM_INTERVAL=0.5 bin/rails 'simulate:app_activity[100]'</code></p>
-  <p id="status" role="status">Connecting…</p>
+  <header>
+    <h1>Rideshare activity</h1>
+    <span id="status" role="status">Connecting…</span>
+    <button id="show-instructions" type="button">How to run</button>
+  </header>
   <section aria-label="Database counts" id="counts"></section>
-  <h2>Simulator drivers</h2>
-  <div id="drivers"></div>
-  <h2>Active rides</h2>
-  <div id="active"></div>
-  <h2>Recent completed rides</h2>
-  <p class="muted">Latest 15 rides. Trip ratings have no separate author field. Actor and location counts stay fixed while requests, trips and positions accumulate.</p>
-  <div class="table-wrap"><table><thead><tr><th>Trip</th><th>Driver / rider</th><th>Route</th><th>Samples</th><th>Trip rating</th></tr></thead><tbody id="recent"></tbody></table></div>
+  <section class="panel pool">
+    <h2>Simulator drivers <span class="muted" id="pool-summary"></span></h2>
+    <div id="drivers"></div>
+  </section>
+  <main class="columns">
+    <section class="panel">
+      <h2>Active rides</h2>
+      <div id="active"></div>
+    </section>
+    <section class="panel">
+      <h2>Recent completed rides</h2>
+      <div class="table-wrap"><table><thead><tr><th>Trip</th><th>Driver / rider</th><th>Route</th><th>Samples</th><th>Trip rating</th></tr></thead><tbody id="recent"></tbody></table></div>
+      <details id="history">
+        <summary>More recent rides <span id="history-count"></span></summary>
+        <div class="table-wrap"><table aria-label="More completed rides"><thead><tr><th>Trip</th><th>Driver / rider</th><th>Route</th><th>Samples</th><th>Trip rating</th></tr></thead><tbody id="older"></tbody></table></div>
+      </details>
+      <p class="muted note">Latest 3 shown · up to 15 expanded · trip rating has no separate author field</p>
+    </section>
+  </main>
+  <dialog id="instructions" aria-labelledby="instructions-title">
+    <form method="dialog"><button>Close</button></form>
+    <h2 id="instructions-title">Run the simulator</h2>
+    <p>From the repository directory, run in another terminal:</p>
+    <pre>docker compose exec -e SIM_SAMPLES=20 -e SIM_INTERVAL=0.5 app sh -c 'export PGPASSWORD="$RIDESHARE_DB_PASSWORD"; bin/rails "simulate:app_activity[100]"'</pre>
+    <p>For Rails running directly on your machine:</p>
+    <pre>SIM_SAMPLES=20 SIM_INTERVAL=0.5 bin/rails 'simulate:app_activity[100]'</pre>
+    <p class="muted">Use the same development database as this server. Rides run sequentially; positions update during each ride. Yellow drivers are idle; green drivers are on a trip.</p>
+    <p class="muted">The page polls every second (five seconds in the background). Counts cover the whole database; growth is measured since opening this page. Actor and location pools are reused while requests, trips and positions accumulate.</p>
+  </dialog>
   <script>
     (() => {
       let baseline;
+      document.getElementById('show-instructions').addEventListener('click', () => document.getElementById('instructions').showModal());
       const element = (tag, text, className) => {
         const node = document.createElement(tag);
         if (text !== undefined) node.textContent = text;
@@ -46,20 +86,25 @@
           replace('counts', Object.entries(data.counts).map(([label, count]) => {
             const card = element('div', undefined, 'counter');
             const delta = count - baseline[label];
-            card.append(element('span', label), element('strong', count.toLocaleString()), element('span', `${delta >= 0 ? '+' : ''}${delta.toLocaleString()} since opening`, 'delta'));
+            card.append(element('span', label), element('strong', count.toLocaleString()), element('span', `${delta >= 0 ? '+' : ''}${delta.toLocaleString()}`, 'delta'));
             return card;
           }));
-          replace('drivers', data.drivers.length ? data.drivers.map(driver => element('div', `${driver.name} · ${driver.busy ? 'On trip' : 'Idle'}`, `driver${driver.busy ? ' busy' : ''}`)) : [element('p', 'No simulator drivers yet. Run the command above to prepare the pool.')]);
+          document.getElementById('pool-summary').textContent = `· ${data.drivers.filter(driver => !driver.busy).length} idle / ${data.drivers.filter(driver => driver.busy).length} active`;
+          replace('drivers', data.drivers.length ? data.drivers.map(driver => element('div', `🛞 ${driver.name.replace(/^Simulator /, '')} · ${driver.busy ? 'Active' : 'Idle'}`, `driver${driver.busy ? ' busy' : ''}`)) : [element('p', 'No simulator drivers yet. Use “How to run” to prepare the pool.')]);
           replace('active', data.active.length ? data.active.map(trip => {
             const card = element('article', undefined, 'ride');
-            card.append(element('span', trip.samples ? 'In transit' : 'Assigned / awaiting position', 'badge'), element('strong', `Trip #${trip.id}`), element('p', `${trip.driver} → ${trip.rider}`), element('p', `${trip.origin} → ${trip.destination}`), element('p', `${trip.samples} position samples recorded`));
+            card.append(element('span', trip.samples ? 'In transit' : 'Assigned / awaiting position', 'badge'), element('strong', `Trip #${trip.id}`), element('p', `🛞 ${trip.driver} → 🙋 ${trip.rider}`), element('p', `${trip.origin} → ${trip.destination}`), element('p', `${trip.samples} position samples recorded`));
             return card;
           }) : [element('p', 'No active rides. Drivers are ready for the next request.', 'muted')]);
-          replace('recent', data.recent.map(trip => {
+          const rideRows = trips => trips.map(trip => {
             const row = element('tr');
-            [trip.id, `${trip.driver} / ${trip.rider}`, `${trip.origin} → ${trip.destination}`, trip.samples, trip.rating ? `${'★'.repeat(trip.rating)} (${trip.rating}/5)` : 'Awaiting rating'].forEach(value => row.append(element('td', value)));
+            [trip.id, `🛞 ${trip.driver} / 🙋 ${trip.rider}`, `${trip.origin} → ${trip.destination}`, trip.samples, trip.rating ? `${'★'.repeat(trip.rating)} (${trip.rating}/5)` : 'Awaiting rating'].forEach(value => row.append(element('td', value)));
             return row;
-          }));
+          });
+          replace('recent', rideRows(data.recent.slice(0, 3)));
+          replace('older', rideRows(data.recent.slice(3)));
+          document.getElementById('history').hidden = data.recent.length <= 3;
+          document.getElementById('history-count').textContent = `(${Math.max(0, data.recent.length - 3)})`;
           const status = document.getElementById('status');
           status.className = 'muted';
           status.textContent = `Live · updated ${new Date(data.captured_at).toLocaleTimeString()}`;
