@@ -16,10 +16,16 @@ class SimulatorController < ApplicationController
     render json: { error: error.message }, status: :conflict
   end
 
+  def reset
+    render json: TripSimulator::Runner.reset
+  rescue TripSimulator::Runner::ResetFailed => error
+    render json: { error: error.message }, status: :conflict
+  end
+
   def positions
     trip = TripSimulator::Snapshot.trips.find(params[:id])
     response.headers['Cache-Control'] = 'no-store'
-    render json: { id: trip.id, positions: trip.trip_positions.order(:created_at, :id).map { |record| TripSimulator::Snapshot.position(record) } }
+    render json: { id: trip.id, route: TripSimulator::Snapshot.route(trip), positions: trip.trip_positions.order(:created_at, :id).map { |record| TripSimulator::Snapshot.position(record) } }
   end
 
   private

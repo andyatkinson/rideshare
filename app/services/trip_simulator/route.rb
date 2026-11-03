@@ -1,7 +1,7 @@
 class TripSimulator
   # Saved OSRM street geometry; no network calls while generating positions.
   class Route
-    def self.point(start, finish, fraction)
+    def self.path(start, finish)
       key = if start.address == Pool::LOCATIONS[0][0] && finish.address == Pool::LOCATIONS[1][0]
               'kendall_to_central'
             elsif start.address == Pool::LOCATIONS[1][0] && finish.address == Pool::LOCATIONS[0][0]
@@ -9,11 +9,15 @@ class TripSimulator
             end
       first = [start.position.x, start.position.y]
       last = [finish.position.x, finish.position.y]
-      return first if fraction.zero?
-      return last if fraction == 1
-
       geometry = key ? routes.fetch(key).fetch('coordinates') : []
-      points = [first, *geometry, last]
+      [first, *geometry, last]
+    end
+
+    def self.point(start, finish, fraction)
+      points = path(start, finish)
+      return points.first if fraction.zero?
+      return points.last if fraction == 1
+
       lengths = points.each_cons(2).map do |a, b|
         Math.hypot((b[0] - a[0]), (b[1] - a[1]) * Math.cos((a[0] + b[0]) * Math::PI / 360))
       end
@@ -24,7 +28,7 @@ class TripSimulator
 
         remaining -= length
       end
-      last
+      points.last
     end
 
     def self.routes

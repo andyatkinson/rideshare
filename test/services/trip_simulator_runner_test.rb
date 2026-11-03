@@ -2,7 +2,7 @@ require 'test_helper'
 require 'minitest/mock'
 
 class TripSimulatorRunnerTest < ActiveSupport::TestCase
-  test 'background child retains the run lock and exit releases it' do
+  test 'reset stops the locked child and removes only unfinished simulator trip data' do
     spawn = Process.method(:spawn)
     detach = Process.method(:detach)
     child, waiter = nil, nil
@@ -19,9 +19,31 @@ class TripSimulatorRunnerTest < ActiveSupport::TestCase
         end
       end
     end
-    Process.kill('TERM', child)
+    pool = TripSimulator::Pool.new(driver_count: 1, rider_count: 1).prepare!
+    completed = TripSimulator.new(drivers: pool.drivers, riders: pool.riders,
+                                  locations: pool.locations, samples: 2, interval: 0).run.first
+    request = TripRequest.create!(rider: pool.riders.first, start_location: pool.locations.first, end_location: pool.locations.last)
+    unfinished = TripCreator.new(trip_request_id: request.id, driver_ids: pool.drivers.map(&:id)).create_trip!
+    position = unfinished.trip_positions.create!(position: pool.locations.first.position)
+    before_count = pool.drivers.first.reload.trips_count
+    unrelated = trips(:incomplete_trip)
+    Rails.env.stub(:development?, true) do
+      result = TripSimulator::Runner.reset
+      assert_equal 1, result[:removed_trips]
+      assert_not result[:running]
+    end
     waiter.value
     assert_not TripSimulator::Runner.status[:running]
+    Rails.env.stub(:development?, true) { assert_equal 0, TripSimulator::Runner.reset[:removed_trips] }
+    assert_not Trip.exists?(unfinished.id)
+    assert_not TripRequest.exists?(request.id)
+    assert_not TripPosition.exists?(position.id)
+    assert Trip.exists?(completed.id)
+    assert_equal 2, completed.trip_positions.count
+    assert Trip.exists?(unrelated.id)
+    assert Driver.idle.exists?(pool.drivers.first.id)
+    assert_equal before_count - 1, pool.drivers.first.reload.trips_count
+    assert_equal 5, TripSimulator::Pool.new.prepare!.drivers.size
   ensure
     Process.kill('TERM', child) rescue nil
     waiter&.join

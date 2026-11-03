@@ -11,7 +11,7 @@
     body { margin: 0 auto; padding: 10px 16px; max-width: 1500px; background: #f3f5f8; color: #17243a; font: 14px system-ui, sans-serif }
     header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px }
     h1 { font-size: 20px; margin: 0; white-space: nowrap } h2 { font-size: 16px; margin: 0 0 6px } p { margin: 6px 0 }
-    header .controls { margin-left: auto; display: flex; gap: 6px; align-items: center } #run-status { font-size: 11px; color: #526078 } #start-simulation { background: #176443; color: white; border-color: #176443 } button:disabled { opacity: 0.6; cursor: default } button, summary { cursor: pointer } button { padding: 7px 12px; border: 1px solid #bac7d8; border-radius: 7px; background: white; color: inherit; font: inherit }
+    header .controls { margin-left: auto; display: flex; gap: 6px; align-items: center } #run-status { font-size: 11px; color: #526078 } #start-simulation { background: #176443; color: white; border-color: #176443 } button:disabled { opacity: 0.6; cursor: default } button, summary { cursor: pointer } button { padding: 6px 8px; white-space: nowrap; border: 1px solid #bac7d8; border-radius: 7px; background: white; color: inherit; font: inherit }
     .muted { color: #526078 } .error { color: #a72d24 } #status { font-size: 12px }
     #counts { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; margin-bottom: 8px }
     .counter { background: white; border: 1px solid #d5ddea; border-radius: 7px; padding: 5px 10px }
@@ -44,7 +44,7 @@
   <header>
     <h1>Rideshare activity</h1>
     <span id="status" role="status">Connecting…</span>
-    <div class="controls"><span id="run-status" role="status">Ready</span><button id="start-simulation" type="button">Run 10 trips</button><button id="show-instructions" type="button">How to run</button></div>
+    <div class="controls"><span id="run-status" role="status">Ready</span><button id="start-simulation" type="button">Run 10 trips</button><button id="reset-simulation" type="button" title="Stop the task and remove unfinished simulator trips; completed rides are kept">Reset</button><button id="show-instructions" type="button">How to run</button></div>
   </header>
   <section aria-label="Database counts" id="counts"></section>
   <section class="panel pool">
@@ -78,6 +78,7 @@
     <pre>SIM_SAMPLES=37 SIM_INTERVAL=10 bin/rails 'simulate:app_activity[100]'</pre>
     <p class="muted">Click Run 10 trips to launch a background Rails task on this server. Five drivers share up to two concurrent rides in opposite directions; 10 six-minute trips take about 30 minutes. Repeated clicks cannot start overlapping runs. Logs are in log/simulator.log.
     </p><p class="muted">Default rides last six minutes: 37 positions, including pickup and arrival, sampled every 10 seconds. For a quick preview use SIM_INTERVAL=0.5. Positions follow saved street geometry; timing is synthetic.</p>
+    <p class="muted">Reset stops the background or managed CLI task, removes unfinished simulator trips and their requests/positions, and frees drivers. Completed trips and ratings are kept. The count-growth baseline resets.</p>
     <p class="muted">Click a completed trip number to inspect its recorded pins; Back to live restores active trips. Completed trips disappear from the live map automatically.</p>
     <p class="muted">Use the same development database as this server. At most two rides run concurrently; positions update during each ride. Yellow drivers are idle; green drivers are on a trip.</p>
     <p class="muted">The page polls every second (five seconds in the background). Counts cover the whole database; growth is measured since opening this page. Actor and location pools are reused while requests, trips and positions accumulate.</p>
@@ -86,6 +87,32 @@
   <script>
     (() => {
       let starting = false;
+      const resetButton = document.getElementById('reset-simulation');
+      resetButton.addEventListener('click', async () => {
+        starting = true;
+        resetButton.disabled = true;
+        startButton.disabled = true;
+        runStatus.textContent = 'Resetting…';
+        try {
+          const response = await fetch('/simulator/reset', { method: 'POST', headers: { 'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content, 'Accept': 'application/json' } });
+          const result = await response.json();
+          if (!response.ok) throw new Error(result.error || `HTTP ${response.status}`);
+          selectedTrip = null;
+          selectionVersion++;
+          liveTrips = [];
+          drawTrips([]);
+          document.getElementById('live-map').hidden = true;
+          baseline = undefined;
+          runStatus.textContent = `Reset ${result.removed_trips} unfinished trips`;
+          startButton.disabled = false;
+          startButton.textContent = 'Run 10 trips';
+        } catch (error) {
+          runStatus.textContent = error.message;
+        } finally {
+          starting = false;
+          resetButton.disabled = false;
+        }
+      });
       const startButton = document.getElementById('start-simulation');
       const runStatus = document.getElementById('run-status');
       startButton.addEventListener('click', async () => {
@@ -130,9 +157,10 @@
           const color = history ? (tripColors.get(trip.id) || '#1d4ed8') : colorForTrip(trip.id);
           const left = !history && palette.indexOf(color) % 2 === 0;
           const positions = trip.positions || [];
-          if (positions.length > 1) {
-            L.polyline(positions.map(position => [position.lat, position.lng]), {
-              color, weight: 3, opacity: 0.75, interactive: false
+          const route = trip.route || positions.map(position => [position.lat, position.lng]);
+          if (route.length > 1) {
+            L.polyline(route, {
+              color, weight: 3, opacity: 0.75, dashArray: !history && !left ? '6 5' : null, interactive: false
             }).addTo(pins);
           }
           positions.forEach((position, index) => {
@@ -164,7 +192,7 @@
           const trip = await response.json();
           if (version !== selectionVersion) return;
           drawTrips([trip], true);
-          if (map && trip.positions.length) map.fitBounds(L.latLngBounds(trip.positions.map(position => [position.lat, position.lng])), { padding: [30, 30], maxZoom: 16 });
+          if (map && trip.route.length) map.fitBounds(L.latLngBounds(trip.route), { padding: [30, 30], maxZoom: 16 });
         } catch (error) {
           if (version === selectionVersion) mapStatus.textContent = `Cannot load trip #${id}: ${error.message}`;
         }

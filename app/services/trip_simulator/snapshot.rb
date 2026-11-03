@@ -18,7 +18,7 @@ class TripSimulator
         counts: { drivers: Driver.count, riders: Rider.count, locations: Location.count,
                   requests: TripRequest.count, trips: Trip.count, positions: TripPosition.count },
         drivers: drivers.map { |driver| { id: driver.id, name: name(driver), busy: busy.include?(driver.id) } },
-        active: active.map { |trip| serialize(trip, samples).merge(positions: positions.fetch(trip.id, []).map { |position| self.class.position(position) }) },
+        active: active.map { |trip| serialize(trip, samples).merge(route: self.class.route(trip), positions: positions.fetch(trip.id, []).map { |position| self.class.position(position) }) },
         recent: recent.map { |trip| serialize(trip, samples) }
       }
     end
@@ -27,6 +27,11 @@ class TripSimulator
       locations = Location.where(address: Pool::LOCATIONS.map(&:first)).select(:id)
       requests = TripRequest.where(start_location_id: locations, end_location_id: locations).select(:id)
       Trip.where(driver_id: Pool.drivers.select(:id), trip_request_id: requests)
+    end
+
+    def self.route(trip)
+      request = trip.trip_request
+      Route.path(request.start_location, request.end_location)
     end
 
     def self.position(record)

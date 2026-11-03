@@ -64,13 +64,21 @@ A process-held file lock prevents duplicate runs from the UI or CLI. The button
 disables while a batch runs; output and failures go to `log/simulator.log`.
 An existing unfinished simulator ride must finish before starting a new UI batch.
 The start endpoint is development-only and protected by Rails CSRF validation.
+**Reset** stops the managed simulator process, waits for exit, and transactionally
+removes only unfinished simulator trips, their positions and requests. Completed
+trips/ratings, drivers, riders, locations, and unrelated app data are preserved.
+Driver counters are updated through normal model callbacks. Reset frees the pool,
+clears live pins, and resets the growth baseline so a new batch can start.
+If the task cannot be identified or stopped, cleanup is refused and an error is
+shown. Reset does not fabricate completion timestamps or ratings.
 Reloading the page does not interrupt a batch. Logs from CLI invocations remain
 in their terminal.
 
 The page polls every second (five seconds when hidden). Yellow drivers are idle; green
 are active. The [Leaflet](https://leafletjs.com/) map starts framed around both
 squares. Distinct colors and trip-number labels identify recorded positions for each
-active trip, with a matching line connecting its recorded pins; both pins and
+active trip, with a matching full street-route line visible from pickup to destination
+even before position samples arrive; both pins and
 line disappear on completion. Matching colored borders identify
 the active ride cards below the wide map, and active drivers sort before idle
 drivers. Marker icons and labels are slightly offset to distinguish overlapping

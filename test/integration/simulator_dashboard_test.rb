@@ -9,12 +9,19 @@ class SimulatorDashboardTest < ActionDispatch::IntegrationTest
     assert_response :not_found
     post '/simulator/start'
     assert_response :not_found
+    post '/simulator/reset'
+    assert_response :not_found
     get '/simulator/trips/1/positions'
     assert_response :not_found
   end
 
   test 'start returns accepted and repeated starts return conflict' do
     Rails.env.stub(:development?, true) do
+      TripSimulator::Runner.stub(:reset, { running: false, removed_trips: 2 }) do
+        post '/simulator/reset'
+        assert_response :success
+        assert_equal 2, response.parsed_body['removed_trips']
+      end
       TripSimulator::Runner.stub(:start, { running: true }) do
         post '/simulator/start'
         assert_response :accepted
@@ -57,8 +64,13 @@ class SimulatorDashboardTest < ActionDispatch::IntegrationTest
       assert_empty idle['active']
       assert_equal 2, idle['recent'].first['samples']
       assert_empty assigned['active'].first['positions']
+      route = assigned['active'].first['route']
+      assert_operator route.length, :>, 2
+      assert_equal [trip.trip_request.start_location.position.x, trip.trip_request.start_location.position.y], route.first
+      assert_equal [trip.trip_request.end_location.position.x, trip.trip_request.end_location.position.y], route.last
       get "/simulator/trips/#{trip.id}/positions"
       assert_response :success
+      assert_equal route, response.parsed_body['route']
       positions = response.parsed_body['positions']
       assert_equal 2, positions.size
       assert_equal trip.trip_request.start_location.position.x, positions.first['lat']
