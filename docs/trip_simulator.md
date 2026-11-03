@@ -34,3 +34,15 @@ Trip creation is transactional; position updates and completion are separate
 commits so the activity can be observed. An interrupted or failed ride remains
 unfinished and its driver stays busy; the task does not pretend it completed.
 The simulator is development-only. Tests exercise the lifecycle in the test DB.
+
+## Live dashboard
+
+Start the Rails server and open `/simulator` in development. The dashboard polls
+committed database state every second and does not create records. Run the task
+in a separate terminal; use `SIM_SAMPLES=20 SIM_INTERVAL=0.5` for visible rides.
+It shows simulator drivers, up to 50 active rides, the latest 15 completed rides
+and trip ratings, plus exact database-wide counts and growth since page opening.
+Counts include unrelated application data; frequent exact counts add database
+load as tables grow. Polling can miss immediate pickup/completion transitions;
+completed rides and ratings remain visible. Position counts indicate activity,
+not a percentage or a map. Reloading resets the count baseline.

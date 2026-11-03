@@ -1,4 +1,9 @@
 Rails.application.routes.draw do
+  if Rails.env.development? || Rails.env.test?
+    get '/simulator', to: 'simulator#index'
+    get '/simulator/snapshot', to: 'simulator#snapshot'
+  end
+
   mount PgHero::Engine, at: 'pghero'
 
   namespace :api do

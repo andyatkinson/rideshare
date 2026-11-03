@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Rideshare simulator</title>
+  <style>
+    * { box-sizing: border-box } body { margin: 0 auto; padding: 28px; max-width: 1200px; background: #f3f5f8; color: #17243a; font: 16px system-ui, sans-serif }
+    h1 { margin-bottom: 8px } h2 { font-size: 20px } code { background: #e2e8f0; padding: 3px 6px } .muted { color: #526078 }
+    #counts, #drivers { display: flex; flex-wrap: wrap; gap: 10px } .counter, .driver, .ride { background: white; border: 1px solid #cdd6e3; border-radius: 9px; padding: 14px }
+    .counter { flex: 1; min-width: 140px } .counter strong { display: block; font-size: 26px } .delta { color: #176443; font-size: 14px }
+    .driver { border-left: 5px solid #26845b } .driver.busy { border-left-color: #d18212; background: #fff7e8 }
+    .ride { margin: 10px 0 } .ride p { margin: 7px 0 } .badge { float: right; color: #176443 } #status { min-height: 24px } .error { color: #a72d24 }
+    table { width: 100%; border-collapse: collapse; background: white } th, td { text-align: left; padding: 12px; border-bottom: 1px solid #dce2eb } .table-wrap { overflow-x: auto }
+  </style>
+</head>
+<body>
+  <h1>Rideshare activity</h1>
+  <p class="muted">Live database view · fixed actor pool · sequential rides · refreshes every second</p>
+  <p>Run in another terminal: <code>SIM_SAMPLES=20 SIM_INTERVAL=0.5 bin/rails 'simulate:app_activity[100]'</code></p>
+  <p id="status" role="status">Connecting…</p>
+  <section aria-label="Database counts" id="counts"></section>
+  <h2>Simulator drivers</h2>
+  <div id="drivers"></div>
+  <h2>Active rides</h2>
+  <div id="active"></div>
+  <h2>Recent completed rides</h2>
+  <p class="muted">Latest 15 rides. Trip ratings have no separate author field. Actor and location counts stay fixed while requests, trips and positions accumulate.</p>
+  <div class="table-wrap"><table><thead><tr><th>Trip</th><th>Driver / rider</th><th>Route</th><th>Samples</th><th>Trip rating</th></tr></thead><tbody id="recent"></tbody></table></div>
+  <script>
+    (() => {
+      let baseline;
+      const element = (tag, text, className) => {
+        const node = document.createElement(tag);
+        if (text !== undefined) node.textContent = text;
+        if (className) node.className = className;
+        return node;
+      };
+      const replace = (id, children) => document.getElementById(id).replaceChildren(...children);
+      async function refresh() {
+        try {
+          const response = await fetch('/simulator/snapshot', { cache: 'no-store' });
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          const data = await response.json();
+          baseline ||= data.counts;
+          replace('counts', Object.entries(data.counts).map(([label, count]) => {
+            const card = element('div', undefined, 'counter');
+            const delta = count - baseline[label];
+            card.append(element('span', label), element('strong', count.toLocaleString()), element('span', `${delta >= 0 ? '+' : ''}${delta.toLocaleString()} since opening`, 'delta'));
+            return card;
+          }));
+          replace('drivers', data.drivers.length ? data.drivers.map(driver => element('div', `${driver.name} · ${driver.busy ? 'On trip' : 'Idle'}`, `driver${driver.busy ? ' busy' : ''}`)) : [element('p', 'No simulator drivers yet. Run the command above to prepare the pool.')]);
+          replace('active', data.active.length ? data.active.map(trip => {
+            const card = element('article', undefined, 'ride');
+            card.append(element('span', trip.samples ? 'In transit' : 'Assigned / awaiting position', 'badge'), element('strong', `Trip #${trip.id}`), element('p', `${trip.driver} → ${trip.rider}`), element('p', `${trip.origin} → ${trip.destination}`), element('p', `${trip.samples} position samples recorded`));
+            return card;
+          }) : [element('p', 'No active rides. Drivers are ready for the next request.', 'muted')]);
+          replace('recent', data.recent.map(trip => {
+            const row = element('tr');
+            [trip.id, `${trip.driver} / ${trip.rider}`, `${trip.origin} → ${trip.destination}`, trip.samples, trip.rating ? `${'★'.repeat(trip.rating)} (${trip.rating}/5)` : 'Awaiting rating'].forEach(value => row.append(element('td', value)));
+            return row;
+          }));
+          const status = document.getElementById('status');
+          status.className = 'muted';
+          status.textContent = `Live · updated ${new Date(data.captured_at).toLocaleTimeString()}`;
+        } catch (error) {
+          const status = document.getElementById('status');
+          status.className = 'error';
+          status.textContent = `Connection unavailable (${error.message}). Retrying…`;
+        } finally {
+          setTimeout(refresh, document.hidden ? 5000 : 1000);
+        }
+      }
+      refresh();
+    })();
+  </script>
+</body>
+</html>
