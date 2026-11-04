@@ -21,7 +21,7 @@
     .pool { margin-bottom: 8px } #drivers { display: flex; flex-wrap: wrap; gap: 6px }
     .driver { border: 1px solid #d9b942; border-radius: 6px; padding: 4px 7px; background: #fff3ba; color: #654e00; font-size: 12px }
     .driver.busy { border-color: #69ae80; background: #d9f4e2; color: #145c30 }
-    .columns { display: grid; gap: 8px } #active { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px }
+    .columns { display: grid; gap: 8px } #active { display: grid; grid-template-columns: 1fr; gap: 8px }
     #map { height: clamp(120px, 18vh, 200px); border-radius: 7px; background: #e8eef3; margin-bottom: 8px }
     .map-heading { display: flex; justify-content: space-between; align-items: center; gap: 8px }
     #map-status { font-size: 12px; margin-bottom: 8px } #live-map { padding: 4px 8px; font-size: 12px }
@@ -137,6 +137,7 @@
         if (!tripColors.has(id)) tripColors.set(id, palette.find(color => ![...tripColors.values()].includes(color)) || palette[0]);
         return tripColors.get(id);
       };
+      const clock = seconds => `${Math.floor(seconds / 60).toString().padStart(2, '0')}:${(seconds % 60).toString().padStart(2, '0')}`;
       const shortName = name => name.replace(/^Simulator /, '');
       const shortLocation = name => name.replace(', Cambridge, MA', '');
       const bounds = [[42.36242, -71.10310], [42.36507, -71.08572]];
@@ -233,7 +234,7 @@
           replace('active', data.active.length ? data.active.map(trip => {
             const card = element('article', undefined, 'ride');
             card.style.setProperty('--trip-color', colorForTrip(trip.id));
-            card.append(element('span', trip.samples ? 'In transit' : 'Assigned / awaiting position', 'badge'), element('strong', `Trip #${trip.id}`), element('p', `🛞 ${shortName(trip.driver)} → 🙋 ${shortName(trip.rider)}`), element('p', `${shortLocation(trip.origin)} → ${shortLocation(trip.destination)}`), element('p', `${trip.samples} position samples recorded`));
+            card.append(element('span', trip.samples ? 'In transit' : 'Assigned / awaiting position', 'badge'), element('strong', `Trip #${trip.id}`), element('p', `🛞 ${shortName(trip.driver)} → 🙋 ${shortName(trip.rider)}`), element('p', `🚩 ${shortLocation(trip.origin)} → 🏁 ${shortLocation(trip.destination)}`), element('p', `⏱ Elapsed ${clock(trip.elapsed_seconds)} · ⏳ Remaining ≈ ${clock(trip.remaining_seconds)} · ${trip.samples} positions`));
             return card;
           }) : [element('p', 'No active rides. Drivers are ready for the next request.', 'muted')]);
           const rideRows = trips => trips.map(trip => {
@@ -246,7 +247,7 @@
             link.addEventListener('click', () => selectTrip(trip.id));
             tripCell.append(link);
             row.append(tripCell);
-            [`🛞 ${shortName(trip.driver)} / 🙋 ${shortName(trip.rider)}`, `${shortLocation(trip.origin)} → ${shortLocation(trip.destination)}`, trip.samples, trip.rating ? `${'★'.repeat(trip.rating)} (${trip.rating}/5)` : 'Awaiting rating'].forEach(value => row.append(element('td', value)));
+            [`🛞 ${shortName(trip.driver)} / 🙋 ${shortName(trip.rider)}`, `🚩 ${shortLocation(trip.origin)} → 🏁 ${shortLocation(trip.destination)}`, trip.samples, trip.rating ? `${'★'.repeat(trip.rating)} (${trip.rating}/5)` : 'Awaiting rating'].forEach(value => row.append(element('td', value)));
             return row;
           });
           replace('recent', rideRows(data.recent.slice(0, 3)));

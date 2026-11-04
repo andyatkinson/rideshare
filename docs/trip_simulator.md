@@ -79,7 +79,9 @@ active trip, with a matching full street-route line visible from pickup to desti
 even before position samples arrive; both pins and
 line disappear on completion. Matching colored borders identify
 the active ride cards below the wide map, and active drivers sort before idle
-drivers. Marker icons and labels are slightly offset to distinguish overlapping
+drivers. Active rides show elapsed time and estimated time remaining based on
+the running task’s configured duration; 🚩 marks pickup and 🏁 marks destination.
+Marker icons and labels are slightly offset to distinguish overlapping
 trips; stored coordinates are unchanged. Click a completed trip number for its saved blue position pins;
 **Back to live** restores active trips. Pin pop-ups show trip, sample, and time.
 

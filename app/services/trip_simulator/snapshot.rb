@@ -12,13 +12,15 @@ class TripSimulator
       ).call
       samples = TripPosition.where(trip_id: rows.map(&:id)).group(:trip_id).count
       positions = TripPosition.where(trip_id: active.map(&:id)).order(:created_at, :id).group_by(&:trip_id)
+      runner = Runner.status
+      duration = runner[:running] ? runner[:duration_seconds] : 360
       busy = trips.where(completed_at: nil).pluck(:driver_id)
       {
-        captured_at: Time.current.iso8601, runner: Runner.status,
+        captured_at: Time.current.iso8601, runner: runner,
         counts: { drivers: Driver.count, riders: Rider.count, locations: Location.count,
                   requests: TripRequest.count, trips: Trip.count, positions: TripPosition.count },
         drivers: drivers.map { |driver| { id: driver.id, name: name(driver), busy: busy.include?(driver.id) } },
-        active: active.map { |trip| serialize(trip, samples).merge(route: self.class.route(trip), positions: positions.fetch(trip.id, []).map { |position| self.class.position(position) }) },
+        active: active.map { |trip| serialize(trip, samples).merge(timing(trip, duration)).merge(route: self.class.route(trip), positions: positions.fetch(trip.id, []).map { |position| self.class.position(position) }) },
         recent: recent.map { |trip| serialize(trip, samples) }
       }
     end
@@ -39,6 +41,11 @@ class TripSimulator
     end
 
     private
+
+    def timing(trip, duration)
+      elapsed = [((Time.current - trip.created_at).to_f).floor, 0].max
+      { elapsed_seconds: elapsed, remaining_seconds: [(duration - elapsed).ceil, 0].max }
+    end
 
     def name(user)
       [user.first_name, user.last_name].join(' ')

@@ -9,7 +9,8 @@ class TripSimulator
 
     def self.status
       File.open(LOCK_PATH, 'a+') do |lock|
-        { running: !lock.flock(File::LOCK_EX | File::LOCK_NB), log: 'log/simulator.log' }
+        { running: !lock.flock(File::LOCK_EX | File::LOCK_NB), log: 'log/simulator.log',
+          duration_seconds: metadata(lock).fetch('duration_seconds', 360) }
       end
     end
 
@@ -20,10 +21,18 @@ class TripSimulator
       end
     end
 
-    def self.record_pid(lock, pid)
+    def self.metadata(lock)
+      lock.rewind
+      value = JSON.parse(lock.read)
+      value.is_a?(Hash) ? value : { 'pid' => value, 'duration_seconds' => 360 }
+    rescue JSON::ParserError
+      { 'pid' => nil, 'duration_seconds' => 360 }
+    end
+
+    def self.record_pid(lock, pid, samples: ENV.fetch('SIM_SAMPLES', 73), interval: ENV.fetch('SIM_INTERVAL', 5))
       lock.truncate(0)
       lock.rewind
-      lock.write(pid.to_s)
+      lock.write({ pid: pid, duration_seconds: (Integer(samples) - 1) * Float(interval) }.to_json)
       lock.flush
     end
 
@@ -46,7 +55,7 @@ class TripSimulator
                               'simulate:app_activity[10]', lock.fileno => lock,
                               chdir: Rails.root.to_s, in: File::NULL, out: [LOG_PATH.to_s, 'a'],
                               err: [:child, :out], pgroup: true)
-          record_pid(lock, pid)
+          record_pid(lock, pid, samples: 73, interval: 5)
           Process.detach(pid)
         end
       end
@@ -74,8 +83,7 @@ class TripSimulator
       control do
         File.open(LOCK_PATH, 'a+') do |lock|
           unless lock.flock(File::LOCK_EX | File::LOCK_NB)
-            lock.rewind
-            pid = Integer(lock.read, exception: false)
+            pid = Integer(metadata(lock)['pid'], exception: false)
             raise ResetFailed, 'Cannot identify the running task; stop it in its terminal first' unless pid && pid > 1 && pid != Process.pid
 
             Process.kill('TERM', pid)

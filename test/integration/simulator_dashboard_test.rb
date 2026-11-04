@@ -41,12 +41,24 @@ class SimulatorDashboardTest < ActionDispatch::IntegrationTest
       assert_select 'h1', 'Rideshare activity'
       pool = TripSimulator::Pool.new(driver_count: 1, rider_count: 1).prepare!
       events = []
-      observer = lambda do |event, _trip|
+      observer = lambda do |event, active_trip|
         next unless %i[assigned position idle].include?(event)
 
         get '/simulator/snapshot'
         assert_response :success
         events << [event, response.parsed_body]
+        if event == :assigned
+          travel_to(active_trip.created_at + 90.seconds, with_usec: true) do
+            get '/simulator/snapshot'
+            timer = response.parsed_body['active'].first
+            assert_equal 90, timer['elapsed_seconds']
+            assert_equal 270, timer['remaining_seconds']
+            TripSimulator::Runner.stub(:status, { running: true, duration_seconds: 120 }) do
+              get '/simulator/snapshot'
+              assert_equal 30, response.parsed_body['active'].first['remaining_seconds']
+            end
+          end
+        end
         assert_equal 'no-store', response.headers['Cache-Control']
       end
       runner = TripSimulator.new(drivers: pool.drivers, riders: pool.riders, locations: pool.locations,
