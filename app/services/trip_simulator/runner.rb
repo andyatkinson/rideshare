@@ -88,11 +88,13 @@ class TripSimulator
         File.open(LOCK_PATH, 'a+') do |lock|
           unless lock.flock(File::LOCK_EX | File::LOCK_NB)
             details = metadata(lock)
-            unless details['host'] == Socket.gethostname
-              raise ResetFailed, 'Task runs in another environment; stop it in its own terminal/container'
-            end
             pid = Integer(details['pid'], exception: false)
             raise ResetFailed, 'Cannot identify the running task; stop it in its terminal first' unless pid && pid > 1 && pid != Process.pid
+            same_environment = details['host'] == Socket.gethostname ||
+                               (!details.key?('host') && legacy_task_holds_lock?(pid, lock))
+            unless same_environment
+              raise ResetFailed, 'Task runs in another environment; stop it in its own terminal/container'
+            end
 
             Process.kill('TERM', pid)
             deadline = Process.clock_gettime(Process::CLOCK_MONOTONIC) + 5
@@ -110,6 +112,22 @@ class TripSimulator
       end
     rescue Errno::ESRCH
       raise ResetFailed, 'Task exited while resetting; try Reset again'
+    end
+
+    # Older runs did not record their container hostname. On Linux, verify both
+    # the Rails task command and its inherited lock before signaling that PID.
+    def self.legacy_task_holds_lock?(pid, lock)
+      arguments = File.binread("/proc/#{pid}/cmdline").split("\0")
+      return false unless arguments.include?(Rails.root.join('bin/rails').to_s) &&
+                          arguments.any? { |argument| argument.match?(/\Asimulate:app_activity(?:\[.*\])?\z/) }
+
+      Dir.glob("/proc/#{pid}/fd/*").any? do |path|
+        File.identical?(path, lock.path)
+      rescue Errno::ENOENT, Errno::EACCES
+        false
+      end
+    rescue Errno::ENOENT, Errno::EACCES
+      false
     end
 
     def self.alive?(pid)

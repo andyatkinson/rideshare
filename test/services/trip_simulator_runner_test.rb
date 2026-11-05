@@ -13,7 +13,7 @@ class TripSimulatorRunnerTest < ActiveSupport::TestCase
       assert_equal 2, configuration['sample_interval']
       assert_equal 15, configuration['jitter_seconds']
       assert_equal '5', environment['RAILS_MAX_THREADS']
-      child = spawn.call(environment, RbConfig.ruby, '-e', 'sleep 30', **options)
+      child = spawn.call(environment, RbConfig.ruby, '-e', 'sleep 30', Rails.root.join('bin/rails').to_s, 'simulate:app_activity[10]', **options)
     end
     Rails.env.stub(:development?, true) do
       Process.stub(:spawn, replacement) do
@@ -36,6 +36,13 @@ class TripSimulatorRunnerTest < ActiveSupport::TestCase
     position = unfinished.trip_positions.create!(position: pool.locations.first.position)
     before_count = pool.drivers.first.reload.trips_count
     unrelated = trips(:incomplete_trip)
+    # Simulate a task launched before hostname metadata was introduced.
+    if File.directory?("/proc/#{child}/fd")
+      path = TripSimulator::Runner::LOCK_PATH
+      details = JSON.parse(File.read(path)).except('host')
+      File.write(path, details.to_json)
+      File.open(path) { |lock| assert TripSimulator::Runner.legacy_task_holds_lock?(child, lock) }
+    end
     Rails.env.stub(:development?, true) do
       result = TripSimulator::Runner.reset
       assert_equal 1, result[:removed_trips]

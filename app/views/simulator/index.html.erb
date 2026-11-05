@@ -120,7 +120,8 @@
           drawTrips([]);
           document.getElementById('live-map').hidden = true;
           baseline = undefined;
-          runStatus.textContent = `Reset ${result.removed_trips} unfinished trips`;
+          runStatus.textContent = `Stopped · removed ${result.removed_trips} unfinished trips`;
+          await refresh();
           startButton.disabled = false;
           startButton.textContent = 'Run 10 trips';
         } catch (error) {
