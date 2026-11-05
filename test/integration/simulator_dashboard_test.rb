@@ -22,12 +22,16 @@ class SimulatorDashboardTest < ActionDispatch::IntegrationTest
         assert_response :success
         assert_equal 2, response.parsed_body['removed_trips']
       end
-      TripSimulator::Runner.stub(:start, { running: true }) do
-        post '/simulator/start'
+      received = nil
+      TripSimulator::Runner.stub(:start, ->(options) { received = options; { running: true } }) do
+        post '/simulator/start', params: { concurrency: 8, sample_interval: 2, jitter_seconds: 15 }, as: :json
         assert_response :accepted
+        assert_equal({ 'concurrency' => 8, 'sample_interval' => 2, 'jitter_seconds' => 15 }, received)
         assert response.parsed_body['running']
       end
-      TripSimulator::Runner.stub(:start, -> { raise TripSimulator::Runner::AlreadyRunning, 'Already running' }) do
+      post '/simulator/start', params: { concurrency: 11 }, as: :json
+      assert_response :unprocessable_entity
+      TripSimulator::Runner.stub(:start, ->(*) { raise TripSimulator::Runner::AlreadyRunning, 'Already running' }) do
         post '/simulator/start'
         assert_response :conflict
       end
@@ -62,7 +66,7 @@ class SimulatorDashboardTest < ActionDispatch::IntegrationTest
         assert_equal 'no-store', response.headers['Cache-Control']
       end
       runner = TripSimulator.new(drivers: pool.drivers, riders: pool.riders, locations: pool.locations,
-                                 samples: 2, interval: 0, on_event: observer)
+                                 samples: 2, interval: 0, jitter: 0, on_event: observer)
       trip = runner.run.first
       assigned = events.assoc(:assigned).last
       idle = events.assoc(:idle).last

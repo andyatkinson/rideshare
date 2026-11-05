@@ -1,15 +1,20 @@
 class TripSimulator
   class Pool
     LOCATIONS = [
-      ['Kendall Square, Cambridge, MA', 'MA', [42.36242, -71.08572]],
-      ['Central Square, Cambridge, MA', 'MA', [42.36507, -71.10310]]
+      ['Kendall Square, Cambridge, MA', 'MA', [42.36242, -71.08572], 'kendall'],
+      ['Central Square, Cambridge, MA', 'MA', [42.36507, -71.10310], 'central'],
+      ['Harvard Square, Cambridge, MA', 'MA', [42.37336, -71.11896], 'harvard_square'],
+      ['Inman Square, Cambridge, MA', 'MA', [42.3730, -71.1008], 'inman'],
+      ['MIT, 77 Massachusetts Avenue, Cambridge, MA', 'MA', [42.3593, -71.0935], 'mit'],
+      ['Harvard University, Oxford Street, Cambridge, MA', 'MA', [42.3763, -71.1168], 'harvard_university'],
+      ['North Station, Boston, MA', 'MA', [42.36558, -71.06131], 'north_station']
     ].freeze
 
     attr_reader :drivers, :riders, :locations
 
     def initialize(driver_count: 5, rider_count: 30)
       @driver_count, @rider_count = Integer(driver_count), Integer(rider_count)
-      raise ArgumentError, 'Use 1 to 5 drivers and at least one rider' unless (1..5).cover?(@driver_count) && @rider_count.positive?
+      raise ArgumentError, 'Use 1 to 10 drivers and at least one rider' unless (1..10).cover?(@driver_count) && @rider_count.positive?
     end
 
     def prepare!
@@ -25,8 +30,8 @@ class TripSimulator
       self
     end
 
-    def self.drivers
-      Driver.where(email: (1..5).map { |number| "sim-driver-#{number}@rideshare.test" }).order(:id)
+    def self.drivers(count = 10)
+      Driver.where(email: (1..count).map { |number| "sim-driver-#{number}@rideshare.test" }).order(:id)
     end
 
     private

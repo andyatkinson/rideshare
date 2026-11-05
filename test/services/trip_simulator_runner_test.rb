@@ -8,20 +8,29 @@ class TripSimulatorRunnerTest < ActiveSupport::TestCase
     child, waiter = nil, nil
     replacement = lambda do |environment, *arguments, **options|
       options = arguments.last if arguments.last.is_a?(Hash)
+      configuration = JSON.parse(environment.fetch('SIM_CONFIG'))
+      assert_equal 3, configuration['concurrency']
+      assert_equal 2, configuration['sample_interval']
+      assert_equal 15, configuration['jitter_seconds']
+      assert_equal '5', environment['RAILS_MAX_THREADS']
       child = spawn.call(environment, RbConfig.ruby, '-e', 'sleep 30', **options)
     end
     Rails.env.stub(:development?, true) do
       Process.stub(:spawn, replacement) do
         Process.stub(:detach, ->(pid) { waiter = detach.call(pid) }) do
-          assert TripSimulator::Runner.start[:running]
+          assert TripSimulator::Runner.start(concurrency: 3, sample_interval: 2, jitter_seconds: 15)[:running]
           assert TripSimulator::Runner.status[:running]
           assert_raises(TripSimulator::Runner::AlreadyRunning) { TripSimulator::Runner.start }
+          Socket.stub(:gethostname, 'another-container') do
+            assert_raises(TripSimulator::Runner::ResetFailed) { TripSimulator::Runner.reset }
+          end
+          assert TripSimulator::Runner.status[:running]
         end
       end
     end
     pool = TripSimulator::Pool.new(driver_count: 1, rider_count: 1).prepare!
     completed = TripSimulator.new(drivers: pool.drivers, riders: pool.riders,
-                                  locations: pool.locations, samples: 2, interval: 0).run.first
+                                  locations: pool.locations, samples: 2, interval: 0, jitter: 0).run.first
     request = TripRequest.create!(rider: pool.riders.first, start_location: pool.locations.first, end_location: pool.locations.last)
     unfinished = TripCreator.new(trip_request_id: request.id, driver_ids: pool.drivers.map(&:id)).create_trip!
     position = unfinished.trip_positions.create!(position: pool.locations.first.position)

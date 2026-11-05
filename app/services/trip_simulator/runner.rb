@@ -1,3 +1,5 @@
+require 'socket'
+
 class TripSimulator
   # A detached Rails task, not a thread in the reloading web process.
   class Runner
@@ -10,7 +12,8 @@ class TripSimulator
     def self.status
       File.open(LOCK_PATH, 'a+') do |lock|
         { running: !lock.flock(File::LOCK_EX | File::LOCK_NB), log: 'log/simulator.log',
-          duration_seconds: metadata(lock).fetch('duration_seconds', 360) }
+          duration_seconds: metadata(lock).fetch('duration_seconds', 360),
+          configuration: metadata(lock).fetch('configuration', Configuration.new.to_h) }
       end
     end
 
@@ -29,16 +32,17 @@ class TripSimulator
       { 'pid' => nil, 'duration_seconds' => 360 }
     end
 
-    def self.record_pid(lock, pid, samples: ENV.fetch('SIM_SAMPLES', 73), interval: ENV.fetch('SIM_INTERVAL', 5))
+    def self.record_pid(lock, pid, configuration: Configuration.new)
       lock.truncate(0)
       lock.rewind
-      lock.write({ pid: pid, duration_seconds: (Integer(samples) - 1) * Float(interval) }.to_json)
+      lock.write({ pid: pid, host: Socket.gethostname, duration_seconds: configuration.duration_seconds, configuration: configuration.to_h }.to_json)
       lock.flush
     end
 
-    def self.start
+    def self.start(options = {})
       raise 'Simulator is development-only' unless Rails.env.development?
 
+      configuration = Configuration.new(**options.symbolize_keys)
       control do
         File.open(LOCK_PATH, 'a+') do |lock|
           raise AlreadyRunning, 'Simulator is already running' unless lock.flock(File::LOCK_EX | File::LOCK_NB)
@@ -49,25 +53,25 @@ class TripSimulator
           end
           # The child retains the lock through exec; the OS releases it on exit.
           lock.close_on_exec = false
-          environment = { 'SIM_LOCK_FD' => lock.fileno.to_s, 'SIM_DRIVERS' => '5',
-                          'SIM_SAMPLES' => '73', 'SIM_INTERVAL' => '5' }
+          environment = { 'SIM_LOCK_FD' => lock.fileno.to_s, 'SIM_CONFIG' => configuration.to_h.to_json,
+                          'RAILS_MAX_THREADS' => '5' }
           pid = Process.spawn(environment, RbConfig.ruby, Rails.root.join('bin/rails').to_s,
-                              'simulate:app_activity[10]', lock.fileno => lock,
+                              "simulate:app_activity[#{configuration.iterations}]", lock.fileno => lock,
                               chdir: Rails.root.to_s, in: File::NULL, out: [LOG_PATH.to_s, 'a'],
                               err: [:child, :out], pgroup: true)
-          record_pid(lock, pid, samples: 73, interval: 5)
+          record_pid(lock, pid, configuration: configuration)
           Process.detach(pid)
         end
       end
-      { running: true, log: 'log/simulator.log' }
+      { running: true, log: 'log/simulator.log', configuration: configuration.to_h }
     end
 
-    def self.exclusively
+    def self.exclusively(configuration: Configuration.new)
       lock = ENV['SIM_LOCK_FD'] ? File.for_fd(Integer(ENV.fetch('SIM_LOCK_FD'))) : File.open(LOCK_PATH, 'a+')
       control do
         raise AlreadyRunning, 'Simulator is already running' unless lock.flock(File::LOCK_EX | File::LOCK_NB)
 
-        record_pid(lock, Process.pid)
+        record_pid(lock, Process.pid, configuration: configuration)
       end
       yield
     rescue SignalException => error
@@ -83,7 +87,11 @@ class TripSimulator
       control do
         File.open(LOCK_PATH, 'a+') do |lock|
           unless lock.flock(File::LOCK_EX | File::LOCK_NB)
-            pid = Integer(metadata(lock)['pid'], exception: false)
+            details = metadata(lock)
+            unless details['host'] == Socket.gethostname
+              raise ResetFailed, 'Task runs in another environment; stop it in its own terminal/container'
+            end
+            pid = Integer(details['pid'], exception: false)
             raise ResetFailed, 'Cannot identify the running task; stop it in its terminal first' unless pid && pid > 1 && pid != Process.pid
 
             Process.kill('TERM', pid)
@@ -95,7 +103,8 @@ class TripSimulator
             end
           end
           removed = clear_unfinished
-          record_pid(lock, 0)
+          configuration = Configuration.new(**metadata(lock).fetch('configuration', {}).symbolize_keys)
+          record_pid(lock, 0, configuration: configuration)
           { running: false, removed_trips: removed }
         end
       end

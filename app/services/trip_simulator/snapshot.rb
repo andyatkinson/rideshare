@@ -2,7 +2,9 @@ class TripSimulator
   # Read committed database state; never prepare a pool or create records here.
   class Snapshot
     def call
-      drivers = Pool.drivers
+      runner = Runner.status
+      configuration = (runner[:configuration] || Configuration.new.to_h).symbolize_keys
+      drivers = Pool.drivers([5, configuration.fetch(:concurrency, 1)].max)
       trips = self.class.trips
       active = trips.where(completed_at: nil).order(:id).limit(50).to_a
       recent = trips.completed.order(completed_at: :desc).limit(15).to_a
@@ -12,11 +14,11 @@ class TripSimulator
       ).call
       samples = TripPosition.where(trip_id: rows.map(&:id)).group(:trip_id).count
       positions = TripPosition.where(trip_id: active.map(&:id)).order(:created_at, :id).group_by(&:trip_id)
-      runner = Runner.status
       duration = runner[:running] ? runner[:duration_seconds] : 360
       busy = trips.where(completed_at: nil).pluck(:driver_id)
       {
         captured_at: Time.current.iso8601, runner: runner,
+        locations: Pool::LOCATIONS.map { |address, _state, point, _key| { name: address, point: point } },
         counts: { drivers: Driver.count, riders: Rider.count, locations: Location.count,
                   requests: TripRequest.count, trips: Trip.count, positions: TripPosition.count },
         drivers: drivers.map { |driver| { id: driver.id, name: name(driver), busy: busy.include?(driver.id) } },

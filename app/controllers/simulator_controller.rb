@@ -11,7 +11,9 @@ class SimulatorController < ApplicationController
   end
 
   def start
-    render json: TripSimulator::Runner.start, status: :accepted
+    render json: TripSimulator::Runner.start(params.permit(:concurrency, :sample_interval, :jitter_seconds).to_h), status: :accepted
+  rescue ArgumentError, TypeError => error
+    render json: { error: error.message }, status: :unprocessable_entity
   rescue TripSimulator::Runner::AlreadyRunning => error
     render json: { error: error.message }, status: :conflict
   end

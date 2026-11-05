@@ -2,11 +2,9 @@ class TripSimulator
   # Saved OSRM street geometry; no network calls while generating positions.
   class Route
     def self.path(start, finish)
-      key = if start.address == Pool::LOCATIONS[0][0] && finish.address == Pool::LOCATIONS[1][0]
-              'kendall_to_central'
-            elsif start.address == Pool::LOCATIONS[1][0] && finish.address == Pool::LOCATIONS[0][0]
-              'central_to_kendall'
-            end
+      start_key = Pool::LOCATIONS.find { |entry| entry[0] == start.address }&.last
+      finish_key = Pool::LOCATIONS.find { |entry| entry[0] == finish.address }&.last
+      key = "#{start_key}_to_#{finish_key}" if start_key && finish_key
       first = [start.position.x, start.position.y]
       last = [finish.position.x, finish.position.y]
       geometry = key ? routes.fetch(key).fetch('coordinates') : []

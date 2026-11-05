@@ -3,36 +3,43 @@ require 'test_helper'
 class TripSimulatorConcurrencyTest < ActiveSupport::TestCase
   self.use_transactional_tests = false
 
-  test 'only one trip can be active and subsequent trips reverse direction' do
-    pool = TripSimulator::Pool.new.prepare!
-    ready, release = Queue.new, Queue.new
-    observer = lambda do |event, _trip|
-      if event == :assigned
+  test 'ten workers share seven origins without holding connections while waiting' do
+    pool = TripSimulator::Pool.new(driver_count: 10).prepare!
+    ready, release, next_release = Queue.new, Queue.new, Queue.new
+    waits, wait_lock = 0, Mutex.new
+    sleeper = lambda do |seconds|
+      if seconds == 1
+        first_wave = wait_lock.synchronize { waits += 1; waits <= 7 }
         ready << true
-        release.pop
+        (first_wave ? release : next_release).pop
+      else
+        sleep 0.01
       end
     end
     simulator = TripSimulator.new(drivers: pool.drivers, riders: pool.riders, locations: pool.locations,
-                                  samples: 2, interval: 0, on_event: observer)
-    worker = Thread.new { simulator.run }
-    Timeout.timeout(10) { ready.pop }
-    assert_equal 1, TripSimulator::Snapshot.trips.where(completed_at: nil).count
-    assert_equal 5, TripSimulator::Pool.drivers.count
+                                  samples: 2, interval: 1, jitter: 0, concurrency: 10, sleeper: sleeper)
+    worker = Thread.new { simulator.run(iterations: 10) }
+    Timeout.timeout(15) { 7.times { ready.pop } }
+    active = TripSimulator::Snapshot.trips.where(completed_at: nil)
+    assert_equal 7, active.count
+    assert_equal 7, TripRequest.where(id: active.select(:trip_request_id)).distinct.count(:start_location_id)
+    assert_equal 10, TripSimulator::Pool.drivers.count
     assert_no_difference -> { TripRequest.count } do
-      assert_raises(TripSimulator::CapacityReached) { simulator.run }
+      assert_raises(TripSimulator::NoAvailableOrigin) { simulator.send(:in_connection) { simulator.send(:request_trip!) } }
     end
-    release << true
-    first_trip = worker.value.first
-    second_trip = TripSimulator.new(drivers: pool.drivers, riders: pool.riders, locations: pool.locations,
-                                    samples: 2, interval: 0).run.first
-    first, second = [first_trip, second_trip].map(&:trip_request)
-    assert_equal first.start_location_id, second.end_location_id
-    assert_equal first.end_location_id, second.start_location_id
-    assert first_trip.completed_at
-    assert second_trip.completed_at
-    assert_equal 0, TripSimulator::Snapshot.trips.where(completed_at: nil).count
+    7.times { release << true }
+    Timeout.timeout(15) { 3.times { ready.pop } }
+    remaining = Trip.uncached { TripSimulator::Snapshot.trips.where(completed_at: nil).to_a }
+    assert_equal 3, remaining.size
+    assert_equal 3, TripRequest.where(id: remaining.map(&:trip_request_id)).distinct.count(:start_location_id)
+    3.times { next_release << true }
+    trips = worker.value
+    assert_equal 10, trips.size
+    assert trips.all?(&:completed_at)
+    assert trips.all? { |trip| trip.trip_request.start_location_id != trip.trip_request.end_location_id }
+    assert_equal 0, Trip.uncached { TripSimulator::Snapshot.trips.where(completed_at: nil).count }
   ensure
-    release << true if release
+    10.times { release << true; next_release << true } if release
     worker&.join
     if pool
       trips = Trip.where(driver_id: pool.drivers.map(&:id))

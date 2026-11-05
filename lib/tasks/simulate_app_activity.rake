@@ -10,14 +10,16 @@ namespace :simulate do
     iterations = Integer((args[:iteration_count] || '1'), 10)
     raise ArgumentError, 'iterations must be positive' unless iterations.positive?
 
-    TripSimulator::Runner.exclusively do
+    configuration = TripSimulator::Configuration.from_env(iterations: iterations)
+    TripSimulator::Runner.exclusively(configuration: configuration) do
       pool = TripSimulator::Pool.new(
-        driver_count: ENV.fetch('SIM_DRIVERS', 5), rider_count: ENV.fetch('SIM_RIDERS', 30)
+        driver_count: [5, configuration.concurrency].max, rider_count: ENV.fetch('SIM_RIDERS', 30)
       ).prepare!
       puts "Simulator pool: #{pool.drivers.size} drivers, #{pool.riders.size} riders, #{pool.locations.size} locations"
       TripSimulator.new(
         drivers: pool.drivers, riders: pool.riders, locations: pool.locations,
-        samples: ENV.fetch('SIM_SAMPLES', 73), interval: ENV.fetch('SIM_INTERVAL', 5),
+        interval: configuration.sample_interval, duration: configuration.duration_seconds,
+        concurrency: configuration.concurrency, jitter: configuration.jitter_seconds,
         random: Random.new(Integer(ENV.fetch('SIM_SEED', Random.new_seed))),
         on_event: ->(event, trip) { puts "[#{event}] trip=#{trip.id} rider=#{trip.rider.id} driver=#{trip.driver_id} rating=#{trip.rating.inspect}" }
       ).run(iterations: iterations)
