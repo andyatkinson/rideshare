@@ -194,8 +194,9 @@
           positions.forEach((position, index) => {
             const label = document.createElement('span');
             label.textContent = `Trip #${trip.id} · sample ${index + 1} · ${new Date(position.recorded_at).toLocaleTimeString()}`;
+            const tripLabel = index === positions.length - 1 ? `<span class="pin-label${left ? ' left' : ''}">#${trip.id}</span>` : '';
             L.marker([position.lat, position.lng], { title: label.textContent, alt: label.textContent, icon: L.divIcon({
-              className: '', html: `<div style="--trip-color:${color}"><div class="position-pin"></div><span class="pin-label${left ? ' left' : ''}">#${trip.id}</span></div>`, iconSize: [14, 14], iconAnchor: [history ? 7 : (left ? 14 : 0), 14]
+              className: '', html: `<div style="--trip-color:${color}"><div class="position-pin"></div>${tripLabel}</div>`, iconSize: [14, 14], iconAnchor: [history ? 7 : (left ? 14 : 0), 14]
             }) }).bindPopup(label).addTo(pins);
           });
         });
