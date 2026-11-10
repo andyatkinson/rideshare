@@ -1,58 +1,73 @@
 # Optional UUID primary key conversion
 
-This branch keeps the original migrations and `db/structure.sql` as the bigint
-base. `lib/generators/uuid_conversion/templates/convert_primary_keys_to_uuid.rb.tt`
-is the stable conversion source. Generate a timestamped migration only when you
-want to apply it; generated conversion migrations are ignored by Git.
+The branch isolates the code changes; it uses the existing development and test
+databases from `config/database.yml` (`rideshare_development` and `rideshare_test`
+in the standard setup). No database configuration changes or separate databases
+are required. Stop the Rails server and simulator before converting or resetting.
+Both workflows delete application data.
 
-Use a separate checkout/worktree and database for this experiment. Copy
-`config/database-uuid.sample.yml` to `config/database.yml` in that checkout. It
-uses `rideshare_uuid_development` and `rideshare_uuid_test` on localhost. Override
-`UUID_DEVELOPMENT_DATABASE_URL` and `UUID_TEST_DATABASE_URL` as needed (use host
-`db` inside Docker). Do not point this experiment at the main checkout's database.
-The sample connects as `postgres`; `MIGRATION_ROLE=postgres` overrides the app's
-normal development migration role of `owner`. `SKIP_ERD=1` skips optional diagram
-generation when Graphviz is unavailable. Use your own migration role if
-you change these URLs. Stop any simulator/server using the experimental
-databases before conversion, then restart Rails after migration.
+The original migrations and committed `db/structure.sql` remain the bigint base.
+`lib/generators/uuid_conversion/templates/convert_primary_keys_to_uuid.rb.tt` is
+the stable conversion source. Timestamped conversion migrations are generated
+locally and ignored by Git.
 
-With PostgreSQL 18 and dependencies available:
+## Apply UUIDs
+
+With PostgreSQL 18 and the normal app/database setup available, run these in your
+usual Rails environment (inside the app container if using Docker):
 
 ```sh
-bin/rails db:create db:schema:load
+git switch feat/uuid-primary-keys
 bin/rails generate uuid_conversion
-MIGRATION_ROLE=postgres SKIP_ERD=1 bin/rails db:migrate
-RAILS_ENV=test bin/rails db:schema:load db:migrate db:schema:dump
+RAILS_ENV=development bin/rails db:migrate db:schema:dump
+RAILS_ENV=test bin/rails db:migrate db:schema:dump
 ruby bin/generate_simulator_routes # one-time simulator prerequisite
 bin/rails test
 ```
 
-The migration **deletes all rows in the seven application tables** in one
-transaction, converts their IDs and eight foreign keys to `uuid`, and sets each
-primary key default to PostgreSQL's built-in `uuidv7()`. It rebuilds the two search
-views, their indexes, and the reservation exclusion constraint using UUID equality
-instead of `int4range`. It installs `btree_gist` if needed (requires extension
-creation privileges). It refuses production, PostgreSQL before 18, or a schema
-that has already been converted. Rails' `schema_migrations.version` and
-`ar_internal_metadata.key` stay as strings.
+The migration converts the existing databases directly; it does not load a new
+schema first. Each migration deletes all rows in the seven application tables in
+one transaction, converts their IDs and eight foreign keys to `uuid`, and sets
+each primary key default to PostgreSQL's built-in `uuidv7()`. It rebuilds the two
+search views, their indexes, and the reservation exclusion constraint using UUID
+equality instead of `int4range`. It installs `btree_gist` if needed; the migration
+role needs database CREATE privileges for that trusted extension, plus ownership
+of the application tables. The normal development migration hook still uses the
+`owner` role, and the normal ERD generation setup still applies.
+
+Conversion refuses production, PostgreSQL before 18, or an already-converted
+schema. Rails' `schema_migrations.version` and `ar_internal_metadata.key` stay as
+strings. Restart Rails after migration.
 
 Rails model generators default to UUID primary keys/references on this branch.
 New UUID primary keys use `uuidv7()` unless a migration explicitly provides another
-default. Historical bigint migrations keep their original behavior. Rails fixtures
-use deterministic UUIDs for associations; newly inserted application rows receive
-version 7 UUIDs from PostgreSQL.
+default. Historical bigint migrations keep their original behavior. Fixtures use
+deterministic UUIDs for associations; application inserts get version 7 UUIDs.
 
-The local schema dump changes after conversion and must match the test database
-before parallel tests run. Dumps include extension definitions so parallel test
-databases can load the UUID reservation constraint. Keep the converted dump local;
-restore `db/structure.sql` from Git before committing. A fresh checkout still loads
-the bigint base until you generate/apply the conversion.
+The converted schema dump stays local. Dump the test schema before parallel tests
+so worker databases use UUIDs too; dumps include extension definitions for the
+reservation constraint. Do not commit the converted `db/structure.sql`.
 
-There is no data-preserving rollback. To start over, drop **only the experimental
-databases**, restore the committed bigint dump, recreate/load them, and reapply the
-generated migration. Remove the ignored generated migration when returning to a
-checkout/database that should stay bigint. Migration and schema changes live in
-this branch; changing branches alone does not change a database.
+## Return to main and bigint keys
+
+Stop Rails and the simulator again. Remove the generated migration while still
+on the UUID branch, discard its local schema dump, and switch back:
+
+```sh
+rm -f db/migrate/*_convert_primary_keys_to_uuid.rb
+git restore db/structure.sql
+git switch main
+RAILS_ENV=development bin/rails db:drop db:create db:schema:load
+RAILS_ENV=test bin/rails db:drop db:create db:schema:load
+bin/rails test
+```
+
+These commands rebuild the same configured development and test databases from
+main's committed bigint schema, including migration bookkeeping. Use credentials
+with permission to drop/create those databases and the normal local setup for
+roles/extensions. Restart Rails afterwards. There is no data-preserving rollback;
+switching branches alone does not change database types. To try UUIDs again,
+switch to this branch and repeat the generation/application steps.
 
 References: [PostgreSQL 18 UUID functions](https://www.postgresql.org/docs/18/functions-uuid.html)
 and [Rails UUID primary keys](https://guides.rubyonrails.org/active_record_postgresql.html#uuid-primary-keys).

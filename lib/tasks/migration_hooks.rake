@@ -6,9 +6,7 @@ namespace :migration_hooks do
   task set_role: :environment do
     if Rails.env.development?
       puts 'Setting role for development'
-      connection = ActiveRecord::Base.connection
-      role = ENV.fetch('MIGRATION_ROLE', 'owner')
-      connection.execute("SET ROLE #{connection.quote_column_name(role)}")
+      ActiveRecord::Base.connection.execute('SET ROLE owner')
     end
   end
 end
