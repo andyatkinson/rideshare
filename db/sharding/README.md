@@ -37,7 +37,9 @@ The demo checks inserts, keyed reads, physical row placement, trip locality, and
 cross-shard counts, then removes its own rows. All services share a Docker
 network; volumes and ports are separate from the normal development stack.
 
-Run tests against the separate test databases:
+Run tests against the separate test databases. The suite defaults to one process
+because PgDog configures one test database rather than Rails' per-worker database
+names; simulator tests still exercise ten concurrent worker threads:
 
 ```sh
 docker compose -f docker-compose.yml -f docker-compose.pgdog-app.yml exec -e RAILS_ENV=test app bin/rails test
@@ -179,3 +181,13 @@ the old primary table is not removed automatically. Keep primary migrations and
 fixtures separate from PgDog migrations. Demo routing samples use synthetic trip
 IDs and skip parent validation; real application writes retain validation.
 Passwords and superuser access are for local development; ports bind to loopback.
+
+## Simulator
+
+The simulator writes `TripPosition` rows through PgDog. Worker threads release both
+the primary and PgDog connections between position samples and origin waits. The
+dashboard reads trips from primary and their positions separately from PgDog.
+Stop all terminates the workers before deleting unfinished positions and primary
+trip records; completed rides remain. Those deletions span separate databases,
+so they do not form one distributed transaction. Generate offline street routes
+with `ruby bin/generate_simulator_routes` before running the simulator or its tests.

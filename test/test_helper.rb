@@ -3,8 +3,9 @@ require_relative '../config/environment'
 require 'rails/test_help'
 
 class ActiveSupport::TestCase
-  # Run tests in parallel with specified workers
-  parallelize(workers: :number_of_processors)
+  # PgDog has one configured test database, not Rails' per-worker database names.
+  # Simulator concurrency is still exercised by its own worker-thread tests.
+  parallelize(workers: 1)
 
   # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
   fixtures :all

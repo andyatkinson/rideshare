@@ -13,12 +13,13 @@ class TripSimulatorRunnerTest < ActiveSupport::TestCase
       assert_equal 2, configuration['sample_interval']
       assert_equal 15, configuration['jitter_seconds']
       assert_equal '5', environment['RAILS_MAX_THREADS']
-      child = spawn.call(environment, RbConfig.ruby, '-e', 'sleep 30', Rails.root.join('bin/rails').to_s, 'simulate:app_activity[10]', **options)
+      child = spawn.call(environment, RbConfig.ruby, '-e', 'File.for_fd(Integer(ENV.fetch("SIM_LOCK_FD"))).flock(File::LOCK_EX); sleep 30', Rails.root.join('bin/rails').to_s, 'simulate:app_activity[10]', **options)
     end
     Rails.env.stub(:development?, true) do
       Process.stub(:spawn, replacement) do
         Process.stub(:detach, ->(pid) { waiter = detach.call(pid) }) do
           assert TripSimulator::Runner.start(concurrency: 3, sample_interval: 2, jitter_seconds: 15)[:running]
+          Timeout.timeout(5) { sleep 0.01 until TripSimulator::Runner.status[:running] }
           assert TripSimulator::Runner.status[:running]
           assert_raises(TripSimulator::Runner::AlreadyRunning) { TripSimulator::Runner.start }
           Socket.stub(:gethostname, 'another-container') do
