@@ -1,0 +1,76 @@
+# Development/demo conversion: deletes all application rows. PostgreSQL 18+.
+class ConvertPrimaryKeysToUuid < ActiveRecord::Migration[7.2]
+  COLUMNS = {
+    users: %i[id], locations: %i[id], vehicles: %i[id],
+    trip_requests: %i[id rider_id start_location_id end_location_id],
+    trips: %i[id trip_request_id driver_id], trip_positions: %i[id trip_id],
+    vehicle_reservations: %i[id vehicle_id trip_request_id]
+  }.freeze
+
+  def up
+    raise 'UUID conversion is for development/test only' unless Rails.env.development? || Rails.env.test?
+    raise 'UUID conversion requires PostgreSQL 18+' if connection.database_version < 180_000
+
+    COLUMNS.each do |table, names|
+      columns = connection.columns("rideshare.#{table}").index_by(&:name)
+      unless names.all? { |name| columns.fetch(name.to_s).type == :integer }
+        raise "#{table} no longer matches the bigint base schema (or is already converted)"
+      end
+    end
+
+    safety_assured do
+      execute 'CREATE EXTENSION IF NOT EXISTS btree_gist WITH SCHEMA rideshare'
+      gist_schema = connection.select_value("SELECT extnamespace::regnamespace::text FROM pg_extension WHERE extname = 'btree_gist'")
+      uuid_ops = "#{connection.quote_column_name(gist_schema)}.gist_uuid_ops"
+      # A fixed set, with no CASCADE: unrelated tables are never silently emptied.
+      tables = COLUMNS.keys.map { |table| connection.quote_table_name("rideshare.#{table}") }
+      execute "TRUNCATE TABLE #{tables.join(', ')}"
+
+      foreign_keys = connection.select_all(<<~SQL).to_a
+        SELECT conrelid::regclass::text AS table_name, conname AS name,
+               pg_get_constraintdef(oid) AS definition
+        FROM pg_constraint
+        WHERE contype = 'f' AND conrelid IN (#{tables.map { |table| "#{connection.quote(table)}::regclass" }.join(', ')})
+      SQL
+      foreign_keys.each { |key| execute "ALTER TABLE #{connection.quote_table_name(key['table_name'])} DROP CONSTRAINT #{connection.quote_column_name(key['name'])}" }
+
+      # These views depend on trips.driver_id; preserve their SQL and indexes.
+      views = %w[search_results fast_search_results].map do |name|
+        table = "rideshare.#{name}"
+        definition = connection.select_value("SELECT pg_get_viewdef(#{connection.quote(table)}::regclass, true)")
+        indexes = connection.select_values("SELECT indexdef FROM pg_indexes WHERE schemaname = 'rideshare' AND tablename = #{connection.quote(name)}")
+        [table, definition, indexes]
+      end
+      execute 'DROP VIEW rideshare.search_results'
+      execute 'DROP MATERIALIZED VIEW rideshare.fast_search_results'
+      execute 'ALTER TABLE rideshare.vehicle_reservations DROP CONSTRAINT non_overlapping_vehicle_registration'
+
+      COLUMNS.each do |table, columns|
+        qualified = connection.quote_table_name("rideshare.#{table}")
+        sequence = connection.select_value("SELECT pg_get_serial_sequence(#{connection.quote("rideshare.#{table}")}, 'id')")
+        execute "ALTER TABLE #{qualified} ALTER COLUMN id DROP DEFAULT"
+        columns.each do |column|
+          execute "ALTER TABLE #{qualified} ALTER COLUMN #{connection.quote_column_name(column)} TYPE uuid USING NULL::uuid"
+        end
+        execute "ALTER TABLE #{qualified} ALTER COLUMN id SET DEFAULT uuidv7()"
+        execute "DROP SEQUENCE #{connection.quote_table_name(sequence)}" if sequence
+      end
+      foreign_keys.each { |key| execute "ALTER TABLE #{connection.quote_table_name(key['table_name'])} ADD CONSTRAINT #{connection.quote_column_name(key['name'])} #{key['definition']}" }
+      execute <<~SQL
+        ALTER TABLE rideshare.vehicle_reservations
+        ADD CONSTRAINT non_overlapping_vehicle_registration
+        EXCLUDE USING gist (vehicle_id #{uuid_ops} WITH =, tstzrange(starts_at, ends_at) WITH &&)
+        WHERE (NOT canceled)
+      SQL
+      views.each do |table, definition, indexes|
+        kind = table.end_with?('fast_search_results') ? 'MATERIALIZED VIEW' : 'VIEW'
+        execute "CREATE #{kind} #{connection.quote_table_name(table)} AS #{definition}"
+        indexes.each { |index| execute index }
+      end
+    end
+  end
+
+  def down
+    raise ActiveRecord::IrreversibleMigration, 'Recreate the database from the committed bigint schema to undo this destructive conversion'
+  end
+end
