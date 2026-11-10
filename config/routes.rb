@@ -1,4 +1,12 @@
 Rails.application.routes.draw do
+  if Rails.env.development? || Rails.env.test?
+    post '/simulator/reset', to: 'simulator#reset'
+    post '/simulator/start', to: 'simulator#start'
+    get '/simulator', to: 'simulator#index'
+    get '/simulator/trips/:id/positions', to: 'simulator#positions'
+    get '/simulator/snapshot', to: 'simulator#snapshot'
+  end
+
   mount PgHero::Engine, at: 'pghero'
 
   namespace :api do

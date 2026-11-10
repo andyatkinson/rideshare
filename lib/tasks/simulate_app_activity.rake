@@ -1,66 +1,29 @@
-#
-# bin/rails simulate:app_activity
-#
-# Set an optional iterations (default: 1)
-# bin/rails simulate:app_activity[10]
-#
+# bin/rails 'simulate:app_activity[10]'
 namespace :simulate do
-  desc 'Simulate App Activity'
-  task :app_activity, [:iteration_count] => :environment do |_t, args|
-    args.with_defaults(iteration_count: 1)
-    # Steps in end-to-end cycle
-    # 1. (API) Rider creates trip_request
-    # 1. (API) Rider polls for trip_request status
-    # 1. Best available driver picks up trip request, updates status, trip created
-    # 1. (API) Rider polls for trip status
-    # 1. Driver completes trip
+  desc 'Fulfill trips with a fixed driver/rider/location pool (development only)'
+  task :app_activity, [:iteration_count] => :environment do |_task, args|
+    abort 'The activity simulator is development-only' unless Rails.env.development?
 
-    iterations = args[:iteration_count].to_i
-    puts "Running script #{iterations} times..."
-    iterations.times do
-      # 1. create trip request
-      url = 'http://localhost:3000/api/trip_requests'
-      request_body = {
-        trip_request: {
-          rider_id: Rider.first.id,
-          start_address: 'Boston, MA',
-          end_address: 'New York, NY'
-        }
-      }
-      request_headers = {
-        'Accept' => 'application/json'
-      }
-      puts '[trip_request] creating trip request...'
-      response = Faraday.post(url, request_body, request_headers)
-      resp = JSON.parse(response.body, symbolize_names: true)
-      trip_request_id = resp[:trip_request_id]
-      puts "[trip_request] got trip_request_id: #{trip_request_id}"
+    $stdout.sync = true
+    Rails.logger.level = Logger::WARN unless ENV['SIM_SQL_LOG'] == '1'
 
-      next unless trip_request_id
+    iterations = Integer((args[:iteration_count] || '1'), 10)
+    raise ArgumentError, 'iterations must be positive' unless iterations.positive?
 
-      # 1. poll for trip request status, until trip exists
-      # Polling is not implemented, would need some async processing
-      # in the app like Sidekiq or another background processor
-      begin
-        puts '[trip_request] checking for trip_id...'
-        attempts ||= 1
-        url = "http://localhost:3000/api/trip_requests/#{trip_request_id}"
-        show_response = Faraday.get(url)
-        show_resp = JSON.parse(show_response.body, symbolize_names: true)
-        puts "[trip_request] show_resp: #{show_resp.inspect}"
-        trip_id = show_resp[:trip_id]
-        if trip_id
-          puts "[trip] Got a trip_id: #{trip_id}"
-        else
-          puts '[trip] no trip_id...'
-          raise
-        end
-      rescue StandardError
-        if (attempts += 1) < 5 # go back to begin block if condition ok
-          puts 'retrying...'
-          retry
-        end
-      end
+    configuration = TripSimulator::Configuration.from_env(iterations: iterations)
+    TripSimulator::Runner.exclusively(configuration: configuration) do
+      pool = TripSimulator::Pool.new(
+        driver_count: [5, configuration.concurrency].max, rider_count: ENV.fetch('SIM_RIDERS', 30)
+      ).prepare!
+      puts "Simulator pool: #{pool.drivers.size} drivers, #{pool.riders.size} riders, #{pool.locations.size} locations"
+      TripSimulator.new(
+        drivers: pool.drivers, riders: pool.riders, locations: pool.locations,
+        interval: configuration.sample_interval, duration: configuration.duration_seconds,
+        concurrency: configuration.concurrency, jitter: configuration.jitter_seconds,
+        random: Random.new(Integer(ENV.fetch('SIM_SEED', Random.new_seed))),
+        on_event: ->(event, trip) { puts "[#{event}] trip=#{trip.id} rider=#{trip.rider.id} driver=#{trip.driver_id} rating=#{trip.rating.inspect}" }
+      ).run(iterations: iterations)
     end
+    puts "Completed #{iterations} trips; drivers returned to the idle pool."
   end
 end
