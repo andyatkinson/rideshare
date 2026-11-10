@@ -1,19 +1,22 @@
 class Api::TripRequestsController < ApiController
   def create
     if start_location && end_location && current_rider
-      trip_request = current_rider.trip_requests.create!(
-        start_location: start_location,
-        end_location: end_location
-      )
-      TripCreator.new(
-        trip_request_id: trip_request.id
-      ).create_trip!
+      trip_request = TripRequest.transaction do
+        request = current_rider.trip_requests.create!(
+          start_location: start_location,
+          end_location: end_location
+        )
+        TripCreator.new(trip_request_id: request.id).create_trip!
+        request
+      end
       render json: { trip_request_id: trip_request.id },
              status: :created
     else
       render nothing: true,
              status: :unprocessable_entity
     end
+  rescue TripCreator::NoAvailableDriver => error
+    render json: { error: error.message }, status: :service_unavailable
   end
 
   def show

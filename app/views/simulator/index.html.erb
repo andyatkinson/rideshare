@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <%= csrf_meta_tags %>
+  <title>Rideshare simulator</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <style>
+    * { box-sizing: border-box }
+    body { margin: 0 auto; padding: 10px 16px; max-width: 1500px; background: #f3f5f8; color: #17243a; font: 14px system-ui, sans-serif; height: 100dvh; display: flex; flex-direction: column; overflow: hidden }
+    header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px }
+    h1 { font-size: 20px; margin: 0; white-space: nowrap } h2 { font-size: 16px; margin: 0 0 6px } p { margin: 6px 0 }
+    header .controls { margin-left: auto; display: flex; gap: 6px; align-items: center } #run-status { font-size: 11px; color: #526078 } #start-simulation { background: #176443; color: white; border-color: #176443 } button:disabled { opacity: 0.6; cursor: default } button, summary { cursor: pointer } button { padding: 6px 8px; white-space: nowrap; border: 1px solid #bac7d8; border-radius: 7px; background: white; color: inherit; font: inherit }
+    .config-panel { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; padding: 7px 10px; margin-bottom: 8px; background: white; border: 1px solid #d5ddea; border-radius: 7px; font-size: 12px }
+    .config-panel label { display: flex; align-items: center; gap: 6px } .config-panel input { width: 62px; border: 1px solid #bac7d8; border-radius: 4px; padding: 3px 5px; font: inherit }
+    #configuration-status { font-size: 11px; color: #526078 }
+    .muted { color: #526078 } .error { color: #a72d24 } #status { font-size: 12px }
+    #counts { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; margin-bottom: 8px }
+    .counter { background: white; border: 1px solid #d5ddea; border-radius: 7px; padding: 5px 10px }
+    .counter strong { display: inline-block; font-size: 19px; margin-right: 8px } .counter > span:first-child { display: block; text-transform: capitalize; font-size: 12px; color: #526078 }
+    .delta { color: #176443; font-size: 11px; white-space: nowrap }
+    .panel { background: white; border: 1px solid #d5ddea; border-radius: 9px; padding: 8px 10px; min-width: 0 }
+    .pool { margin-bottom: 8px } #drivers { display: flex; flex-wrap: wrap; gap: 6px }
+    .driver { border: 1px solid #d9b942; border-radius: 6px; padding: 4px 7px; background: #fff3ba; color: #654e00; font-size: 12px }
+    .driver.busy { border-color: #69ae80; background: #d9f4e2; color: #145c30 }
+    .columns { display: grid; gap: 8px; flex: 1; min-height: 0; grid-template-rows: minmax(0, 1fr) auto }
+    .columns > section:last-child { max-height: 30vh; overflow-y: auto } #active { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 8px; max-height: 170px; overflow-y: auto }
+    .live-panel { display: grid; grid-template-columns: minmax(0, 1.8fr) minmax(280px, 1fr); gap: 12px; min-height: 0; overflow: hidden }
+    .map-block, .active-block { display: flex; flex-direction: column; min-height: 0 }
+    .active-block #active { grid-template-columns: 1fr; align-content: start; flex: 1; min-height: 0; max-height: none }
+    #map { height: auto; min-height: 80px; flex: 1; border-radius: 7px; background: #e8eef3; margin-bottom: 8px }
+    .map-heading { display: flex; justify-content: space-between; align-items: center; gap: 8px }
+    #map-status { font-size: 12px; margin-bottom: 8px } #live-map { padding: 4px 8px; font-size: 12px }
+    .position-pin { background: var(--trip-color); border: 2px solid white; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); width: 14px; height: 14px; box-shadow: 0 1px 4px #17243a77 }
+    .pin-label { position: absolute; left: 15px; top: -9px; padding: 1px 4px; border-radius: 3px; background: white; color: var(--trip-color); border: 1px solid currentColor; font: bold 10px system-ui; white-space: nowrap }
+    .pin-label.left { left: auto; right: 15px }
+    .trip-link { padding: 0; border: 0; background: none; color: #245caf; text-decoration: underline; font: inherit }
+    .trip-link[aria-pressed="true"] { font-weight: 700; color: #17243a }
+    .ride { border: 1px solid #d5ddea; border-left: 4px solid var(--trip-color); background: #f8fafc; border-radius: 7px; padding: 6px 8px; margin: 0; font-size: 12px }
+    .ride p { margin: 3px 0 } .badge { float: right; color: var(--trip-color); font-size: 11px; margin-bottom: 4px }
+    table { width: 100%; border-collapse: collapse; font-size: 12px } th, td { text-align: left; padding: 5px 6px; border-bottom: 1px solid #e3e8f0; vertical-align: top; overflow-wrap: anywhere }
+    th { color: #526078; font-weight: 500 } td:last-child { white-space: nowrap } .table-wrap { overflow-x: auto }
+    details { margin-top: 10px } summary { color: #345681; font-size: 12px } .note { font-size: 11px; margin-top: 8px }
+    dialog { max-width: 640px; width: calc(100% - 32px); border: 1px solid #bac7d8; border-radius: 12px; padding: 22px; color: inherit }
+    dialog::backdrop { background: #17243a77 } dialog button { float: right } pre { padding: 12px; background: #eef2f7; white-space: pre-wrap; overflow-wrap: anywhere; font-size: 12px }
+    @media (max-width: 900px) { .live-panel { grid-template-columns: 1fr; grid-template-rows: minmax(0, 1fr) 100px; gap: 6px } .active-block #active { grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)) } }
+    @media (max-width: 600px) { body { padding: 12px } header { flex-wrap: wrap; gap: 8px } #counts { grid-template-columns: repeat(3, 1fr) } #active { grid-template-columns: 1fr } }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Rideshare activity</h1>
+    <span id="status" role="status">Connecting…</span>
+    <div class="controls"><span id="run-status" role="status">Ready</span><button id="start-simulation" type="submit" form="simulator-config">Run 10 trips</button><button id="reset-simulation" type="button" title="Stop the task and remove unfinished simulator trips; completed rides are kept">Stop all</button><button id="show-instructions" type="button">How to run</button></div>
+  </header>
+  <form id="simulator-config" class="config-panel" aria-label="Simulator configuration">
+    <label title="One active trip per pickup location; extra workers wait when all seven origins are busy">Concurrent trips <input name="concurrency" type="number" min="1" max="10" step="1" value="1" required></label>
+    <label>Sample every <input name="sample_interval" type="number" min="0.25" max="60" step="0.25" value="5" required> sec</label>
+    <label>Start jitter <input name="jitter_seconds" type="number" min="0" max="300" step="1" value="30" required> sec</label>
+    <output id="configuration-status">Six-minute rides · 10 trips per batch</output>
+  </form>
+  <section aria-label="Database counts" id="counts"></section>
+  <section class="panel pool">
+    <h2>Drivers <span class="muted" id="pool-summary"></span></h2>
+    <div id="drivers"></div>
+  </section>
+  <main class="columns">
+    <section class="panel live-panel">
+      <div class="map-block">
+      <div class="map-heading"><h2>Trip positions</h2><button id="live-map" type="button" hidden>Back to live</button></div>
+      <p id="map-status" role="status">Live positions · Cambridge & North Station</p>
+      <div id="map" role="region" aria-label="Trip position map"></div>
+      </div>
+      <div class="active-block">
+        <h2>Active rides</h2>
+        <div id="active"></div>
+      </div>
+    </section>
+    <section class="panel">
+      <h2>Recent completed rides</h2>
+      <div class="table-wrap"><table><thead><tr><th>Trip</th><th>Driver / rider</th><th>Route</th><th>Samples</th><th>Trip rating</th></tr></thead><tbody id="recent"></tbody></table></div>
+      <details id="history">
+        <summary>More recent rides <span id="history-count"></span></summary>
+        <div class="table-wrap"><table aria-label="More completed rides"><thead><tr><th>Trip</th><th>Driver / rider</th><th>Route</th><th>Samples</th><th>Trip rating</th></tr></thead><tbody id="older"></tbody></table></div>
+      </details>
+      <p class="muted note">Latest 3 shown · up to 15 expanded · trip rating has no separate author field</p>
+    </section>
+  </main>
+  <dialog id="instructions" aria-labelledby="instructions-title">
+    <form method="dialog"><button>Close</button></form>
+    <h2 id="instructions-title">Run the simulator</h2>
+    <p>From the repository directory, run in another terminal:</p>
+    <pre>docker compose exec -e SIM_CONCURRENCY=1 -e SIM_INTERVAL=5 -e SIM_JITTER=30 app sh -c 'export PGPASSWORD="$RIDESHARE_DB_PASSWORD"; bin/rails "simulate:app_activity[100]"'</pre>
+    <p>For Rails running directly on your machine:</p>
+    <pre>SIM_CONCURRENCY=1 SIM_INTERVAL=5 SIM_JITTER=30 bin/rails 'simulate:app_activity[100]'</pre>
+    <p class="muted">Choose 1–10 concurrent rides, sampling frequency, and start jitter above, then Run 10 trips. All chosen settings are sent to the backend and displayed while running. Settings apply to a new run; stop the current run before restarting with changes.</p>
+    <p class="muted">Every ride takes six simulated minutes. Origins and destinations are chosen randomly from seven nearby locations. Each trip waits a random 0–jitter seconds before starting (default 30), including replacement trips. Ten concurrent rides use ten drivers; smaller runs retain at least five drivers.</p>
+    <p class="muted">Stop all cancels every worker and pending jitter wait, deletes unfinished simulator trips and their requests/positions, and frees drivers. Completed trips and ratings are kept. The count-growth baseline resets. Output is in log/simulator.log.</p>
+    <p class="muted">Click a completed trip number to inspect its saved pins; Back to live restores active trips. Yellow drivers are idle; green drivers are on a trip. The map uses a distinct color for each active trip.</p>
+    <p class="muted">The page polls every second (five seconds in the background). Counts cover the whole database. Actor pools are reused while requests, trips, and positions accumulate.</p>
+  </dialog>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    (() => {
+      let starting = false;
+      const resetButton = document.getElementById('reset-simulation');
+      resetButton.addEventListener('click', async () => {
+        starting = true;
+        resetButton.disabled = true;
+        startButton.disabled = true;
+        runStatus.textContent = 'Resetting…';
+        try {
+          const response = await fetch('/simulator/reset', { method: 'POST', headers: { 'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content, 'Accept': 'application/json' } });
+          const result = await response.json();
+          if (!response.ok) throw new Error(result.error || `HTTP ${response.status}`);
+          selectedTrip = null;
+          selectionVersion++;
+          liveTrips = [];
+          drawTrips([]);
+          document.getElementById('live-map').hidden = true;
+          baseline = undefined;
+          runStatus.textContent = `Stopped · removed ${result.removed_trips} unfinished trips`;
+          await refresh();
+          startButton.disabled = false;
+          startButton.textContent = 'Run 10 trips';
+        } catch (error) {
+          runStatus.textContent = error.message;
+        } finally {
+          starting = false;
+          resetButton.disabled = false;
+        }
+      });
+      const startButton = document.getElementById('start-simulation');
+      const runStatus = document.getElementById('run-status');
+      const configForm = document.getElementById('simulator-config');
+      const configurationStatus = document.getElementById('configuration-status');
+      let configurationInitialized = false;
+      configForm.addEventListener('submit', async event => {
+        event.preventDefault();
+        const settings = Object.fromEntries(new FormData(configForm));
+        starting = true;
+        startButton.disabled = true;
+        runStatus.textContent = 'Starting…';
+        try {
+          const response = await fetch('/simulator/start', { method: 'POST', headers: { 'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content, 'Accept': 'application/json', 'Content-Type': 'application/json' }, body: JSON.stringify(settings) });
+          const result = await response.json();
+          if (!response.ok) throw new Error(result.error || `HTTP ${response.status}`);
+          runStatus.textContent = `Running · max ${result.configuration.concurrency}`;
+        } catch (error) {
+          runStatus.textContent = error.message;
+        } finally {
+          starting = false;
+        }
+      });
+      let baseline, map, pins, selectedTrip = null, selectionVersion = 0, liveTrips = [];
+      const tripColors = new Map();
+      const palette = ['#087f5b', '#9c36b5', '#c05600', '#1d4ed8', '#c2255c', '#0c8599', '#5f3dc4', '#a61e4d', '#5c7c00', '#495057'];
+      const colorForTrip = id => {
+        if (!tripColors.has(id)) tripColors.set(id, palette.find(color => ![...tripColors.values()].includes(color)) || palette[0]);
+        return tripColors.get(id);
+      };
+      const clock = seconds => `${Math.floor(seconds / 60).toString().padStart(2, '0')}:${(seconds % 60).toString().padStart(2, '0')}`;
+      const shortName = name => name.replace(/^Simulator /, '');
+      const shortLocation = name => name.split(',')[0];
+      let bounds = [[42.3593, -71.11896], [42.3763, -71.06131]];
+      let locationBoundsSet = false;
+      const mapStatus = document.getElementById('map-status');
+      if (window.L) {
+        map = L.map('map', { zoomSnap: 0.25 }).fitBounds(bounds, { padding: [30, 30] });
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map).on('tileerror', () => { mapStatus.textContent = 'Map tiles unavailable; recorded pins still shown. Internet access is required for tiles.'; });
+        pins = L.layerGroup().addTo(map);
+        new ResizeObserver(() => {
+          map.invalidateSize({ pan: false });
+          if (selectedTrip === null) map.fitBounds(bounds, { padding: [15, 15] });
+        }).observe(map.getContainer());
+      } else {
+        mapStatus.textContent = 'Map library unavailable. Check your internet connection and reload; activity below still updates.';
+      }
+      function drawTrips(trips, history = false) {
+        if (!map) return;
+        pins.clearLayers();
+        trips.forEach(trip => {
+          const color = history ? (tripColors.get(trip.id) || '#1d4ed8') : colorForTrip(trip.id);
+          const left = !history && palette.indexOf(color) % 2 === 0;
+          const positions = trip.positions || [];
+          const route = trip.route || positions.map(position => [position.lat, position.lng]);
+          if (route.length > 1) {
+            L.polyline(route, {
+              color, weight: 3, opacity: 0.75, dashArray: !history && !left ? '6 5' : null, interactive: false
+            }).addTo(pins);
+          }
+          positions.forEach((position, index) => {
+            const label = document.createElement('span');
+            label.textContent = `Trip #${trip.id} · sample ${index + 1} · ${new Date(position.recorded_at).toLocaleTimeString()}`;
+            const tripLabel = index === positions.length - 1 ? `<span class="pin-label${left ? ' left' : ''}">#${trip.id}</span>` : '';
+            L.marker([position.lat, position.lng], { title: label.textContent, alt: label.textContent, icon: L.divIcon({
+              className: '', html: `<div style="--trip-color:${color}"><div class="position-pin"></div>${tripLabel}</div>`, iconSize: [14, 14], iconAnchor: [history ? 7 : (left ? 14 : 0), 14]
+            }) }).bindPopup(label).addTo(pins);
+          });
+        });
+        mapStatus.textContent = history ? `Trip #${selectedTrip} · ${trips[0].positions.length} recorded positions` : `Live · ${trips.length} active rides · colored pins clear on completion`;
+      }
+      document.getElementById('live-map').addEventListener('click', () => {
+        selectionVersion++;
+        selectedTrip = null;
+        document.getElementById('live-map').hidden = true;
+        if (map) map.fitBounds(bounds, { padding: [30, 30] });
+        drawTrips(liveTrips);
+      });
+      async function selectTrip(id) {
+        const version = ++selectionVersion;
+        selectedTrip = id;
+        document.getElementById('live-map').hidden = false;
+        if (pins) pins.clearLayers();
+        mapStatus.textContent = `Loading trip #${id}…`;
+        try {
+          const response = await fetch(`/simulator/trips/${id}/positions`, { cache: 'no-store' });
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          const trip = await response.json();
+          if (version !== selectionVersion) return;
+          drawTrips([trip], true);
+          if (map && trip.route.length) map.fitBounds(L.latLngBounds(trip.route), { padding: [30, 30], maxZoom: 16 });
+        } catch (error) {
+          if (version === selectionVersion) mapStatus.textContent = `Cannot load trip #${id}: ${error.message}`;
+        }
+      }
+      document.getElementById('show-instructions').addEventListener('click', () => document.getElementById('instructions').showModal());
+      const element = (tag, text, className) => {
+        const node = document.createElement(tag);
+        if (text !== undefined) node.textContent = text;
+        if (className) node.className = className;
+        return node;
+      };
+      const replace = (id, children) => document.getElementById(id).replaceChildren(...children);
+      async function refresh() {
+        try {
+          const response = await fetch('/simulator/snapshot', { cache: 'no-store' });
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          const data = await response.json();
+          baseline ||= data.counts;
+          const configuration = data.runner.configuration;
+          if (!configurationInitialized) {
+            for (const name of ['concurrency', 'sample_interval', 'jitter_seconds']) configForm.elements[name].value = configuration[name];
+            configurationInitialized = true;
+          }
+          configurationStatus.textContent = data.runner.running ? `Active: max ${configuration.concurrency} · samples ${configuration.sample_interval}s · jitter 0–${configuration.jitter_seconds}s` : 'Six-minute rides · 10 trips per batch';
+          if (!locationBoundsSet && data.locations.length) {
+            bounds = data.locations.map(location => location.point);
+            if (map) map.fitBounds(bounds, { padding: [20, 20] });
+            locationBoundsSet = true;
+          }
+          if (!starting) {
+            startButton.disabled = data.runner.running;
+            startButton.textContent = data.runner.running ? 'Running…' : 'Run 10 trips';
+            if (data.runner.running) runStatus.textContent = `Running · max ${configuration.concurrency}`;
+            else if (runStatus.textContent.startsWith('Running · max')) runStatus.textContent = 'Stopped · see log/simulator.log';
+          }
+          liveTrips = data.active;
+          const activeIds = new Set(liveTrips.map(trip => trip.id));
+          for (const id of tripColors.keys()) if (!activeIds.has(id)) tripColors.delete(id);
+          liveTrips.forEach(trip => colorForTrip(trip.id));
+          if (selectedTrip === null) drawTrips(liveTrips);
+          replace('counts', Object.entries(data.counts).map(([label, count]) => {
+            const card = element('div', undefined, 'counter');
+            const delta = count - baseline[label];
+            card.append(element('span', label), element('strong', count.toLocaleString()), element('span', `${delta >= 0 ? '+' : ''}${delta.toLocaleString()}`, 'delta'));
+            return card;
+          }));
+          document.getElementById('pool-summary').textContent = `· ${data.drivers.filter(driver => !driver.busy).length} idle / ${data.drivers.filter(driver => driver.busy).length} active`;
+          replace('drivers', data.drivers.length ? [...data.drivers].sort((a, b) => Number(b.busy) - Number(a.busy) || a.id - b.id).map(driver => element('div', `🛞 ${shortName(driver.name)} · ${driver.busy ? 'Active' : 'Idle'}`, `driver${driver.busy ? ' busy' : ''}`)) : [element('p', 'No drivers yet. Use “How to run” to prepare the pool.')]);
+          replace('active', data.active.length ? data.active.map(trip => {
+            const card = element('article', undefined, 'ride');
+            card.style.setProperty('--trip-color', colorForTrip(trip.id));
+            card.append(element('span', trip.samples ? 'In transit' : 'Assigned / awaiting position', 'badge'), element('strong', `Trip #${trip.id}`), element('p', `🛞 ${shortName(trip.driver)} → 🙋 ${shortName(trip.rider)}`), element('p', `🚩 ${shortLocation(trip.origin)} → 🏁 ${shortLocation(trip.destination)}`), element('p', `⏱ Elapsed ${clock(trip.elapsed_seconds)} · ⏳ Remaining ≈ ${clock(trip.remaining_seconds)} · ${trip.samples} positions`));
+            return card;
+          }) : [element('p', data.runner.running ? 'Waiting for the next randomized start…' : 'No active rides. Drivers are ready for the next request.', 'muted')]);
+          const rideRows = trips => trips.map(trip => {
+            const row = element('tr');
+            const tripCell = element('td');
+            const link = element('button', `#${trip.id}`, 'trip-link');
+            link.type = 'button';
+            link.setAttribute('aria-label', `Show positions for trip ${trip.id}`);
+            link.setAttribute('aria-pressed', String(selectedTrip === trip.id));
+            link.addEventListener('click', () => selectTrip(trip.id));
+            tripCell.append(link);
+            row.append(tripCell);
+            [`🛞 ${shortName(trip.driver)} / 🙋 ${shortName(trip.rider)}`, `🚩 ${shortLocation(trip.origin)} → 🏁 ${shortLocation(trip.destination)}`, trip.samples, trip.rating ? `${'★'.repeat(trip.rating)} (${trip.rating}/5)` : 'Awaiting rating'].forEach(value => row.append(element('td', value)));
+            return row;
+          });
+          replace('recent', rideRows(data.recent.slice(0, 3)));
+          replace('older', rideRows(data.recent.slice(3)));
+          document.getElementById('history').hidden = data.recent.length <= 3;
+          document.getElementById('history-count').textContent = `(${Math.max(0, data.recent.length - 3)})`;
+          const status = document.getElementById('status');
+          status.className = 'muted';
+          status.textContent = `Live · ${new Date(data.captured_at).toLocaleTimeString()}`;
+        } catch (error) {
+          const status = document.getElementById('status');
+          status.className = 'error';
+          status.textContent = `Connection unavailable (${error.message}). Retrying…`;
+        } finally {
+          setTimeout(refresh, document.hidden ? 5000 : 1000);
+        }
+      }
+      refresh();
+    })();
+  </script>
+</body>
+</html>

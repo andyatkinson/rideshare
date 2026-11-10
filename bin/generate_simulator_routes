@@ -1,0 +1,58 @@
+#!/usr/bin/env ruby
+# Generate the offline route cache without booting Rails or connecting to a database.
+require 'json'
+require 'net/http'
+require 'tempfile'
+require_relative '../app/services/trip_simulator/pool'
+
+$stdout.sync = true
+
+output = File.expand_path('../db/simulator_routes.json', __dir__)
+base_url = ENV.fetch('OSRM_URL', 'https://router.project-osrm.org').delete_suffix('/')
+routes = {}
+locations = TripSimulator::Pool::LOCATIONS
+
+begin
+  locations.permutation(2).each do |start, finish|
+    key = "#{start.last}_to_#{finish.last}"
+    coordinates = [start, finish].map { |location| location[2].reverse.join(',') }.join(';')
+    uri = URI("#{base_url}/route/v1/driving/#{coordinates}?overview=full&geometries=geojson&steps=false")
+    attempts = 0
+    begin
+      attempts += 1
+      response = Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == 'https', open_timeout: 10, read_timeout: 30) do |http|
+        http.get(uri.request_uri, 'User-Agent' => 'Rideshare-local-simulator-route-generator')
+      end
+      raise "OSRM HTTP #{response.code}" unless response.is_a?(Net::HTTPSuccess)
+
+      data = JSON.parse(response.body)
+      raise "OSRM returned #{data['code']}" unless data['code'] == 'Ok'
+
+      route = data.fetch('routes').fetch(0)
+      points = route.fetch('geometry').fetch('coordinates')
+      raise 'OSRM returned no route geometry' if points.length < 2
+
+      routes[key] = { distance_meters: route.fetch('distance'), coordinates: points.map { |lng, lat| [lat, lng] } }
+    rescue StandardError
+      raise if attempts >= 3
+
+      sleep attempts
+      retry
+    end
+    puts "#{routes.size}/#{locations.size * (locations.size - 1)} #{key}"
+    sleep 0.25 # Keep requests to the public demo service modest.
+  end
+
+  # Replace only after every route succeeds; failed generation preserves the cache.
+  Tempfile.create(['simulator_routes', '.json'], File.dirname(output)) do |file|
+    file.write(JSON.pretty_generate({ source: "OSRM driving routes / OpenStreetMap. Coordinates: [latitude, longitude]. Demo timing is synthetic.", routes: routes }))
+    file.write("\n")
+    file.chmod(0o644)
+    file.close
+    File.rename(file.path, output)
+  end
+  puts "Saved #{routes.size} routes to #{output}"
+rescue StandardError => error
+  warn "Route generation failed: #{error.message}. Existing cache was preserved."
+  exit 1
+end

@@ -190,6 +190,7 @@ The Rideshare repository has many `README.md` files within subdirectories. Run `
 - For Docker things: [docker/README.md](docker/README.md)
 - For DB scrubbing: [db/scrubbing/README.md](db/scrubbing/README.md)
 - For test environment details in Rideshare, check out: [TESTING.md](TESTING.md)
+- For repeatable trip activity: [Trip simulator](docs/trip_simulator.md)
 - For Guides and Tasks in this repo, check out: [Guides](GUIDES.md)
 
 # User Interfaces
