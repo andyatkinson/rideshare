@@ -62,3 +62,5 @@ pg18_db03_data/
 
 # Optional UUID experiment: generate the timestamped migration locally.
 /db/migrate/*_convert_primary_keys_to_uuid.rb
+
+/db/pgdog_migrate/*_convert_pgdog_trip_ids_to_uuid.rb

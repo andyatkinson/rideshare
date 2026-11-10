@@ -1,0 +1,50 @@
+# Disposable CI stack: no host ports or development database volumes.
+x-shard: &shard
+  image: postgres:18.4
+  environment:
+    POSTGRES_PASSWORD: postgres
+    POSTGRES_DB: rideshare_dev_sharded
+  volumes:
+    - ../docker/pgdog/setup.sql:/docker-entrypoint-initdb.d/setup.sql:ro
+  healthcheck:
+    test: [CMD-SHELL, 'pg_isready -U postgres -d rideshare_dev_sharded']
+    interval: 2s
+    timeout: 3s
+    retries: 30
+
+services:
+  primary:
+    image: postgres:18.4
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: rideshare_test
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U postgres -d rideshare_test']
+      interval: 2s
+      timeout: 3s
+      retries: 30
+  shard_0:
+    <<: *shard
+  shard_1:
+    <<: *shard
+  pgdog:
+    build:
+      context: ..
+      target: pgdog
+    depends_on:
+      shard_0: {condition: service_healthy}
+      shard_1: {condition: service_healthy}
+  test:
+    build:
+      context: ..
+      target: pgdog-demo
+    environment:
+      RAILS_ENV: test
+      TEST_DATABASE_URL: postgresql://postgres:postgres@primary:5432/rideshare_test
+      PGDOG_TEST_DATABASE_URL: postgresql://postgres:postgres@pgdog:6432/rideshare_test_sharded
+      PGPASSWORD: postgres
+    volumes:
+      - ..:/app
+    depends_on:
+      primary: {condition: service_healthy}
+      pgdog: {condition: service_started}

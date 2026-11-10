@@ -1,6 +1,6 @@
 # Sharding trip positions with PgDog
 
-This local demo shards only `rideshare.trip_positions` by bigint `trip_id` using
+This local demo shards only `rideshare.trip_positions` by UUID `trip_id` using
 [PgDog](https://github.com/pgdogdev/pgdog). Two PostgreSQL instances each run the
 same [Rails migrations](../pgdog_migrate) in database `rideshare_dev_sharded`, but own
 different rows. Position samples can grow many times faster than trips because
@@ -29,12 +29,14 @@ From the repository root:
 ```sh
 docker compose -p rideshare-pgdog -f docker-compose.pgdog.yml up -d --build
 docker compose -f docker-compose.yml -f docker-compose.pgdog-app.yml up -d --build
-docker compose -f docker-compose.yml -f docker-compose.pgdog-app.yml exec app bin/rails db:migrate:pgdog
+docker compose -f docker-compose.yml -f docker-compose.pgdog-app.yml exec app bin/rails generate uuid_conversion
+docker compose -f docker-compose.yml -f docker-compose.pgdog-app.yml exec app bin/rails db:migrate:primary db:migrate:pgdog
+docker compose -f docker-compose.yml -f docker-compose.pgdog-app.yml exec -e RAILS_ENV=test app bin/rails db:migrate db:schema:dump
 docker compose -p rideshare-pgdog -f docker-compose.pgdog.yml run --rm --build demo
 ```
 
-The demo checks inserts, keyed reads, physical row placement, trip locality, and
-cross-shard counts, then removes its own rows. All services share a Docker
+The demo checks UUIDv7 inserts, keyed reads, physical row placement, trip locality,
+and keyless ID/count/group/order/limit reads, then removes its own rows. All services share a Docker
 network; volumes and ports are separate from the normal development stack.
 
 Run tests against the separate test databases. The suite defaults to one process
@@ -63,6 +65,15 @@ Populate development data (requires the normal development database setup):
 docker compose -f docker-compose.yml -f docker-compose.pgdog-app.yml exec app bin/rails data_generators:generate_all
 ```
 
+For a small retained workload using the Cambridge simulator roster:
+
+```sh
+docker compose -f docker-compose.yml -f docker-compose.pgdog-app.yml exec -e SIM_CONCURRENCY=5 -e SIM_INTERVAL=1 -e SIM_DURATION=2 -e SIM_JITTER=0 app bin/rails 'simulate:app_activity[32]'
+```
+
+This creates 32 completed rides with three positions each. Normal UI runs retain
+the six-minute ride duration and the selected sampling interval.
+
 Users, trips and related records go to the primary development database;
 position history goes through PgDog to the development shards. The task analyzes
 each table using its model's connection.
@@ -73,7 +84,13 @@ each table using its model's connection.
 `bin/rails generate migration AddAccuracyToTripPositions accuracy:float --database pgdog`.
 Use `db:migrate:pgdog` to evolve both shards through the proxy; Rails dumps SQL to
 `db/pgdog_structure.sql`. The initial migration creates UUIDv7 position IDs. Bootstrap SQL creates only the
-namespaces.
+namespaces. `uuid_conversion` generates a primary migration and a PgDog migration
+from stable templates; both timestamped files are ignored. Apply both to each
+environment: the primary conversion deletes application data, and the PgDog
+conversion clears old positions and changes `trip_id` to UUID. The committed
+schemas remain the bigint base, so generated UUID dumps stay local. Keep the
+primary conversion synchronized with PgDog's `data_type = "uuid"` configuration.
+See [UUID conversion and reset](../../docs/uuid_primary_keys.md).
 
 ```sh
 docker compose -f docker-compose.yml -f docker-compose.pgdog-app.yml exec app bin/rails db:migrate:pgdog
@@ -153,7 +170,10 @@ New UUID keys and UUID value columns default to PostgreSQL 18 `uuidv7()`.
 Explicit defaults (including `nil`) are preserved; UUID references do not generate
 IDs.
 
-Supply `trip_id` for writes and targeted reads/updates. UUID position IDs avoid
+Supply UUID `trip_id` for writes and targeted reads/updates. Reads without it
+fan out to both shards; ID-only lookup, COUNT, grouped COUNT, and ordered LIMIT
+are supported by the pinned demo version. These are scatter/gather operations,
+not single-shard reads. Cross-database SQL joins to primary still fail. UUID position IDs avoid
 independent bigint sequence collisions; `(trip_id, created_at)` indexes support
 timeline reads. There is no foreign key to the original `trips` table. Ordinary
 association reads use separate queries; SQL joins across these databases are not
@@ -191,3 +211,7 @@ Stop all terminates the workers before deleting unfinished positions and primary
 trip records; completed rides remain. Those deletions span separate databases,
 so they do not form one distributed transaction. Generate offline street routes
 with `ruby bin/generate_simulator_routes` before running the simulator or its tests.
+
+CI uses `.circleci/docker-compose.yml` to provision disposable primary/shard
+databases and the pinned PgDog image, generate/apply both UUID migrations, and
+run this same suite. It does not partition the old primary positions table.

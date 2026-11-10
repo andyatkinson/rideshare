@@ -1,5 +1,10 @@
 # Optional UUID primary key conversion
 
+On the PgDog branch, this generator also emits an ignored migration under
+`db/pgdog_migrate`, which clears old positions and converts their `trip_id` to UUID.
+Both PgDog environments must be migrated together with primary; the pooler hashes
+UUID keys. The standalone UUID branch remains separate.
+
 The branch isolates the code changes; it uses the existing development and test
 databases from `config/database.yml` (`rideshare_development` and `rideshare_test`
 in the standard setup). No database configuration changes or separate databases
@@ -17,9 +22,10 @@ With PostgreSQL 18 and the normal app/database setup available, run these in you
 usual Rails environment (inside the app container if using Docker):
 
 ```sh
-git switch feat/uuid-primary-keys
+git switch explore/pgdog-trip-positions
 bin/rails generate uuid_conversion
-RAILS_ENV=development bin/rails db:migrate db:schema:dump
+RAILS_ENV=development bin/rails db:migrate:primary db:migrate:pgdog
+RAILS_ENV=development bin/rails db:schema:dump
 RAILS_ENV=test bin/rails db:migrate db:schema:dump
 ruby bin/generate_simulator_routes # one-time simulator prerequisite
 bin/rails test
@@ -54,13 +60,19 @@ Stop Rails and the simulator again. Remove the generated migration while still
 on the UUID branch, discard its local schema dump, and switch back:
 
 ```sh
-rm -f db/migrate/*_convert_primary_keys_to_uuid.rb
-git restore db/structure.sql
+rm -f db/migrate/*_convert_primary_keys_to_uuid.rb db/pgdog_migrate/*_convert_pgdog_trip_ids_to_uuid.rb
+git restore db/structure.sql db/pgdog_structure.sql
 git switch main
 RAILS_ENV=development bin/rails db:drop db:create db:schema:load
 RAILS_ENV=test bin/rails db:drop db:create db:schema:load
 bin/rails test
 ```
+
+Stop the PgDog-enabled app when returning to main, then start main's normal Docker
+app/network configuration. The shards may retain UUID data while unused by main.
+Before reapplying this experiment, clear/reload **only** the two configured PgDog
+schemas from the committed `db/pgdog_structure.sql`, then apply the generated
+conversion again. This deletes shard data too.
 
 These commands rebuild the same configured development and test databases from
 main's committed bigint schema, including migration bookkeeping. Use credentials

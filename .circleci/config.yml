@@ -14,38 +14,44 @@ jobs:
       - ruby/install-deps
 
   test:
-    parallelism: 3
-    docker:
-      - image: cimg/ruby:3.2.2
-      - image: cimg/postgres:18.0
-        environment:
-          POSTGRES_USER: postgres
-          POSTGRES_DB: rideshare_test
-          POSTGRES_PASSWORD: postgres
-    environment:
-      BUNDLE_JOBS: "3"
-      BUNDLE_RETRY: "3"
-      PGHOST: 127.0.0.1
-      RAILS_ENV: test
-      PGSLICE_URL: "postgres://postgres:postgres@localhost:5432/rideshare_test"
+    machine:
+      image: ubuntu-2204:current
     steps:
       - checkout
-      - ruby/install-deps
+      - restore_cache:
+          keys:
+            - simulator-routes-v1-{{ checksum "app/services/trip_simulator/pool.rb" }}
       - run:
-          name: Wait for DB
-          command: dockerize -wait tcp://localhost:5432 -timeout 1m
+          name: Start PostgreSQL shards and PgDog
+          command: docker compose -p rideshare-ci -f .circleci/docker-compose.yml up -d --build --wait primary shard_0 shard_1 pgdog
       - run:
-          name: Test Database setup
-          command: sh db/setup_test_database.sh
+          name: Build Rails test client
+          command: docker compose -p rideshare-ci -f .circleci/docker-compose.yml build test
       - run:
-          name: Database schema load
-          command: bundle exec rails db:schema:load --trace
+          name: Convert test databases and run suite
+          command: |
+            docker compose -p rideshare-ci -f .circleci/docker-compose.yml run --rm test sh -c '
+              set -e
+              bin/rails db:prepare
+              bin/rails generate uuid_conversion
+              bin/rails db:migrate db:schema:dump
+              test -f db/simulator_routes.json || ruby bin/generate_simulator_routes
+              bin/rails test
+            '
+      - save_cache:
+          key: simulator-routes-v1-{{ checksum "app/services/trip_simulator/pool.rb" }}
+          paths:
+            - db/simulator_routes.json
       - run:
-          name: Partition conversion
-          command: sh bin/partition_conversion.sh
+          name: Collect Docker logs
+          when: always
+          command: docker compose -p rideshare-ci -f .circleci/docker-compose.yml logs --no-color > /tmp/pgdog-ci.log
+      - store_artifacts:
+          path: /tmp/pgdog-ci.log
       - run:
-          name: run tests
-          command: bin/rails test
+          name: Stop disposable databases
+          when: always
+          command: docker compose -p rideshare-ci -f .circleci/docker-compose.yml down --volumes
 
 workflows:
   version: 2

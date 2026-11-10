@@ -26,7 +26,7 @@ shard = 1
 database = "rideshare_dev_sharded"
 name = "trip_positions"
 column = "trip_id"
-data_type = "bigint"
+data_type = "uuid"
 
 [[databases]]
 name = "rideshare_test_sharded"
@@ -46,7 +46,7 @@ shard = 1
 database = "rideshare_test_sharded"
 name = "trip_positions"
 column = "trip_id"
-data_type = "bigint"
+data_type = "uuid"
 
 # Rails create/drop/test preparation connects to the PostgreSQL maintenance DB.
 [[databases]]

@@ -6,7 +6,7 @@ model = TripPosition
 rows = []
 shards = []
 begin
-  (1..32).each do |trip_id|
+  Array.new(32) { model.connection.select_value('SELECT uuidv7()') }.each do |trip_id|
     2.times do
       # Synthetic IDs isolate routing from parent-trip validation.
       row = model.new(trip_id: trip_id, position: '(1,2)')
@@ -36,7 +36,13 @@ begin
   raise 'Scatter query lost rows' unless model.where(id: ids).count == rows.size
   puts "Verified #{rows.size} inserts and keyed reads through PgDog."
   puts "Physical distribution: shard_0=#{counts[0]}, shard_1=#{counts[1]}; no duplicates; each trip stays on one shard."
-  puts 'Cross-shard count verified.'
+  raise 'ID-only lookup failed' unless model.find(rows.first.id).trip_id == rows.first.trip_id
+  expected = rows.sort_by { |row| [row.created_at, row.id] }.first(7).map(&:id)
+  actual = model.where(id: ids).order(:created_at, :id).limit(7).pluck(:id)
+  raise 'Cross-shard order/limit failed' unless actual == expected
+  raise 'Cross-shard grouped count failed' unless model.where(id: ids).group(:trip_id).count == rows.group_by(&:trip_id).transform_values(&:size)
+  puts 'Keyless ID lookup, count, grouped count, and ordered LIMIT verified (scatter/gather).'
+
 ensure
   rows.each { |row| model.where(trip_id: row.trip_id, id: row.id).delete_all }
   shards.each(&:close)

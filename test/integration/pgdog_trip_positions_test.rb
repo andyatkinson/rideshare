@@ -41,7 +41,7 @@ class PgdogTripPositionsTest < ActiveSupport::TestCase
       TripPosition.for_trips(Trip.completed.where(id: [completed.id, rated.id, incomplete.id])).to_a
     end
 
-    assert_equal positions.first(2).map(&:id), result.map(&:id)
+    assert_equal positions.first(2).map(&:id).sort, result.map(&:id).sort
     assert_equal 2, queries.size
     assert_match(/FROM "trips"/, queries.first)
     assert_match(/FROM "trip_positions"/, queries.last)
@@ -50,6 +50,20 @@ class PgdogTripPositionsTest < ActiveSupport::TestCase
     positions&.each do |position|
       TripPosition.where(trip_id: position.trip_id, id: position.id).delete_all
     end
+  end
+
+  test 'reads without trip_id gather UUID positions across shards' do
+    positions = [trips(:completed_trip), trips(:rated_trip)].flat_map do |trip|
+      2.times.map { trip.trip_positions.create!(position: '(1,2)') }
+    end
+    ids = positions.map(&:id)
+    assert_equal positions.first.trip_id, TripPosition.find(ids.first).trip_id
+    assert_equal 4, TripPosition.where(id: ids).count
+    assert_equal positions.group_by(&:trip_id).transform_values(&:size), TripPosition.where(id: ids).group(:trip_id).count
+    expected = positions.sort_by { |position| [position.created_at, position.id] }.first(3).map(&:id)
+    assert_equal expected, TripPosition.where(id: ids).order(:created_at, :id).limit(3).pluck(:id)
+  ensure
+    positions&.each { |position| TripPosition.where(trip_id: position.trip_id, id: position.id).delete_all }
   end
 
   test 'reading role rejects position writes' do

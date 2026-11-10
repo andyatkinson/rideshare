@@ -13,7 +13,8 @@ class TripSimulatorRunnerTest < ActiveSupport::TestCase
       assert_equal 2, configuration['sample_interval']
       assert_equal 15, configuration['jitter_seconds']
       assert_equal '5', environment['RAILS_MAX_THREADS']
-      child = spawn.call(environment, RbConfig.ruby, '-e', 'File.for_fd(Integer(ENV.fetch("SIM_LOCK_FD"))).flock(File::LOCK_EX); sleep 30', Rails.root.join('bin/rails').to_s, 'simulate:app_activity[10]', **options)
+      # Own the descriptor independently on Docker bind mounts; wait for startup below.
+      child = spawn.call(environment, RbConfig.ruby, '-e', 'File.for_fd(Integer(ENV.fetch("SIM_LOCK_FD"))).close; lock = File.open(ARGV.first, "a+"); lock.flock(File::LOCK_EX); sleep 30', TripSimulator::Runner::LOCK_PATH.to_s, Rails.root.join('bin/rails').to_s, 'simulate:app_activity[10]', **options)
     end
     Rails.env.stub(:development?, true) do
       Process.stub(:spawn, replacement) do
