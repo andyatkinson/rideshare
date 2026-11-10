@@ -30,7 +30,12 @@ class TripSimulator
     end
 
     def self.routes
-      @routes ||= JSON.parse(File.read(Rails.root.join('db/simulator_routes.json'))).fetch('routes')
+      @routes ||= begin
+        path = Rails.root.join('db/simulator_routes.json')
+        raise 'Simulator routes missing; run ruby bin/generate_simulator_routes (see docs/trip_simulator.md)' unless path.exist?
+
+        JSON.parse(File.read(path)).fetch('routes')
+      end
     end
   end
 end

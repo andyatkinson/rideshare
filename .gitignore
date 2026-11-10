@@ -56,3 +56,6 @@ output.log
 pg18_db01_data/
 pg18_db02_data/
 pg18_db03_data/
+
+# Generated offline simulator street routes.
+/db/simulator_routes.json

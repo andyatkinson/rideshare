@@ -24,8 +24,24 @@ Avenue, [Harvard's Oxford Street campus](https://chsi.harvard.edu/visit-us), and
 North Station across the river in Boston. Pickup coordinates are approximate.
 Existing unrelated locations and records are preserved.
 
-`db/simulator_routes.json` contains all 42 directed driving routes from
-[OSRM](https://project-osrm.org/) and [OpenStreetMap](https://www.openstreetmap.org/copyright).
+Generate the offline route file once after checkout, before running the simulator
+or its tests (Ruby standard library only; no Rails boot or database needed):
+
+```sh
+ruby bin/generate_simulator_routes
+# Or inside Docker:
+docker compose exec app ruby bin/generate_simulator_routes
+```
+
+The script reads the location roster from `TripSimulator::Pool::LOCATIONS` and
+fetches all 42 directed driving routes from
+[OSRM](https://project-osrm.org/) using [OpenStreetMap](https://www.openstreetmap.org/copyright).
+It writes `db/simulator_routes.json`, which is ignored by Git and reused as static
+local data. Internet access is needed only for generation. Re-run after changing
+locations or to refresh road geometry; restart Rails and any running simulator to
+reload the cache. `OSRM_URL` can point to another OSRM server with the driving
+profile. Failed generation preserves the previous file.
+
 Position generation interpolates by distance along saved street geometry; there
 are no runtime geocoding or routing API calls. Timing and GPS samples are synthetic,
 not measured traffic or real journeys. PostgreSQL point x is latitude and y is
