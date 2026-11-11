@@ -18,9 +18,6 @@ jobs:
       image: ubuntu-2204:current
     steps:
       - checkout
-      - restore_cache:
-          keys:
-            - simulator-routes-v1-{{ checksum "app/services/trip_simulator/pool.rb" }}
       - run:
           name: Start PostgreSQL shards and PgDog
           command: docker compose -p rideshare-ci -f .circleci/docker-compose.yml up -d --build --wait primary shard_0 shard_1 pgdog
@@ -35,13 +32,8 @@ jobs:
               bin/rails db:prepare
               bin/rails generate uuid_conversion
               bin/rails db:migrate db:schema:dump
-              test -f db/simulator_routes.json || ruby bin/generate_simulator_routes
               bin/rails test
             '
-      - save_cache:
-          key: simulator-routes-v1-{{ checksum "app/services/trip_simulator/pool.rb" }}
-          paths:
-            - db/simulator_routes.json
       - run:
           name: Collect Docker logs
           when: always

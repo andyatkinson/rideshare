@@ -27,8 +27,8 @@ bin/rails generate uuid_conversion
 RAILS_ENV=development bin/rails db:migrate:primary db:migrate:pgdog
 RAILS_ENV=development bin/rails db:schema:dump
 RAILS_ENV=test bin/rails db:migrate db:schema:dump
-ruby bin/generate_simulator_routes # one-time simulator prerequisite
 bin/rails test
+bin/rails test:simulator # optional; generates driving routes first
 ```
 
 The migration converts the existing databases directly; it does not load a new

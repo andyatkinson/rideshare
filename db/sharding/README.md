@@ -210,7 +210,9 @@ dashboard reads trips from primary and their positions separately from PgDog.
 Stop all terminates the workers before deleting unfinished positions and primary
 trip records; completed rides remain. Those deletions span separate databases,
 so they do not form one distributed transaction. Generate offline street routes
-with `ruby bin/generate_simulator_routes` before running the simulator or its tests.
+with `ruby bin/generate_simulator_routes` before running the simulator. Default
+`bin/rails test` needs no route file. Run `bin/rails test:simulator` to generate
+routes first and execute the optional simulator integration group.
 
 CI uses `.circleci/docker-compose.yml` to provision disposable primary/shard
 databases and the pinned PgDog image, generate/apply both UUID migrations, and
