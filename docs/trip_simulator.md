@@ -25,7 +25,7 @@ North Station across the river in Boston. Pickup coordinates are approximate.
 Existing unrelated locations and records are preserved.
 
 Generate the offline route file once after checkout, before running the simulator
-or its tests (Ruby standard library only; no Rails boot or database needed):
+(Ruby standard library only; no Rails boot or database needed):
 
 ```sh
 ruby bin/generate_simulator_routes
@@ -111,3 +111,23 @@ connection (`rideshare_development` in Docker). Live Queries shows SQL currently
 executing, not a query history: short simulator inserts may finish between
 refreshes. Use the Queries page for aggregated workload statistics when query
 stats are enabled.
+
+## Tests
+
+`bin/rails test` runs the default suite without the generated route file or any
+network setup. Route-dependent simulator checks live in `test/optional/simulator`
+and are excluded from default discovery. Run that optional group with:
+
+```sh
+bin/rails test:simulator
+# Or inside Docker, with the normal test database configured:
+docker compose exec app bin/rails test:simulator
+```
+
+The command first runs `bin/generate_simulator_routes`, then runs only the optional
+tests against the test database. Generation requires internet access to OSRM (or
+your configured `OSRM_URL`) and replaces the ignored local route file. If
+generation fails, the command stops before running tests. The group covers street
+geometry, randomized routes, concurrent journeys, background-run reset, and live
+dashboard positions. Other simulator unit and access-control tests remain in the
+default suite.
