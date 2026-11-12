@@ -25,8 +25,7 @@ ENV BUNDLE_PATH=/usr/local/bundle
 
 # ---- Bundler layer (cache-friendly) ----
 COPY Gemfile Gemfile.lock ./
-RUN bundle config set without 'development test' && \
-    bundle install --jobs=4 --retry=3
+RUN bundle install --jobs=4 --retry=3
 
 # ---- App code ----
 COPY . .

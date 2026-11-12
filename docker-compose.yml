@@ -20,11 +20,15 @@ services:
 
   app:
     build: .
-    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails server -b 0.0.0.0"
+    command: >-
+      bash -c "(bundle check || bundle install --jobs=4 --retry=3) &&
+      rm -f tmp/pids/server.pid &&
+      exec bundle exec rails server -b 0.0.0.0"
     depends_on:
       - db
     environment:
       RAILS_ENV: development
+      BUNDLE_WITHOUT: ""
       RIDESHARE_DB_PASSWORD: HSnDDgFtyW9fyFI
       DB_URL: postgres://postgres:postgres@db:5432/postgres
       DATABASE_URL: postgres://owner:@db:5432/rideshare_development
