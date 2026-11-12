@@ -60,7 +60,9 @@ class TripSimulator
   private
 
   def in_connection(&block)
-    ActiveRecord::Base.connection_pool.with_connection(prevent_permanent_checkout: true, &block)
+    ActiveRecord::Base.connection_pool.with_connection(prevent_permanent_checkout: true) do
+      PgdogRecord.connection_pool.with_connection(prevent_permanent_checkout: true, &block)
+    end
   end
 
   def run_trip

@@ -1,0 +1,18 @@
+# The primary UUID conversion discards parent trips, so discard their old samples too.
+class ConvertPgdogTripIdsToUuid < ActiveRecord::Migration[7.2]
+  def up
+    raise 'UUID conversion is for development/test only' unless Rails.env.development? || Rails.env.test?
+    raise 'UUID conversion requires PostgreSQL 18+' if connection.database_version < 180_000
+    raise 'PgDog trip IDs are already converted' if connection.columns(:trip_positions).find { |column| column.name == 'trip_id' }.type == :uuid
+
+    safety_assured do
+      execute 'TRUNCATE TABLE rideshare.trip_positions'
+      execute 'ALTER TABLE rideshare.trip_positions ALTER COLUMN trip_id TYPE uuid USING NULL::uuid'
+      execute 'ALTER TABLE rideshare.trip_positions ALTER COLUMN id SET DEFAULT uuidv7()'
+    end
+  end
+
+  def down
+    raise ActiveRecord::IrreversibleMigration, 'Reload the bigint base schema to undo the demo conversion'
+  end
+end

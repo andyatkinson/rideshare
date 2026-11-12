@@ -44,7 +44,7 @@ class TripSimulatorConcurrencyTest < ActiveSupport::TestCase
     if pool
       trips = Trip.where(driver_id: pool.drivers.map(&:id))
       requests = TripRequest.where(id: trips.select(:trip_request_id)).to_a
-      TripPosition.where(trip_id: trips.select(:id)).delete_all
+      TripPosition.where(trip_id: trips.pluck(:id)).delete_all
       trips.destroy_all
       requests.each(&:destroy!)
       (pool.drivers + pool.riders).each(&:destroy!)
