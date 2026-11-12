@@ -213,6 +213,9 @@ Once that's running, visit <http://localhost:3000/pghero> in your browser to see
 > [!TIP]
 > For 2026, this is the recommended dev env setup method.
 
+> [!TIP]
+> When updating gems docker needs a rebuild
+
 Clone the repo then run the following steps:
 ```sh
 # Terminal #1: Bring containers up (initially empty DB)
